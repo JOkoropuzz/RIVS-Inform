@@ -1,0 +1,42 @@
+<header>
+  <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+    <div class="container">
+      <div class="color-bg-transparent">
+        <img src="images/favicon.png" alt="" height="32"
+             width="32" data-view-component="true" class="rivs-logo">
+      </div>
+      <a class="navbar-brand" [routerLink]="['/home']">RIVS-inform</a>
+      <div class="navbar-collapse collapse d-sm-inline-flex justify-content-end"
+           [ngClass]="{ show: isExpanded }">
+        <ul class="navbar-nav flex-grow">
+          <li class="nav-item"
+              [routerLinkActive]="['link-active']"
+              [routerLinkActiveOptions]="{ exact: true }">
+            <a class="nav-link text-dark" [routerLink]="['/measure']">Измерения</a>
+          </li>
+          <li class="nav-item"
+              [routerLinkActive]="['link-active']"
+              [routerLinkActiveOptions]="{ exact: true }">
+            <a class="nav-link text-dark" [routerLink]="['/log']">Лог</a>
+          </li>
+        </ul>
+      </div>
+      <div class="navbar-brand">
+        <button height="32" width="32" class="color-bg-transparent Button" aria-label="Open user navigation menu" type="button" data-view-component="true"
+                aria-expanded="false" aria-haspopup="true"
+                mat-icon-button [matMenuTriggerFor]="menu">
+          <img src="images/icon-user-profile.png" alt="" size="32" height="32"
+               width="32" data-view-component="true" class="avatar circle">
+        </button>
+        <mat-menu #menu="matMenu">
+          <button mat-menu-item disabled class="text-dark">
+            <span>Иванов Иван Иванович</span>
+          </button>
+          <button mat-menu-item>
+            <span>Выход</span>
+          </button>
+        </mat-menu>
+      </div>
+    </div>
+  </nav>
+</header>

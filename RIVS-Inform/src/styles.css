@@ -1,1 +1,49 @@
 /* You can add global styles to this file, and also import other style files */
+
+a {
+  color: #0366d6;
+}
+
+code {
+  color: #e01a76;
+}
+
+.btn-primary {
+  color: #fff;
+  background-color: #1b6ec2;
+  border-color: #1861ac;
+}
+
+.text-center {
+  text-align: center;
+}
+
+body {
+  margin: 0;
+}
+
+.flex-container {
+  display: flex;
+}
+
+.flex-element {
+  width: 100%;
+}
+
+
+table {
+  width: 100%;
+}
+
+.first-header-row th {
+  justify-content: center;
+  font-weight: bold;
+  border-bottom-color: black;
+}
+
+.second-header-row th {
+  font-weight: bold;
+}
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
