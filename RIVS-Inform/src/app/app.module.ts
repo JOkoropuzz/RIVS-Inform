@@ -7,6 +7,7 @@ import { NavMenuComponent } from './components/nav-menu/nav-menu.component';
 
 import { MatMenuModule } from '@angular/material/menu';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 @NgModule({
   declarations: [
@@ -17,6 +18,7 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
     BrowserModule,
     AppRoutingModule,
     MatMenuModule,
+    NgbModule,
   ],
   providers: [
     provideAnimationsAsync()

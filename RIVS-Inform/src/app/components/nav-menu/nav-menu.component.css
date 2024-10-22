@@ -1,3 +1,9 @@
+a.navbar-brand {
+  white-space: normal;
+  text-align: center;
+  word-break: break-all;
+}
+
 .Button {
   border: var(--borderWidth-thin) solid;
   border-color: #0000;
