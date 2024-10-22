@@ -1,0 +1,86 @@
+<div class="flex-element">
+  <canvasjs-chart [options]="cpuChartOptions" (chartInstance)="getChartInstance($event)" [styles]="{width: '50%', height: '300px', 'float': 'left' }"></canvasjs-chart>
+  <canvasjs-chart [options]="memoryChartOptions" (chartInstance)="getChartInstance($event)" [styles]="{width: '50%', height: '300px', 'float': 'left'}"></canvasjs-chart>
+  <canvasjs-chart [options]="networkChartOptions" (chartInstance)="getChartInstance($event)" [styles]="{width: '50%', height: '300px', 'float': 'left'}"></canvasjs-chart>
+  <canvasjs-chart [options]="diskChartOptions" (chartInstance)="getChartInstance($event)" [styles]="{width: '50%', height: '300px', 'float': 'left'}"></canvasjs-chart>
+</div>
+<div class="mat-elevation-z8 flex-element">
+  <mat-form-field>
+    <mat-label>Продукт</mat-label>
+    <mat-select [(ngModel)]="selectedProdName" (selectionChange)="select($event.value)">
+      <mat-option *ngFor="let prodName of prodNames" [value]="prodName">
+        {{prodName}}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+  <table mat-table [dataSource]="resultProducts" class="mat-elevation-z8">
+
+    <!--<ng-container [matColumnDef]="column" *ngFor="let column of displayedColumns">
+      <th mat-header-cell *matHeaderCellDef> {{column}} </th>
+      <td mat-cell *matCellDef="let resultProducts"> {{resultProducts[column]}} </td>
+    </ng-container>-->
+
+    <ng-container matColumnDef="time">
+      <th mat-header-cell *matHeaderCellDef> <p>{{allColumns[0].label}}</p> </th>
+      <td mat-cell *matCellDef="let resultProducts"> {{resultProducts.time}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="TFcc">
+      <th mat-header-cell *matHeaderCellDef> <p>{{allColumns[1].label}}</p> </th>
+      <td mat-cell *matCellDef="let resultProducts"> {{resultProducts.TFcc}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="el1">
+      <th mat-header-cell *matHeaderCellDef> <p>{{allColumns[2].label}}</p> </th>
+      <td mat-cell *matCellDef="let resultProducts"> {{resultProducts.el1}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="el2">
+      <th mat-header-cell *matHeaderCellDef> <p>{{allColumns[3].label}}</p> </th>
+      <td mat-cell *matCellDef="let resultProducts"> {{resultProducts.el2}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="el3">
+      <th mat-header-cell *matHeaderCellDef> <p>{{allColumns[4].label}}</p> </th>
+      <td mat-cell *matCellDef="let resultProducts"> {{resultProducts.el3}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="el4">
+      <th mat-header-cell *matHeaderCellDef> <p>{{allColumns[5].label}}</p> </th>
+      <td mat-cell *matCellDef="let resultProducts"> {{resultProducts.el4}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="el5">
+      <th mat-header-cell *matHeaderCellDef> <p>{{allColumns[6].label}}</p> </th>
+      <td mat-cell *matCellDef="let resultProducts"> {{resultProducts.el5}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="el6">
+      <th mat-header-cell *matHeaderCellDef> <p>{{allColumns[7].label}}</p> </th>
+      <td mat-cell *matCellDef="let resultProducts"> {{resultProducts.el6}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="el7">
+      <th mat-header-cell *matHeaderCellDef> <p>{{allColumns[8].label}}</p> </th>
+      <td mat-cell *matCellDef="let resultProducts"> {{resultProducts.el7}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="el8">
+      <th mat-header-cell *matHeaderCellDef> <p>{{allColumns[9].label}}</p> </th>
+      <td mat-cell *matCellDef="let resultProducts"> {{resultProducts.el8}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="item-description">
+      <th mat-header-cell *matHeaderCellDef colspan="10" class="text-center"><p>Продукт "{{selectedProdName}}"</p></th>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="['item-description']"
+        class="first-header-row">
+    </tr>
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"
+        class="second-header-row">
+    </tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+  </table>
+</div>
