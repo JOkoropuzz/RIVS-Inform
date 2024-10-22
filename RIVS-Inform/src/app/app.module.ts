@@ -8,11 +8,13 @@ import { NavMenuComponent } from './components/nav-menu/nav-menu.component';
 import { MatMenuModule } from '@angular/material/menu';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { HomeComponent } from './components/home/home.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    NavMenuComponent
+    NavMenuComponent,
+    HomeComponent
   ],
   imports: [
     BrowserModule,
