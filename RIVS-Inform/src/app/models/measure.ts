@@ -1,6 +1,6 @@
-export interface Product {
+export interface Measure {
   name: string;
-  time: string;
+  time: Date;
   TFcc: number;
   el1?: number;
   el2?: number;

@@ -1,8 +1,13 @@
 <div class="flex-element">
-  <canvasjs-chart [options]="cpuChartOptions" (chartInstance)="getChartInstance($event)" [styles]="{width: '50%', height: '300px', 'float': 'left' }"></canvasjs-chart>
-  <canvasjs-chart [options]="memoryChartOptions" (chartInstance)="getChartInstance($event)" [styles]="{width: '50%', height: '300px', 'float': 'left'}"></canvasjs-chart>
-  <canvasjs-chart [options]="networkChartOptions" (chartInstance)="getChartInstance($event)" [styles]="{width: '50%', height: '300px', 'float': 'left'}"></canvasjs-chart>
-  <canvasjs-chart [options]="diskChartOptions" (chartInstance)="getChartInstance($event)" [styles]="{width: '50%', height: '300px', 'float': 'left'}"></canvasjs-chart>
+  <canvasjs-chart [options]="TFccOptions" (chartInstance)="getChartInstance($event)" [styles]="{width: '50%', height: '300px', 'float': 'left' }"></canvasjs-chart>
+  <canvasjs-chart [options]="el1Options" (chartInstance)="getChartInstance($event)" [styles]="{width: '50%', height: '300px', 'float': 'left'}"></canvasjs-chart>
+  <canvasjs-chart [options]="el2Options" (chartInstance)="getChartInstance($event)" [styles]="{width: '50%', height: '300px', 'float': 'left'}"></canvasjs-chart>
+  <canvasjs-chart [options]="el3Options" (chartInstance)="getChartInstance($event)" [styles]="{width: '50%', height: '300px', 'float': 'left'}"></canvasjs-chart>
+  <canvasjs-chart [options]="el4Options" (chartInstance)="getChartInstance($event)" [styles]="{width: '50%', height: '300px', 'float': 'left'}"></canvasjs-chart>
+  <canvasjs-chart [options]="el5Options" (chartInstance)="getChartInstance($event)" [styles]="{width: '50%', height: '300px', 'float': 'left'}"></canvasjs-chart>
+  <canvasjs-chart [options]="el6Options" (chartInstance)="getChartInstance($event)" [styles]="{width: '50%', height: '300px', 'float': 'left'}"></canvasjs-chart>
+  <canvasjs-chart [options]="el7Options" (chartInstance)="getChartInstance($event)" [styles]="{width: '50%', height: '300px', 'float': 'left'}"></canvasjs-chart>
+  <canvasjs-chart [options]="el8Options" (chartInstance)="getChartInstance($event)" [styles]="{width: '50%', height: '300px', 'float': 'left'}"></canvasjs-chart>
 </div>
 <div class="mat-elevation-z8 flex-element">
   <mat-form-field>
@@ -13,7 +18,7 @@
       </mat-option>
     </mat-select>
   </mat-form-field>
-  <table mat-table [dataSource]="resultProducts" class="mat-elevation-z8">
+  <table mat-table [dataSource]="productMeasures" class="mat-elevation-z8">
 
     <!--<ng-container [matColumnDef]="column" *ngFor="let column of displayedColumns">
       <th mat-header-cell *matHeaderCellDef> {{column}} </th>

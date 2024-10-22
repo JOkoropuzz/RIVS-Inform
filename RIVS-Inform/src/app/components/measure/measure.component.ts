@@ -1,20 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { TableService } from '../../servises/table.service';
-import { Product } from '../../models/products';
-import * as data from '../../../../public/server-metrics.json';
-
-/* Tutorial: https://www.javatpoint.com/display-data-from-json-file-in-angular */
-interface JsonData { "read": number, "time": number, "used": number, "user": number, "wait": number, "cache": number, "write": number, "system": number, "buffers": number, "inbound": number, "outbound": number }
-
-
+import { Measure } from '../../models/measure';
 
 export interface DisplayColumn {
   def: string;
   label: string;
   hide: boolean;
 }
-
-
 
 @Component({
   selector: 'app-measure',
@@ -38,13 +30,18 @@ export class TableMultipleHeader implements OnInit {
     { def: 'el8', label: 'el8', hide: true }
   ];
   
+  //string array of products name
+  prodNames = this.tableServ.productNameSelector();
 
   selectedProdName?: string;
 
-  resultProducts: Product[]=[];
+  productMeasures: Measure[]=[];
 
   //string array of columns name
   displayedColumns?: string[];
+
+  //CanvasJS
+  charts: any = [];
 
   constructor(private tableServ: TableService) { }
 
@@ -53,24 +50,27 @@ export class TableMultipleHeader implements OnInit {
     this.selectedProdName = this.tableServ.productNameSelector()[0];
     this.fillColumns();
     this.hideColumns();
-    this.resultProducts = this.tableServ.productSelector(this.selectedProdName);
+    this.productMeasures = this.tableServ.productSelector(this.selectedProdName);
+    this.fillCharts();
+    //CanvasJS
+    
+  }
 
-    for (var i = 0; i < this.jsonData.length; i++) {
-      this.systemDps.push({ x: Number(this.jsonData[i].time), y: Number(this.jsonData[i].system) });
-      this.userDps.push({ x: Number(this.jsonData[i].time), y: Number(this.jsonData[i].user) });
-      this.waitDps.push({ x: Number(this.jsonData[i].time), y: Number(this.jsonData[i].wait) });
-      this.buffersDps.push({ x: Number(this.jsonData[i].time), y: Number(this.jsonData[i].buffers) });
-      this.cacheDps.push({ x: Number(this.jsonData[i].time), y: Number(this.jsonData[i].cache) });
-      this.usedDps.push({ x: Number(this.jsonData[i].time), y: Number(this.jsonData[i].used) });
-      this.inboundDps.push({ x: Number(this.jsonData[i].time), y: Number(this.jsonData[i].inbound) });
-      this.outboundDps.push({ x: Number(this.jsonData[i].time), y: Number(this.jsonData[i].outbound) });
-      this.writeDps.push({ x: Number(this.jsonData[i].time), y: Number(this.jsonData[i].write) });
-      this.readDps.push({ x: Number(this.jsonData[i].time), y: Number(this.jsonData[i].read) });
+  //fill charts data
+  fillCharts() {
+    for (var i = 0; i < this.productMeasures.length; i++) {
+      this.TFccDps[i] = { x: Number(Math.round(this.productMeasures[i].time.getTime())), y: Number(this.productMeasures[i].TFcc) };
+      this.el1Dps[i] = { x: Number(Math.round(this.productMeasures[i].time.getTime())), y: Number(this.productMeasures[i].el1) };
+      this.el2Dps[i] = { x: Number(Math.round(this.productMeasures[i].time.getTime())), y: Number(this.productMeasures[i].el2) };
+      this.el3Dps[i] = { x: Number(Math.round(this.productMeasures[i].time.getTime())), y: Number(this.productMeasures[i].el3) };
+      this.el4Dps[i] = { x: Number(Math.round(this.productMeasures[i].time.getTime())), y: Number(this.productMeasures[i].el4) };
+      this.el5Dps[i] = { x: Number(Math.round(this.productMeasures[i].time.getTime())), y: Number(this.productMeasures[i].el5) };
+      this.el6Dps[i] = { x: Number(Math.round(this.productMeasures[i].time.getTime())), y: Number(this.productMeasures[i].el6) };
+      this.el7Dps[i] = { x: Number(Math.round(this.productMeasures[i].time.getTime())), y: Number(this.productMeasures[i].el7) };
+      this.el8Dps[i] = { x: Number(Math.round(this.productMeasures[i].time.getTime())), y: Number(this.productMeasures[i].el8) };
     }
   }
 
-  //string array of products name
-  prodNames = this.tableServ.productNameSelector();
 
   //fill columns data
   fillColumns() {
@@ -91,7 +91,12 @@ export class TableMultipleHeader implements OnInit {
     this.selectedProdName = value;
     this.fillColumns();
     this.hideColumns();
-    this.resultProducts = this.tableServ.productSelector(this.selectedProdName);
+    this.productMeasures = this.tableServ.productSelector(this.selectedProdName);
+    this.fillCharts();
+    for (var j = 0; j < this.charts.length; j++) {
+      if (this.allColumns[j + 1].hide == false)
+        this.charts[j].render();
+    }
   }
 
   // Show/Hide columns
@@ -99,11 +104,11 @@ export class TableMultipleHeader implements OnInit {
     this.displayedColumns = this.allColumns.filter(cd => !cd.hide).map(cd => cd.def)
   }
 
-  dps1: any = []; dps2: any = []; dps3: any = []; charts: any = [];
 
   toolTip = {
     shared: true
   };
+
   legend = {
     cursor: "pointer",
     itemclick: function (e: any) {
@@ -116,169 +121,201 @@ export class TableMultipleHeader implements OnInit {
     }
   };
 
-  systemDps: any = []; userDps: any = []; waitDps: any = []; buffersDps: any = []; cacheDps: any = []; usedDps: any = []; inboundDps: any = []; outboundDps: any = []; writeDps: any = []; readDps: any = [];
-  onToolTipUpdated: any; onToolTipHidden: any; onCrosshairUpdated: any; onCrosshairHidden: any; onRangeChanged: any;
+  TFccDps: any = []; el1Dps: any = []; el2Dps: any = []; el3Dps: any = [];
+  el4Dps: any = []; el5Dps: any = []; el6Dps: any = []; el7Dps: any = [];
+  el8Dps: any = []; onToolTipUpdated: any; onToolTipHidden: any;
+  onCrosshairUpdated: any; onCrosshairHidden: any; onRangeChanged: any;
 
-  cpuChartOptions = {
+  TFccOptions = {
     animationEnabled: true,
-    theme: "light2", // "light1", "light2", "dark1", "dark2"
+    theme: "ligth2", // "light1", "light2", "dark1", "dark2"
     title: {
-      text: "CPU Utilization"
+      text: this.allColumns[1].label
     },
     toolTip: this.toolTip,
-    axisY: {
-      valueFormatString: "#0.#%",
-    },
+    axisY: { suffix: " %" },
     legend: this.legend,
     data: [{
       type: "splineArea",
       showInLegend: "true",
-      name: "User",
-      yValueFormatString: "#0.#%",
-      color: "#64b5f6",
+      name: this.allColumns[1].label,
+      color: "black",
       xValueType: "dateTime",
       xValueFormatString: "DD MMM YY HH:mm",
       legendMarkerType: "square",
-      dataPoints: this.userDps
-    }, {
-      type: "splineArea",
-      showInLegend: "true",
-      name: "System",
-      yValueFormatString: "#0.#%",
-      color: "#2196f3",
-      xValueType: "dateTime",
-      xValueFormatString: "DD MMM YY HH:mm",
-      legendMarkerType: "square",
-      dataPoints: this.systemDps
-    }, {
-      type: "splineArea",
-      showInLegend: "true",
-      name: "Wait",
-      yValueFormatString: "#0.#%",
-      color: "#1976d2",
-      xValueType: "dateTime",
-      xValueFormatString: "DD MMM YY HH:mm",
-      legendMarkerType: "square",
-      dataPoints: this.waitDps
+      dataPoints: this.TFccDps
     }]
   };
-  memoryChartOptions = {
+  el1Options = {
     animationEnabled: true,
     theme: "light2",
     title: {
-      text: "Memory Usage"
+      text: this.allColumns[2].label
     },
-    axisY: {
-      suffix: " GB"
-    },
+    axisY: { suffix: " %" },
     toolTip: this.toolTip,
     legend: this.legend,
     data: [{
       type: "splineArea",
       showInLegend: "true",
-      name: "Cache",
-      color: "#e57373",
+      name: this.allColumns[2].label,
+      color: "black",
       xValueType: "dateTime",
       xValueFormatString: "DD MMM YY HH:mm",
-      yValueFormatString: "#.## GB",
       legendMarkerType: "square",
-      dataPoints: this.cacheDps
-    }, {
-      type: "splineArea",
-      showInLegend: "true",
-      name: "Buffers",
-      color: "#f44336",
-      xValueType: "dateTime",
-      xValueFormatString: "DD MMM YY HH:mm",
-      yValueFormatString: "#.## GB",
-      legendMarkerType: "square",
-      dataPoints: this.buffersDps
-    }, {
-      type: "splineArea",
-      showInLegend: "true",
-      name: "Used",
-      color: "#d32f2f",
-      xValueType: "dateTime",
-      xValueFormatString: "DD MMM YY HH:mm",
-      yValueFormatString: "#.## GB",
-      legendMarkerType: "square",
-      dataPoints: this.usedDps
+      dataPoints: this.el1Dps
     }]
-  }
-  networkChartOptions = {
+  };
+  el2Options = {
     animationEnabled: true,
     theme: "light2",
     title: {
-      text: "Network Traffic"
+      text: this.allColumns[3].label
     },
-    axisY: {
-      suffix: " Kb/s"
-    },
+    axisY: { suffix: " %" },
     toolTip: this.toolTip,
     legend: this.legend,
     data: [{
       type: "splineArea",
       showInLegend: "true",
-      name: "Outbound",
-      color: "#81c784",
+      name: this.allColumns[3].label,
+      color: "black",
       xValueType: "dateTime",
       xValueFormatString: "DD MMM YY HH:mm",
-      yValueFormatString: "#.## Kb/s",
       legendMarkerType: "square",
-      dataPoints: this.outboundDps
-    }, {
-      type: "splineArea",
-      showInLegend: "true",
-      name: "Inbound",
-      color: "#388e3c",
-      xValueType: "dateTime",
-      xValueFormatString: "DD MMM YY HH:mm",
-      yValueFormatString: "#.## Kb/s",
-      legendMarkerType: "square",
-      dataPoints: this.inboundDps
+      dataPoints: this.el2Dps
     }]
-  }
-  diskChartOptions = {
+  };
+  el3Options = {
     animationEnabled: true,
     theme: "light2",
     title: {
-      text: "Disk I/O (IOPS)"
+      text: this.allColumns[4].label
     },
-    axisY: {},
+    axisY: { suffix: " %" },
     toolTip: this.toolTip,
     legend: this.legend,
     data: [{
       type: "splineArea",
       showInLegend: "true",
-      name: "Write",
-      color: "#ffb74d",
+      name: this.allColumns[4].label,
+      color: "black",
       xValueType: "dateTime",
       xValueFormatString: "DD MMM YY HH:mm",
-      yValueFormatString: "#.## ops/second",
       legendMarkerType: "square",
-      dataPoints: this.writeDps
-    }, {
+      dataPoints: this.el3Dps
+    }]
+  };
+  el4Options = {
+    animationEnabled: true,
+    theme: "light2",
+    title: {
+      text: this.allColumns[5].label
+    },
+    axisY: { suffix: " %" },
+    toolTip: this.toolTip,
+    legend: this.legend,
+    data: [{
       type: "splineArea",
       showInLegend: "true",
-      name: "Read",
-      color: "#f57c00",
+      name: this.allColumns[5].label,
+      color: "black",
       xValueType: "dateTime",
       xValueFormatString: "DD MMM YY HH:mm",
-      yValueFormatString: "#.## ops/second",
       legendMarkerType: "square",
-      dataPoints: this.readDps
+      dataPoints: this.el4Dps
     }]
-  }
+  };
+  el5Options = {
+    animationEnabled: true,
+    theme: "light2",
+    title: {
+      text: this.allColumns[6].label
+    },
+    axisY: { suffix: " %" },
+    toolTip: this.toolTip,
+    legend: this.legend,
+    data: [{
+      type: "splineArea",
+      showInLegend: "true",
+      name: this.allColumns[6].label,
+      color: "black",
+      xValueType: "dateTime",
+      xValueFormatString: "DD MMM YY HH:mm",
+      legendMarkerType: "square",
+      dataPoints: this.el5Dps
+    }]
+  };
+  el6Options = {
+    animationEnabled: true,
+    theme: "light2",
+    title: {
+      text: this.allColumns[7].label
+    },
+    axisY: { suffix: " %" },
+    toolTip: this.toolTip,
+    legend: this.legend,
+    data: [{
+      type: "splineArea",
+      showInLegend: "true",
+      name: this.allColumns[7].label,
+      color: "black",
+      xValueType: "dateTime",
+      xValueFormatString: "DD MMM YY HH:mm",
+      legendMarkerType: "square",
+      dataPoints: this.el6Dps
+    }]
+  };
+  el7Options = {
+    animationEnabled: true,
+    theme: "light2",
+    title: {
+      text: this.allColumns[8].label
+    },
+    axisY: { suffix: " %" },
+    toolTip: this.toolTip,
+    legend: this.legend,
+    data: [{
+      type: "splineArea",
+      showInLegend: "true",
+      name: this.allColumns[8].label,
+      color: "black",
+      xValueType: "dateTime",
+      xValueFormatString: "DD MMM YY HH:mm",
+      legendMarkerType: "square",
+      dataPoints: this.el7Dps
+    }]
+  };
+  el8Options = {
+    animationEnabled: true,
+    theme: "light2",
+    title: {
+      text: this.allColumns[9].label
+    },
+    axisY: { suffix: " %" },
+    toolTip: this.toolTip,
+    legend: this.legend,
+    data: [{
+      type: "splineArea",
+      showInLegend: "true",
+      name: this.allColumns[9].label,
+      color: "black",
+      xValueType: "dateTime",
+      xValueFormatString: "DD MMM YY HH:mm",
+      legendMarkerType: "square",
+      dataPoints: this.el8Dps
+    }]
+  };
+  
 
   getChartInstance = (chart: any) => {
     this.charts.push(chart);
   }
 
-  jsonData: JsonData[] = (data as any).default;
-
   ngAfterViewInit() {
     this.syncCharts(this.charts, true, true, true);
   }
+
 
   syncCharts = (charts: any, syncToolTip: any, syncCrosshair: any, syncAxisXRange: any) => {
     if (!this.onToolTipUpdated) {
