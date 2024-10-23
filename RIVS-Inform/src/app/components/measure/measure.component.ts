@@ -42,8 +42,8 @@ export class TableMultipleHeader implements OnInit {
 
   //CanvasJS
   charts: any = [];
-
-  constructor(private tableServ: TableService) { }
+  
+  constructor(private tableServ: TableService) {}
 
 
   ngOnInit(): void {
@@ -55,9 +55,22 @@ export class TableMultipleHeader implements OnInit {
     //CanvasJS
     
   }
-
   //fill charts data
   fillCharts() {
+    while (this.TFccDps.length != 0) {
+      this.TFccDps.shift();
+      this.el1Dps.shift();
+      this.el2Dps.shift();
+      this.el3Dps.shift();
+      this.el4Dps.shift();
+      this.el5Dps.shift();
+      this.el6Dps.shift();
+      this.el7Dps.shift();
+      this.el8Dps.shift();
+    }
+
+    
+
     for (var i = 0; i < this.productMeasures.length; i++) {
       this.TFccDps[i] = { x: Number(Math.round(this.productMeasures[i].time.getTime())), y: Number(this.productMeasures[i].TFcc) };
       this.el1Dps[i] = { x: Number(Math.round(this.productMeasures[i].time.getTime())), y: Number(this.productMeasures[i].el1) };
@@ -93,8 +106,14 @@ export class TableMultipleHeader implements OnInit {
     this.hideColumns();
     this.productMeasures = this.tableServ.productSelector(this.selectedProdName);
     this.fillCharts();
+    this.renderCharts();
+  }
+
+  //render charts
+  renderCharts () {
     for (var j = 0; j < this.charts.length; j++) {
       if (this.allColumns[j + 1].hide == false)
+        this.charts[j].options.title.text = this.allColumns[j + 1].label;
         this.charts[j].render();
     }
   }
@@ -313,6 +332,8 @@ export class TableMultipleHeader implements OnInit {
   }
 
   ngAfterViewInit() {
+
+    this.renderCharts();
     this.syncCharts(this.charts, true, true, true);
   }
 
