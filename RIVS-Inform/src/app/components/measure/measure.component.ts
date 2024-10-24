@@ -182,7 +182,8 @@ export class TableMultipleHeader implements OnInit {
       text: this.allColumns[1].label
     },
     toolTip: this.toolTip,
-    axisY: { suffix: " %" },
+    axisY: { suffix: "%" },
+    axisX: { valueFormatString: "DD-MM HH:mm" },
     legend: this.legend,
     data: [{
       type: "splineArea",
@@ -190,7 +191,7 @@ export class TableMultipleHeader implements OnInit {
       name: this.allColumns[1].label,
       color: "black",
       xValueType: "dateTime",
-      xValueFormatString: "DD MMM YY HH:mm",
+      xValueFormatString: "DD-MM-YYYY HH:mm",
       legendMarkerType: "square",
       dataPoints: this.TFccDps
     }]
@@ -201,15 +202,17 @@ export class TableMultipleHeader implements OnInit {
     title: {
       text: this.allColumns[2].label
     },
-    axisY: { suffix: " %" },
+    axisY: { suffix: "%" },
+    axisX: { valueFormatString: "DD-MM HH:mm" },
     toolTip: this.toolTip,
     legend: this.legend,
     data: [{
       type: "splineArea",
       showInLegend: false,
+      name: this.allColumns[2].label,
       color: "black",
       xValueType: "dateTime",
-      xValueFormatString: "DD MMM YY HH:mm",
+      xValueFormatString: "DD-MM-YYYY HH:mm",
       legendMarkerType: "square",
       dataPoints: this.el1Dps
     }]
@@ -220,16 +223,17 @@ export class TableMultipleHeader implements OnInit {
     title: {
       text: this.allColumns[3].label
     },
-    axisY: { suffix: " %" },
+    axisY: { suffix: "%" },
+    axisX: { valueFormatString: "DD-MM HH:mm" },
     toolTip: this.toolTip,
     legend: this.legend,
     data: [{
       type: "splineArea",
       showInLegend: false,
-      legendText: this.allColumns[3].label,
+      name: this.allColumns[3].label,
       color: "black",
       xValueType: "dateTime",
-      xValueFormatString: "DD MMM YY HH:mm",
+      xValueFormatString: "DD-MM-YYYY HH:mm",
       legendMarkerType: "square",
       dataPoints: this.el2Dps
     }]
@@ -240,16 +244,17 @@ export class TableMultipleHeader implements OnInit {
     title: {
       text: this.allColumns[4].label
     },
-    axisY: { suffix: " %" },
+    axisY: { suffix: "%" },
+    axisX: { valueFormatString: "DD-MM HH:mm" },
     toolTip: this.toolTip,
     legend: this.legend,
     data: [{
       type: "splineArea",
       showInLegend: false,
-      legendText: this.allColumns[4].label,
+      name: this.allColumns[4].label,
       color: "black",
       xValueType: "dateTime",
-      xValueFormatString: "DD MMM YY HH:mm",
+      xValueFormatString: "DD-MM-YYYY HH:mm",
       legendMarkerType: "square",
       dataPoints: this.el3Dps
     }]
@@ -260,16 +265,17 @@ export class TableMultipleHeader implements OnInit {
     title: {
       text: this.allColumns[5].label
     },
-    axisY: { suffix: " %" },
+    axisY: { suffix: "%" },
+    axisX: { valueFormatString: "DD-MM HH:mm" },
     toolTip: this.toolTip,
     legend: this.legend,
     data: [{
       type: "splineArea",
       showInLegend: false,
-      legendText: this.allColumns[5].label,
+      name: this.allColumns[5].label,
       color: "black",
       xValueType: "dateTime",
-      xValueFormatString: "DD MMM YY HH:mm",
+      xValueFormatString: "DD-MM-YYYY HH:mm",
       legendMarkerType: "square",
       dataPoints: this.el4Dps
     }]
@@ -280,16 +286,17 @@ export class TableMultipleHeader implements OnInit {
     title: {
       text: this.allColumns[6].label
     },
-    axisY: { suffix: " %" },
+    axisY: { suffix: "%" },
+    axisX: { valueFormatString: "DD-MM HH:mm" },
     toolTip: this.toolTip,
     legend: this.legend,
     data: [{
       type: "splineArea",
       showInLegend: false,
-      legendText: this.allColumns[6].label,
+      name: this.allColumns[6].label,
       color: "black",
       xValueType: "dateTime",
-      xValueFormatString: "DD MMM YY HH:mm",
+      xValueFormatString: "DD-MM-YYYY HH:mm",
       legendMarkerType: "square",
       dataPoints: this.el5Dps
     }]
@@ -300,16 +307,17 @@ export class TableMultipleHeader implements OnInit {
     title: {
       text: this.allColumns[7].label
     },
-    axisY: { suffix: " %" },
+    axisY: { suffix: "%" },
+    axisX: { valueFormatString: "DD-MM HH:mm" },
     toolTip: this.toolTip,
     legend: this.legend,
     data: [{
       type: "splineArea",
       showInLegend: false,
-      legendText: this.allColumns[7].label,
+      name: this.allColumns[7].label,
       color: "black",
       xValueType: "dateTime",
-      xValueFormatString: "DD MMM YY HH:mm",
+      xValueFormatString: "DD-MM-YYYY HH:mm",
       legendMarkerType: "square",
       dataPoints: this.el6Dps
     }]
@@ -320,16 +328,17 @@ export class TableMultipleHeader implements OnInit {
     title: {
       text: this.allColumns[8].label
     },
-    axisY: { suffix: " %" },
+    axisY: { suffix: "%" },
+    axisX: { valueFormatString: "DD-MM HH:mm" },
     toolTip: this.toolTip,
     legend: this.legend,
     data: [{
       type: "splineArea",
       showInLegend: false,
-      legendText: this.allColumns[8].label,
+      name: this.allColumns[8].label,
       color: "black",
       xValueType: "dateTime",
-      xValueFormatString: "DD MMM YY HH:mm",
+      xValueFormatString: "DD-MM-YYYY HH:mm",
       legendMarkerType: "square",
       dataPoints: this.el7Dps
     }]
@@ -340,16 +349,17 @@ export class TableMultipleHeader implements OnInit {
     title: {
       text: this.allColumns[9].label
     },
-    axisY: { suffix: " %" },
+    axisY: { suffix: "%" },
+    axisX: { valueFormatString: "DD-MM HH:mm" },
     toolTip: this.toolTip,
     legend: this.legend,
     data: [{
       type: "splineArea",
       showInLegend: false,
-      legendText: this.allColumns[9].label,
+      name: this.allColumns[9].label,
       color: "black",
       xValueType: "dateTime",
-      xValueFormatString: "DD MMM YY HH:mm",
+      xValueFormatString: "DD-MM-YYYY HH:mm",
       legendMarkerType: "square",
       dataPoints: this.el8Dps
     }]
