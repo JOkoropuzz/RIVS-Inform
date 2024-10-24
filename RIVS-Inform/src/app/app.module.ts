@@ -15,6 +15,8 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatTableModule } from '@angular/material/table';
 import { FormsModule } from '@angular/forms';
 import { CanvasJSAngularChartsModule } from '@canvasjs/angular-charts';
+import { NgApexchartsModule } from 'ng-apexcharts';
+
 
 
 @NgModule({
@@ -27,6 +29,7 @@ import { CanvasJSAngularChartsModule } from '@canvasjs/angular-charts';
   imports: [
     BrowserModule,
     AppRoutingModule,
+    NgApexchartsModule,
     MatTableModule,
     MatSelectModule,
     CanvasJSAngularChartsModule,

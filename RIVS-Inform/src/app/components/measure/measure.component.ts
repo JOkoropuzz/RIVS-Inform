@@ -1,21 +1,100 @@
 import { Component, OnInit } from '@angular/core';
 import { TableService } from '../../servises/table.service';
 import { Measure } from '../../models/measure';
+import {
+  ApexAxisChartSeries,
+  ApexTitleSubtitle,
+  ApexDataLabels,
+  ApexFill,
+  ApexChart,
+  ApexMarkers,
+  ApexYAxis,
+  ApexXAxis,
+  ApexTooltip,
+  ApexStroke
+} from "ng-apexcharts";
+
+export type ChartOptions = {
+  series: ApexAxisChartSeries;
+  chart: ApexChart;
+  dataLabels: ApexDataLabels;
+  markers: ApexMarkers;
+  title: ApexTitleSubtitle;
+  fill: ApexFill;
+  yaxis: ApexYAxis;
+  xaxis: ApexXAxis;
+  tooltip: ApexTooltip;
+  stroke: ApexStroke;
+  grid: any; //ApexGrid;
+  colors: any;
+};
 
 export interface DisplayColumn {
   def: string;
   label: string;
   hide: boolean;
-}
+};
 
 @Component({
   selector: 'app-measure',
   templateUrl: './measure.component.html',
   providers: [TableService],
-
+  
 })
 
 export class TableMultipleHeader implements OnInit {
+  public TFccoptions!: Partial<ChartOptions>;
+  public chart1options!: Partial<ChartOptions>;
+  public chart2options!: Partial<ChartOptions>;
+  public chart3options!: Partial<ChartOptions>;
+  public chart4options!: Partial<ChartOptions>;
+  public chart5options!: Partial<ChartOptions>;
+  public chart6options!: Partial<ChartOptions>;
+  public chart7options!: Partial<ChartOptions>;
+  public chart8options!: Partial<ChartOptions>;
+  public commonOptions: Partial<ChartOptions> = {
+
+    dataLabels: {
+      enabled: false
+    },
+    stroke: {
+      curve: "smooth"
+    },
+    markers: {
+      size: 6,
+      hover: {
+        size: 10
+      }
+    },
+    tooltip: {
+      followCursor: false,
+      theme: "light",
+      
+      x: {
+        format: "dd-MM-yyyy HH:mm",
+        show: false
+      },
+      marker: {
+        show: false
+      },
+      y: {
+        title: {
+          formatter: function () {
+            return "";
+          }
+        }
+      }
+    },
+    grid: {
+      clipMarkers: false
+    },
+    xaxis: {
+      labels: {
+        datetimeUTC: false
+      },
+      type: "datetime"
+    }
+  };
 
   allColumns: DisplayColumn[] = [
     { def: 'time', label: 'Время', hide: false },
@@ -45,6 +124,238 @@ export class TableMultipleHeader implements OnInit {
   
   constructor(private tableServ: TableService) {}
 
+  public initCharts(): void {
+    this.TFccoptions = {
+      series: [
+        {
+          name: "TFcc",
+          data: this.TFccDps
+        }
+      ],
+      chart: {
+        toolbar: {
+          tools: {
+            pan: false,
+            download: false,
+            zoom: false,
+          }
+          
+        },
+        id: "TFcc",
+        group: "social",
+        type: "area",
+        height: 160
+      },
+      colors: ["black"],
+      yaxis: {
+        tickAmount: 2,
+        labels: {
+          minWidth: 40
+        }
+      }
+    };
+
+    this.chart1options = {
+      series: [
+        {
+          name: "el1",
+          data: this.el1Dps
+        }
+      ],
+      chart: {
+        toolbar: {
+          show: false
+        },
+        id: "el1",
+        group: "social",
+        type: "area",
+        height: 160
+      },
+      colors: ["red"],
+      yaxis: {
+        tickAmount: 2,
+        labels: {
+          minWidth: 40
+        }
+      }
+    };
+
+    this.chart2options = {
+      series: [
+        {
+          name: "el2",
+          data: this.el2Dps
+        }
+      ],
+      chart: {
+        toolbar: {
+          show: false,
+
+        },
+        id: "el2",
+        group: "social",
+        type: "area",
+        height: 160
+      },
+      colors: ["blue"],
+      yaxis: {
+        tickAmount: 2,
+        labels: {
+          minWidth: 40
+        }
+      }
+    };
+
+    this.chart3options = {
+      series: [
+        {
+          name: "el3",
+          data: this.el3Dps
+        }
+      ],
+      chart: {
+        toolbar: {
+          show: false
+        },
+        id: "el3",
+        group: "social",
+        type: "area",
+        height: 160
+      },
+      colors: ["green"],
+      yaxis: {
+        tickAmount: 2,
+        labels: {
+          minWidth: 40
+        }
+      }
+    };
+
+    this.chart4options = {
+      series: [
+        {
+          name: "el4",
+          data: this.el4Dps
+        }
+      ],
+      chart: {
+        toolbar: {
+          show: false
+        },
+        id: "el4",
+        group: "social",
+        type: "area",
+        height: 160
+      },
+      colors: ["yellow"],
+      yaxis: {
+        tickAmount: 2,
+        labels: {
+          minWidth: 40
+        }
+      }
+    };
+
+    this.chart5options = {
+      series: [
+        {
+          name: "el5",
+          data: this.el5Dps
+        }
+      ],
+      chart: {
+        toolbar: {
+          show: false
+        },
+        id: "el5",
+        group: "social",
+        type: "area",
+        height: 160
+      },
+      colors: ["pink"],
+      yaxis: {
+        tickAmount: 2,
+        labels: {
+          minWidth: 40
+        }
+      }
+    };
+
+    this.chart6options = {
+      series: [
+        {
+          name: "el6",
+          data: this.el6Dps
+        }
+      ],
+      chart: {
+        toolbar: {
+          show: false
+        },
+        id: "el6",
+        group: "social",
+        type: "area",
+        height: 160
+      },
+      colors: ["gray"],
+      yaxis: {
+        tickAmount: 2,
+        labels: {
+          minWidth: 40
+        }
+      }
+    };
+
+    this.chart7options = {
+      series: [
+        {
+          name: "el7",
+          data: this.el7Dps
+        }
+      ],
+      chart: {
+        toolbar: {
+          show: false
+        },
+        id: "el7",
+        group: "social",
+        type: "area",
+        height: 160
+      },
+      colors: ["brown"],
+      yaxis: {
+        tickAmount: 2,
+        labels: {
+          minWidth: 40
+        }
+      }
+    };
+
+    this.chart8options = {
+      series: [
+        {
+          name: "el8",
+          data: this.el8Dps
+        }
+      ],
+      chart: {
+        toolbar: {
+          show: false
+        },
+        id: "el8",
+        group: "social",
+        type: "area",
+        height: 160
+      },
+      colors: ["orange"],
+      yaxis: {
+        tickAmount: 2,
+        labels: {
+          minWidth: 40
+        }
+      }
+    };
+  }
 
   ngOnInit(): void {
     this.selectedProdName = this.tableServ.productNameSelector()[0];
@@ -53,8 +364,7 @@ export class TableMultipleHeader implements OnInit {
     this.productMeasures = this.tableServ.productSelector(this.selectedProdName);
     this.toggleDivsVisibility();
     this.fillCharts();
-    //CanvasJS
-    
+    this.initCharts();
   }
   //fill charts data
   fillCharts() {
@@ -68,10 +378,21 @@ export class TableMultipleHeader implements OnInit {
       this.el6Dps.shift();
       this.el7Dps.shift();
       this.el8Dps.shift();
+      //this.TFccD.shift();
+      //this.el1D.shift();
+      //this.el2D.shift();
+      //this.el3D.shift();
+      //this.el4D.shift();
+      //this.el5D.shift();
+      //this.el6D.shift();
+      //this.el7D.shift();
+      //this.el8D.shift();
     }
 
+
     for (var i = 0; i < this.productMeasures.length; i++) {
-      this.TFccDps[i] = { x: Number(Math.round(this.productMeasures[i].time.getTime())), y: Number(this.productMeasures[i].TFcc)};
+      //data for CanvasJS
+      this.TFccDps[i] = { x: Number(Math.round(this.productMeasures[i].time.getTime())), y: Number(this.productMeasures[i].TFcc) };
       this.el1Dps[i] = { x: Number(Math.round(this.productMeasures[i].time.getTime())), y: Number(this.productMeasures[i].el1) };
       this.el2Dps[i] = { x: Number(Math.round(this.productMeasures[i].time.getTime())), y: Number(this.productMeasures[i].el2) };
       this.el3Dps[i] = { x: Number(Math.round(this.productMeasures[i].time.getTime())), y: Number(this.productMeasures[i].el3) };
@@ -80,6 +401,17 @@ export class TableMultipleHeader implements OnInit {
       this.el6Dps[i] = { x: Number(Math.round(this.productMeasures[i].time.getTime())), y: Number(this.productMeasures[i].el6) };
       this.el7Dps[i] = { x: Number(Math.round(this.productMeasures[i].time.getTime())), y: Number(this.productMeasures[i].el7) };
       this.el8Dps[i] = { x: Number(Math.round(this.productMeasures[i].time.getTime())), y: Number(this.productMeasures[i].el8) };
+
+      ////data fro ApexCharts
+      //this.TFccD[i] = { x: this.productMeasures[i].time.getTime(), y: Number(this.productMeasures[i].TFcc) };
+      //this.el1D[i] = { x: this.productMeasures[i].time, y: Number(this.productMeasures[i].el1) };
+      //this.el2D[i] = { x: this.productMeasures[i].time, y: Number(this.productMeasures[i].el2) };
+      //this.el3D[i] = { x: this.productMeasures[i].time, y: Number(this.productMeasures[i].el3) };
+      //this.el4D[i] = { x: this.productMeasures[i].time, y: Number(this.productMeasures[i].el4) };
+      //this.el5D[i] = { x: this.productMeasures[i].time, y: Number(this.productMeasures[i].el5) };
+      //this.el6D[i] = { x: this.productMeasures[i].time, y: Number(this.productMeasures[i].el6) };
+      //this.el7D[i] = { x: this.productMeasures[i].time, y: Number(this.productMeasures[i].el7) };
+      //this.el8D[i] = { x: this.productMeasures[i].time, y: Number(this.productMeasures[i].el8) };
     }
   }
 
@@ -129,6 +461,7 @@ export class TableMultipleHeader implements OnInit {
     this.productMeasures = this.tableServ.productSelector(this.selectedProdName);
     this.toggleDivsVisibility();
     this.fillCharts();
+    this.initCharts();
     this.renderCharts();
   }
 
@@ -170,10 +503,17 @@ export class TableMultipleHeader implements OnInit {
     }
   };
 
+  //data for CanvasJS
   TFccDps: any = []; el1Dps: any = []; el2Dps: any = []; el3Dps: any = [];
   el4Dps: any = []; el5Dps: any = []; el6Dps: any = []; el7Dps: any = [];
   el8Dps: any = []; onToolTipUpdated: any; onToolTipHidden: any;
   onCrosshairUpdated: any; onCrosshairHidden: any; onRangeChanged: any;
+
+
+  ////data for ApexCharts
+  //TFccD: any = []; el1D: any = []; el2D: any = []; el3D: any = [];
+  //el4D: any = []; el5D: any = []; el6D: any = []; el7D: any = [];
+  //el8D: any = [];
 
   TFccOptions = {
     animationEnabled: true,
@@ -446,8 +786,8 @@ export class TableMultipleHeader implements OnInit {
         if (!charts[i].options.axisX)
           charts[i].options.axisX = { labelAngle: 0, crosshair: { enabled: true, snapToDataPoint: true, valueFormatString: "HH:mm" } };
 
-        charts[i].options.axisX.crosshair.updated = this.onCrosshairUpdated;
-        charts[i].options.axisX.crosshair.hidden = this.onCrosshairHidden;
+        //charts[i].options.axisX.crosshair.updated = this.onCrosshairUpdated;
+        //charts[i].options.axisX.crosshair.hidden = this.onCrosshairHidden;
       }
 
       //Sync Zoom / Pan
