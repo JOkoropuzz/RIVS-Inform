@@ -69,8 +69,6 @@ export class TableMultipleHeader implements OnInit {
       this.el8Dps.shift();
     }
 
-    
-
     for (var i = 0; i < this.productMeasures.length; i++) {
       this.TFccDps[i] = { x: Number(Math.round(this.productMeasures[i].time.getTime())), y: Number(this.productMeasures[i].TFcc) };
       this.el1Dps[i] = { x: Number(Math.round(this.productMeasures[i].time.getTime())), y: Number(this.productMeasures[i].el1) };
@@ -84,6 +82,29 @@ export class TableMultipleHeader implements OnInit {
     }
   }
 
+  //show(hide) charts
+  toggleDivsVisibility() {
+    var divsOfCharts = [
+      document.getElementById('TFcc')!,
+      document.getElementById('el1')!,
+      document.getElementById('el2')!,
+      document.getElementById('el3')!,
+      document.getElementById('el4')!,
+      document.getElementById('el5')!,
+      document.getElementById('el6')!,
+      document.getElementById('el7')!,
+      document.getElementById('el8')!,
+    ];
+
+    divsOfCharts.forEach((el) => {
+      if (this.allColumns.find(col => col.def === el.id)!.hide) {
+        el.style.display = 'none';
+      }
+      else {
+        el.style.display = 'block';
+      }
+    } )
+  }
 
   //fill columns data
   fillColumns() {
@@ -105,12 +126,17 @@ export class TableMultipleHeader implements OnInit {
     this.fillColumns();
     this.hideColumns();
     this.productMeasures = this.tableServ.productSelector(this.selectedProdName);
+    this.toggleDivsVisibility();
     this.fillCharts();
     this.renderCharts();
   }
 
   //render charts
-  renderCharts () {
+  renderCharts() {
+    var credits = document.getElementsByClassName('canvasjs-chart-credit') as HTMLCollectionOf<HTMLElement>;
+    Array.from(credits).forEach(element => 
+      element.style.display = 'none'
+    );
     for (var j = 0; j < this.charts.length; j++) {
       if (this.allColumns[j + 1].hide == false)
         this.charts[j].options.title.text = this.allColumns[j + 1].label;
