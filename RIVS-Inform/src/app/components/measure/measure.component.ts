@@ -51,6 +51,7 @@ export class TableMultipleHeader implements OnInit {
     this.fillColumns();
     this.hideColumns();
     this.productMeasures = this.tableServ.productSelector(this.selectedProdName);
+    this.toggleDivsVisibility();
     this.fillCharts();
     //CanvasJS
     
@@ -70,7 +71,7 @@ export class TableMultipleHeader implements OnInit {
     }
 
     for (var i = 0; i < this.productMeasures.length; i++) {
-      this.TFccDps[i] = { x: Number(Math.round(this.productMeasures[i].time.getTime())), y: Number(this.productMeasures[i].TFcc) };
+      this.TFccDps[i] = { x: Number(Math.round(this.productMeasures[i].time.getTime())), y: Number(this.productMeasures[i].TFcc)};
       this.el1Dps[i] = { x: Number(Math.round(this.productMeasures[i].time.getTime())), y: Number(this.productMeasures[i].el1) };
       this.el2Dps[i] = { x: Number(Math.round(this.productMeasures[i].time.getTime())), y: Number(this.productMeasures[i].el2) };
       this.el3Dps[i] = { x: Number(Math.round(this.productMeasures[i].time.getTime())), y: Number(this.productMeasures[i].el3) };
@@ -133,10 +134,13 @@ export class TableMultipleHeader implements OnInit {
 
   //render charts
   renderCharts() {
+
+    //disable canvasJS watermarks
     var credits = document.getElementsByClassName('canvasjs-chart-credit') as HTMLCollectionOf<HTMLElement>;
     Array.from(credits).forEach(element => 
       element.style.display = 'none'
     );
+
     for (var j = 0; j < this.charts.length; j++) {
       if (this.allColumns[j + 1].hide == false)
         this.charts[j].options.title.text = this.allColumns[j + 1].label;
@@ -182,7 +186,7 @@ export class TableMultipleHeader implements OnInit {
     legend: this.legend,
     data: [{
       type: "splineArea",
-      showInLegend: "true",
+      showInLegend: false,
       name: this.allColumns[1].label,
       color: "black",
       xValueType: "dateTime",
@@ -202,8 +206,7 @@ export class TableMultipleHeader implements OnInit {
     legend: this.legend,
     data: [{
       type: "splineArea",
-      showInLegend: "true",
-      name: this.allColumns[2].label,
+      showInLegend: false,
       color: "black",
       xValueType: "dateTime",
       xValueFormatString: "DD MMM YY HH:mm",
@@ -222,8 +225,8 @@ export class TableMultipleHeader implements OnInit {
     legend: this.legend,
     data: [{
       type: "splineArea",
-      showInLegend: "true",
-      name: this.allColumns[3].label,
+      showInLegend: false,
+      legendText: this.allColumns[3].label,
       color: "black",
       xValueType: "dateTime",
       xValueFormatString: "DD MMM YY HH:mm",
@@ -242,8 +245,8 @@ export class TableMultipleHeader implements OnInit {
     legend: this.legend,
     data: [{
       type: "splineArea",
-      showInLegend: "true",
-      name: this.allColumns[4].label,
+      showInLegend: false,
+      legendText: this.allColumns[4].label,
       color: "black",
       xValueType: "dateTime",
       xValueFormatString: "DD MMM YY HH:mm",
@@ -262,8 +265,8 @@ export class TableMultipleHeader implements OnInit {
     legend: this.legend,
     data: [{
       type: "splineArea",
-      showInLegend: "true",
-      name: this.allColumns[5].label,
+      showInLegend: false,
+      legendText: this.allColumns[5].label,
       color: "black",
       xValueType: "dateTime",
       xValueFormatString: "DD MMM YY HH:mm",
@@ -282,8 +285,8 @@ export class TableMultipleHeader implements OnInit {
     legend: this.legend,
     data: [{
       type: "splineArea",
-      showInLegend: "true",
-      name: this.allColumns[6].label,
+      showInLegend: false,
+      legendText: this.allColumns[6].label,
       color: "black",
       xValueType: "dateTime",
       xValueFormatString: "DD MMM YY HH:mm",
@@ -302,8 +305,8 @@ export class TableMultipleHeader implements OnInit {
     legend: this.legend,
     data: [{
       type: "splineArea",
-      showInLegend: "true",
-      name: this.allColumns[7].label,
+      showInLegend: false,
+      legendText: this.allColumns[7].label,
       color: "black",
       xValueType: "dateTime",
       xValueFormatString: "DD MMM YY HH:mm",
@@ -322,8 +325,8 @@ export class TableMultipleHeader implements OnInit {
     legend: this.legend,
     data: [{
       type: "splineArea",
-      showInLegend: "true",
-      name: this.allColumns[8].label,
+      showInLegend: false,
+      legendText: this.allColumns[8].label,
       color: "black",
       xValueType: "dateTime",
       xValueFormatString: "DD MMM YY HH:mm",
@@ -342,8 +345,8 @@ export class TableMultipleHeader implements OnInit {
     legend: this.legend,
     data: [{
       type: "splineArea",
-      showInLegend: "true",
-      name: this.allColumns[9].label,
+      showInLegend: false,
+      legendText: this.allColumns[9].label,
       color: "black",
       xValueType: "dateTime",
       xValueFormatString: "DD MMM YY HH:mm",
