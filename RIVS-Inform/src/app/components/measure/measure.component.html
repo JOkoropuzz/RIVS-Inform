@@ -8,7 +8,7 @@
     </mat-select>
   </mat-form-field>
 </div>
-<div class="apexCharts">
+<div (mouseenter) ="toggleBodyScroll(true)"  (mouseleave) ="toggleBodyScroll(false)">
   <div id="TFcc">
     <apx-chart [series]="TFccoptions.series"
                [chart]="TFccoptions.chart"

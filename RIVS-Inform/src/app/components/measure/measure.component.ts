@@ -28,6 +28,7 @@ export type ChartOptions = {
   stroke: ApexStroke;
   grid: ApexGrid;
   colors: any;
+  toolbar: any;
 };
 
 export interface DisplayColumn {
@@ -108,6 +109,7 @@ export class TableMultipleHeader implements OnInit {
     { def: 'el7', label: 'el7', hide: true },
     { def: 'el8', label: 'el8', hide: true }
   ];
+
   
   //string array of products name
   prodNames = this.tableServ.productNameSelector();
@@ -444,6 +446,11 @@ export class TableMultipleHeader implements OnInit {
       this.el8Dps[i] = { x: Number(Math.round(this.productMeasures[i].time.getTime())), y: Number(this.productMeasures[i].el8) };
 
     }
+  }
+
+  //scroll disable/enable
+  toggleBodyScroll(lock: boolean) {
+    document.body.style.overflow = lock ? 'hidden' : '';
   }
 
   //show(hide) charts
