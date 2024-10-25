@@ -2,6 +2,7 @@ import { Injectable } from "@angular/core";
 import { BehaviorSubject } from "rxjs";
 import { Observable } from "rxjs";
 import { Measure } from '../models/measure';
+import { start } from "@popperjs/core";
 
 export interface ProductElements {
   name: string;
@@ -30,6 +31,9 @@ export class TableService {
     { name: 'c2', time: new Date('2024-09-23 12:18'), TFcc: 24.3, el1: 0.85, el2: 6.85, el3: 23.6, el4: 24.1, el5: 24.1, el6: 24.1, el7: undefined, el8: undefined },
     { name: 'c2', time: new Date('2024-09-23 12:23'), TFcc: 20.5, el1: 0.49, el2: 7.65, el3: 11.1, el4: 24.1, el5: 24.1, el6: 24.1, el7: undefined, el8: undefined },
     { name: 'c2', time: new Date('2024-09-23 12:33'), TFcc: 25.3, el1: 0.85, el2: 8.85, el3: 23.7, el4: 24.1, el5: 24.1, el6: 24.1, el7: undefined, el8: undefined },
+    { name: 'c2', time: new Date('2024-09-24 12:18'), TFcc: 24.3, el1: 0.85, el2: 6.85, el3: 23.6, el4: 24.1, el5: 24.1, el6: 24.1, el7: undefined, el8: undefined },
+    { name: 'c2', time: new Date('2024-09-24 12:23'), TFcc: 20.5, el1: 0.49, el2: 7.65, el3: 11.1, el4: 24.1, el5: 24.1, el6: 24.1, el7: undefined, el8: undefined },
+    { name: 'c2', time: new Date('2024-09-24 12:33'), TFcc: 25.3, el1: 0.85, el2: 8.85, el3: 23.7, el4: 24.1, el5: 24.1, el6: 24.1, el7: undefined, el8: undefined },
     { name: 'c1', time: new Date('2024-09-23 12:43'), TFcc: 26.3, el1: 0.69, el2: 5.75, el3: 22.1, el4: 24.1, el5: 24.1, el6: undefined, el7: undefined, el8: undefined },
     { name: 'c3', time: new Date('2024-09-23 12:45'), TFcc: 26.3, el1: 0.69, el2: 5.75, el3: 22.1, el4: 24.1, el5: 24.1, el6: 22.3, el7: 22.2, el8: 22.1 },
     { name: 'c3', time: new Date('2024-09-23 12:50'), TFcc: 26.3, el1: 0.69, el2: 5.75, el3: 22.1, el4: 24.1, el5: 24.1, el6: 22.3, el7: 22.2, el8: 22.1 },
@@ -59,6 +63,17 @@ export class TableService {
   productSelector(prodName: string): Measure[] {
     return this.measures.filter(
       (measure) => measure.name == prodName);
+  }
+
+  productSelectorWithDate(prodName: string, startDate: Date, endDate: Date): Measure[] {
+    return this.measures.filter(
+      (measure) => measure.name == prodName && measure.time > startDate && measure.time < this.addDays(endDate, 1));
+  }
+
+  addDays(date: Date, days: number): Date {
+  let result = new Date(date);
+  result.setDate(date.getDate() + days);
+  return result;
   }
 
   productNameSelector(): string[] {

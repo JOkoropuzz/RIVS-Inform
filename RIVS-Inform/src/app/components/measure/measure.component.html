@@ -12,8 +12,8 @@
   <mat-form-field>
     <mat-label>Введите диапазон дат</mat-label>
     <mat-date-range-input [rangePicker]="picker">
-      <input matStartDate placeholder="Дата от">
-      <input matEndDate placeholder="Дата до">
+      <input (dateInput)="addEvent('inputStartDate', $event)" matStartDate placeholder="Дата от">
+      <input (dateChange)="addEvent('inputEndDate', $event)" matEndDate placeholder="Дата до">
     </mat-date-range-input>
     <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
     <mat-date-range-picker #picker></mat-date-range-picker>

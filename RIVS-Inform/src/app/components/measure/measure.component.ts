@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { TableService } from '../../servises/table.service';
 import { Measure } from '../../models/measure';
 import { provideNativeDateAdapter } from '@angular/material/core';
+import { MatDatepickerInputEvent} from '@angular/material/datepicker';
 
 import {
   ApexAxisChartSeries,
@@ -47,6 +48,27 @@ export interface DisplayColumn {
 })
 
 export class TableMultipleHeader implements OnInit {
+
+  startDate?: Date;
+  endDate?: Date;
+
+  addEvent(type: string, event: MatDatepickerInputEvent<Date>) {
+
+    if (type === 'inputStartDate') {
+     this.startDate = event.value!;
+    }
+    else {
+      this.endDate = event.value!;
+    }
+    if (this.startDate != undefined && this.endDate != undefined) {
+      this.productMeasures = this.tableServ.productSelectorWithDate(this.selectedProdName!, this.startDate, this.endDate);
+      this.toggleDivsVisibility();
+      this.fillCharts();
+      this.initCharts();
+    }
+  }
+
+
   public TFccoptions!: Partial<ChartOptions>;
   public chart1options!: Partial<ChartOptions>;
   public chart2options!: Partial<ChartOptions>;
@@ -496,7 +518,12 @@ export class TableMultipleHeader implements OnInit {
     this.selectedProdName = value;
     this.fillColumns();
     this.hideColumns();
-    this.productMeasures = this.tableServ.productSelector(this.selectedProdName);
+    if (this.startDate != undefined && this.endDate != undefined) {
+      this.productMeasures = this.tableServ.productSelectorWithDate(this.selectedProdName!, this.startDate, this.endDate);
+    }
+    else {
+      this.productMeasures = this.tableServ.productSelector(this.selectedProdName);
+    }
     this.toggleDivsVisibility();
     this.fillCharts();
     this.initCharts();
