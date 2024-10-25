@@ -70,31 +70,27 @@ export class TableMultipleHeader implements OnInit {
     },
     tooltip: {
       followCursor: false,
-      theme: "light",
-      
+      theme: "dark",
       x: {
         format: "dd-MM-yyyy HH:mm",
-        show: false
+        show: true
       },
+      
       marker: {
         show: false
       },
-      y: {
-        title: {
-          formatter: function () {
-            return "";
-          }
-        }
-      }
     },
     grid: {
     },
     xaxis: {
+      tooltip: {
+        enabled: false
+      },
       labels: {
         datetimeUTC: false
       },
       type: "datetime"
-    }
+    },
   };
 
   allColumns: DisplayColumn[] = [
@@ -129,14 +125,15 @@ export class TableMultipleHeader implements OnInit {
   public initCharts(): void {
     this.TFccoptions = {
       title: {
-        text: this.allColumns[1].label,
+        text: this.allColumns[1].label + " %",
       },
       series: [
         {
-          name: "TFcc",
+          name: this.allColumns[1].label,
           data: this.TFccDps
         }
       ],
+
       chart: {
         toolbar: {
           tools: {
@@ -164,11 +161,11 @@ export class TableMultipleHeader implements OnInit {
 
     this.chart1options = {
       title: {
-        text: this.allColumns[2].label,
+        text: this.allColumns[2].label + " %",
       },
       series: [
         {
-          name: 'el1',
+          name: this.allColumns[2].label,
           data: this.el1Dps
         }
       ],
@@ -184,8 +181,9 @@ export class TableMultipleHeader implements OnInit {
         type: "area",
         height: 160
       },
-      colors: ["red"],
+      colors: ["DarkRed"],
       yaxis: {
+        
         tickAmount: 2,
         labels: {
           minWidth: 40
@@ -195,11 +193,11 @@ export class TableMultipleHeader implements OnInit {
 
     this.chart2options = {
       title: {
-        text: this.allColumns[3].label,
+        text: this.allColumns[3].label + " %",
       },
       series: [
         {
-          name: "el2",
+          name: this.allColumns[3].label,
           data: this.el2Dps
         }
       ],
@@ -215,7 +213,7 @@ export class TableMultipleHeader implements OnInit {
         type: "area",
         height: 160
       },
-      colors: ["blue"],
+      colors: ["DarkBlue"],
       yaxis: {
         tickAmount: 2,
         labels: {
@@ -226,11 +224,11 @@ export class TableMultipleHeader implements OnInit {
 
     this.chart3options = {
       title: {
-        text: this.allColumns[4].label,
+        text: this.allColumns[4].label + " %",
       },
       series: [
         {
-          name: "el3",
+          name: this.allColumns[4].label,
           data: this.el3Dps
         }
       ],
@@ -246,7 +244,7 @@ export class TableMultipleHeader implements OnInit {
         type: "area",
         height: 160
       },
-      colors: ["green"],
+      colors: ["DarkGreen"],
       yaxis: {
         tickAmount: 2,
         labels: {
@@ -257,11 +255,11 @@ export class TableMultipleHeader implements OnInit {
 
     this.chart4options = {
       title: {
-        text: this.allColumns[5].label,
+        text: this.allColumns[5].label + " %",
       },
       series: [
         {
-          name: "el4",
+          name: this.allColumns[5].label,
           data: this.el4Dps
         }
       ],
@@ -277,7 +275,7 @@ export class TableMultipleHeader implements OnInit {
         type: "area",
         height: 160
       },
-      colors: ["yellow"],
+      colors: ["orange"],
       yaxis: {
         tickAmount: 2,
         labels: {
@@ -288,11 +286,11 @@ export class TableMultipleHeader implements OnInit {
 
     this.chart5options = {
       title: {
-        text: this.allColumns[6].label,
+        text: this.allColumns[6].label + " %",
       },
       series: [
         {
-          name: "el5",
+          name: this.allColumns[6].label,
           data: this.el5Dps
         }
       ],
@@ -308,7 +306,7 @@ export class TableMultipleHeader implements OnInit {
         type: "area",
         height: 160
       },
-      colors: ["pink"],
+      colors: ["Coral"],
       yaxis: {
         tickAmount: 2,
         labels: {
@@ -319,11 +317,11 @@ export class TableMultipleHeader implements OnInit {
 
     this.chart6options = {
       title: {
-        text: this.allColumns[7].label,
+        text: this.allColumns[7].label + " %",
       },
       series: [
         {
-          name: "el6",
+          name: this.allColumns[7].label,
           data: this.el6Dps
         }
       ],
@@ -350,15 +348,16 @@ export class TableMultipleHeader implements OnInit {
 
     this.chart7options = {
       title: {
-        text: this.allColumns[8].label,
+        text: this.allColumns[8].label + " %",
       },
       series: [
         {
-          name: "el7",
+          name: this.allColumns[8].label,
           data: this.el7Dps
         }
       ],
       chart: {
+        
         toolbar: {
           show: false,
           tools: {
@@ -381,11 +380,11 @@ export class TableMultipleHeader implements OnInit {
 
     this.chart8options = {
       title: {
-        text: this.allColumns[9].label,
+        text: this.allColumns[9].label + " %",
       },
       series: [
         {
-          name: "el8",
+          name: this.allColumns[9].label,
           data: this.el8Dps
         }
       ],
@@ -401,7 +400,7 @@ export class TableMultipleHeader implements OnInit {
         type: "area",
         height: 160
       },
-      colors: ["orange"],
+      colors: ["Olive"],
       yaxis: {
         tickAmount: 2,
         labels: {
