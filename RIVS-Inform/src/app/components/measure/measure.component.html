@@ -1,23 +1,25 @@
-<div>
-  <mat-form-field>
-    <mat-label>Продукт</mat-label>
-    <mat-select [(ngModel)]="selectedProdName" (selectionChange)="select($event.value)">
-      <mat-option *ngFor="let prodName of prodNames" [value]="prodName">
-        {{prodName}}
-      </mat-option>
-    </mat-select>
-  </mat-form-field>
-</div>
-<div>
-  <mat-form-field>
-    <mat-label>Введите диапазон дат</mat-label>
-    <mat-date-range-input [rangePicker]="picker">
-      <input (dateInput)="addEvent('inputStartDate', $event)" matStartDate placeholder="Дата от">
-      <input (dateChange)="addEvent('inputEndDate', $event)" matEndDate placeholder="Дата до">
-    </mat-date-range-input>
-    <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
-    <mat-date-range-picker #picker></mat-date-range-picker>
-  </mat-form-field>
+<div class="row">
+  <div class="col-md-4">
+    <mat-form-field>
+      <mat-label>Продукт</mat-label>
+      <mat-select [(ngModel)]="selectedProdName" (selectionChange)="select($event.value)">
+        <mat-option *ngFor="let prodName of prodNames" [value]="prodName">
+          {{prodName}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+  <div class="col-md-4">
+    <mat-form-field>
+      <mat-label>Введите диапазон дат</mat-label>
+      <mat-date-range-input [rangePicker]="picker">
+        <input (dateInput)="addEvent('inputStartDate', $event)" matStartDate placeholder="Дата от">
+        <input (dateChange)="addEvent('inputEndDate', $event)" matEndDate placeholder="Дата до">
+      </mat-date-range-input>
+      <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-date-range-picker #picker></mat-date-range-picker>
+    </mat-form-field>
+  </div>
 </div>
 <div (mouseenter) ="toggleBodyScroll(true)"  (mouseleave) ="toggleBodyScroll(false)">
   <div id="TFcc">
