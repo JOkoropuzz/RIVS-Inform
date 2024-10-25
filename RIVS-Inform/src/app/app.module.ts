@@ -13,10 +13,13 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTableModule } from '@angular/material/table';
-import { FormsModule } from '@angular/forms';
 import { NgApexchartsModule } from 'ng-apexcharts';
-
-
+import { JsonPipe } from '@angular/common';
+import { provideNativeDateAdapter } from '@angular/material/core';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { FormsModule } from '@angular/forms';
+import { MAT_DATE_LOCALE } from '@angular/material/core';
 
 @NgModule({
   declarations: [
@@ -29,14 +32,20 @@ import { NgApexchartsModule } from 'ng-apexcharts';
     BrowserModule,
     AppRoutingModule,
     NgApexchartsModule,
+    JsonPipe,
+    MatDatepickerModule,
+    MatFormFieldModule,
+    FormsModule,
     MatTableModule,
     MatSelectModule,
-    FormsModule,
     MatMenuModule,
     NgbModule,
   ],
-  providers: [TableService,
-    provideAnimationsAsync()
+  providers: [
+    TableService,
+    provideNativeDateAdapter(),
+    provideAnimationsAsync(),
+    { provide: MAT_DATE_LOCALE, useValue: 'ru-RU' }
   ],
   bootstrap: [AppComponent]
 })

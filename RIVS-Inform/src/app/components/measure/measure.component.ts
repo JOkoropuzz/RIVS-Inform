@@ -1,6 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { TableService } from '../../servises/table.service';
 import { Measure } from '../../models/measure';
+import { provideNativeDateAdapter } from '@angular/material/core';
+
 import {
   ApexAxisChartSeries,
   ApexTitleSubtitle,
@@ -40,7 +42,7 @@ export interface DisplayColumn {
 @Component({
   selector: 'app-measure',
   templateUrl: './measure.component.html',
-  providers: [TableService],
+  providers: [TableService, provideNativeDateAdapter()],
   
 })
 
@@ -106,7 +108,6 @@ export class TableMultipleHeader implements OnInit {
     { def: 'el8', label: 'el8', hide: true }
   ];
 
-  
   //string array of products name
   prodNames = this.tableServ.productNameSelector();
 
