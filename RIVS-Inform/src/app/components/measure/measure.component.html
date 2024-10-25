@@ -147,7 +147,7 @@
 
     <ng-container matColumnDef="time">
       <th mat-header-cell *matHeaderCellDef> <p>{{allColumns[0].label}}</p> </th>
-      <td mat-cell *matCellDef="let resultProducts"> {{resultProducts.time}} </td>
+      <td mat-cell *matCellDef="let resultProducts"> {{resultProducts.time | date:'dd/MM/yyyy HH:mm'}} </td>
     </ng-container>
 
     <ng-container matColumnDef="TFcc">
