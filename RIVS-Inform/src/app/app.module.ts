@@ -14,7 +14,6 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTableModule } from '@angular/material/table';
 import { FormsModule } from '@angular/forms';
-import { CanvasJSAngularChartsModule } from '@canvasjs/angular-charts';
 import { NgApexchartsModule } from 'ng-apexcharts';
 
 
@@ -32,7 +31,6 @@ import { NgApexchartsModule } from 'ng-apexcharts';
     NgApexchartsModule,
     MatTableModule,
     MatSelectModule,
-    CanvasJSAngularChartsModule,
     FormsModule,
     MatMenuModule,
     NgbModule,

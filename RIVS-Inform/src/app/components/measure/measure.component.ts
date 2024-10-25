@@ -11,7 +11,8 @@ import {
   ApexYAxis,
   ApexXAxis,
   ApexTooltip,
-  ApexStroke
+  ApexStroke,
+  ApexGrid
 } from "ng-apexcharts";
 
 export type ChartOptions = {
@@ -25,7 +26,7 @@ export type ChartOptions = {
   xaxis: ApexXAxis;
   tooltip: ApexTooltip;
   stroke: ApexStroke;
-  grid: any; //ApexGrid;
+  grid: ApexGrid;
   colors: any;
 };
 
@@ -53,10 +54,10 @@ export class TableMultipleHeader implements OnInit {
   public chart7options!: Partial<ChartOptions>;
   public chart8options!: Partial<ChartOptions>;
   public commonOptions: Partial<ChartOptions> = {
-
     dataLabels: {
       enabled: false
     },
+
     stroke: {
       curve: "smooth"
     },
@@ -86,7 +87,6 @@ export class TableMultipleHeader implements OnInit {
       }
     },
     grid: {
-      clipMarkers: false
     },
     xaxis: {
       labels: {
@@ -126,6 +126,9 @@ export class TableMultipleHeader implements OnInit {
 
   public initCharts(): void {
     this.TFccoptions = {
+      title: {
+        text: this.allColumns[1].label,
+      },
       series: [
         {
           name: "TFcc",
@@ -151,20 +154,28 @@ export class TableMultipleHeader implements OnInit {
         tickAmount: 2,
         labels: {
           minWidth: 40
-        }
+        },
+        
+
       }
     };
 
     this.chart1options = {
+      title: {
+        text: this.allColumns[2].label,
+      },
       series: [
         {
-          name: "el1",
+          name: 'el1',
           data: this.el1Dps
         }
       ],
       chart: {
         toolbar: {
-          show: false
+          show: false,
+          tools: {
+            zoom: false
+          }
         },
         id: "el1",
         group: "social",
@@ -181,6 +192,9 @@ export class TableMultipleHeader implements OnInit {
     };
 
     this.chart2options = {
+      title: {
+        text: this.allColumns[3].label,
+      },
       series: [
         {
           name: "el2",
@@ -190,7 +204,9 @@ export class TableMultipleHeader implements OnInit {
       chart: {
         toolbar: {
           show: false,
-
+          tools: {
+            zoom: false
+          }
         },
         id: "el2",
         group: "social",
@@ -207,6 +223,9 @@ export class TableMultipleHeader implements OnInit {
     };
 
     this.chart3options = {
+      title: {
+        text: this.allColumns[4].label,
+      },
       series: [
         {
           name: "el3",
@@ -215,7 +234,10 @@ export class TableMultipleHeader implements OnInit {
       ],
       chart: {
         toolbar: {
-          show: false
+          show: false,
+          tools: {
+            zoom: false
+          }
         },
         id: "el3",
         group: "social",
@@ -232,6 +254,9 @@ export class TableMultipleHeader implements OnInit {
     };
 
     this.chart4options = {
+      title: {
+        text: this.allColumns[5].label,
+      },
       series: [
         {
           name: "el4",
@@ -240,7 +265,10 @@ export class TableMultipleHeader implements OnInit {
       ],
       chart: {
         toolbar: {
-          show: false
+          show: false,
+          tools: {
+            zoom: false
+          }
         },
         id: "el4",
         group: "social",
@@ -257,6 +285,9 @@ export class TableMultipleHeader implements OnInit {
     };
 
     this.chart5options = {
+      title: {
+        text: this.allColumns[6].label,
+      },
       series: [
         {
           name: "el5",
@@ -265,7 +296,10 @@ export class TableMultipleHeader implements OnInit {
       ],
       chart: {
         toolbar: {
-          show: false
+          show: false,
+          tools: {
+            zoom: false
+          }
         },
         id: "el5",
         group: "social",
@@ -282,6 +316,9 @@ export class TableMultipleHeader implements OnInit {
     };
 
     this.chart6options = {
+      title: {
+        text: this.allColumns[7].label,
+      },
       series: [
         {
           name: "el6",
@@ -290,7 +327,10 @@ export class TableMultipleHeader implements OnInit {
       ],
       chart: {
         toolbar: {
-          show: false
+          show: false,
+          tools: {
+            zoom: false
+          }
         },
         id: "el6",
         group: "social",
@@ -307,6 +347,9 @@ export class TableMultipleHeader implements OnInit {
     };
 
     this.chart7options = {
+      title: {
+        text: this.allColumns[8].label,
+      },
       series: [
         {
           name: "el7",
@@ -315,7 +358,10 @@ export class TableMultipleHeader implements OnInit {
       ],
       chart: {
         toolbar: {
-          show: false
+          show: false,
+          tools: {
+            zoom: false
+          }
         },
         id: "el7",
         group: "social",
@@ -332,6 +378,9 @@ export class TableMultipleHeader implements OnInit {
     };
 
     this.chart8options = {
+      title: {
+        text: this.allColumns[9].label,
+      },
       series: [
         {
           name: "el8",
@@ -340,7 +389,10 @@ export class TableMultipleHeader implements OnInit {
       ],
       chart: {
         toolbar: {
-          show: false
+          show: false,
+          tools: {
+            zoom: false
+          }
         },
         id: "el8",
         group: "social",
@@ -378,20 +430,9 @@ export class TableMultipleHeader implements OnInit {
       this.el6Dps.shift();
       this.el7Dps.shift();
       this.el8Dps.shift();
-      //this.TFccD.shift();
-      //this.el1D.shift();
-      //this.el2D.shift();
-      //this.el3D.shift();
-      //this.el4D.shift();
-      //this.el5D.shift();
-      //this.el6D.shift();
-      //this.el7D.shift();
-      //this.el8D.shift();
     }
 
-
     for (var i = 0; i < this.productMeasures.length; i++) {
-      //data for CanvasJS
       this.TFccDps[i] = { x: Number(Math.round(this.productMeasures[i].time.getTime())), y: Number(this.productMeasures[i].TFcc) };
       this.el1Dps[i] = { x: Number(Math.round(this.productMeasures[i].time.getTime())), y: Number(this.productMeasures[i].el1) };
       this.el2Dps[i] = { x: Number(Math.round(this.productMeasures[i].time.getTime())), y: Number(this.productMeasures[i].el2) };
@@ -402,16 +443,6 @@ export class TableMultipleHeader implements OnInit {
       this.el7Dps[i] = { x: Number(Math.round(this.productMeasures[i].time.getTime())), y: Number(this.productMeasures[i].el7) };
       this.el8Dps[i] = { x: Number(Math.round(this.productMeasures[i].time.getTime())), y: Number(this.productMeasures[i].el8) };
 
-      ////data fro ApexCharts
-      //this.TFccD[i] = { x: this.productMeasures[i].time.getTime(), y: Number(this.productMeasures[i].TFcc) };
-      //this.el1D[i] = { x: this.productMeasures[i].time, y: Number(this.productMeasures[i].el1) };
-      //this.el2D[i] = { x: this.productMeasures[i].time, y: Number(this.productMeasures[i].el2) };
-      //this.el3D[i] = { x: this.productMeasures[i].time, y: Number(this.productMeasures[i].el3) };
-      //this.el4D[i] = { x: this.productMeasures[i].time, y: Number(this.productMeasures[i].el4) };
-      //this.el5D[i] = { x: this.productMeasures[i].time, y: Number(this.productMeasures[i].el5) };
-      //this.el6D[i] = { x: this.productMeasures[i].time, y: Number(this.productMeasures[i].el6) };
-      //this.el7D[i] = { x: this.productMeasures[i].time, y: Number(this.productMeasures[i].el7) };
-      //this.el8D[i] = { x: this.productMeasures[i].time, y: Number(this.productMeasures[i].el8) };
     }
   }
 
@@ -462,23 +493,6 @@ export class TableMultipleHeader implements OnInit {
     this.toggleDivsVisibility();
     this.fillCharts();
     this.initCharts();
-    this.renderCharts();
-  }
-
-  //render charts
-  renderCharts() {
-
-    //disable canvasJS watermarks
-    var credits = document.getElementsByClassName('canvasjs-chart-credit') as HTMLCollectionOf<HTMLElement>;
-    Array.from(credits).forEach(element => 
-      element.style.display = 'none'
-    );
-
-    for (var j = 0; j < this.charts.length; j++) {
-      if (this.allColumns[j + 1].hide == false)
-        this.charts[j].options.title.text = this.allColumns[j + 1].label;
-        this.charts[j].render();
-    }
   }
 
   // Show/Hide columns
@@ -486,317 +500,9 @@ export class TableMultipleHeader implements OnInit {
     this.displayedColumns = this.allColumns.filter(cd => !cd.hide).map(cd => cd.def)
   }
 
-
-  toolTip = {
-    shared: true
-  };
-
-  legend = {
-    cursor: "pointer",
-    itemclick: function (e: any) {
-      if (typeof (e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
-        e.dataSeries.visible = false;
-      } else {
-        e.dataSeries.visible = true;
-      }
-      e.chart.render();
-    }
-  };
-
   //data for CanvasJS
   TFccDps: any = []; el1Dps: any = []; el2Dps: any = []; el3Dps: any = [];
   el4Dps: any = []; el5Dps: any = []; el6Dps: any = []; el7Dps: any = [];
-  el8Dps: any = []; onToolTipUpdated: any; onToolTipHidden: any;
-  onCrosshairUpdated: any; onCrosshairHidden: any; onRangeChanged: any;
+  el8Dps: any = [];
 
-
-  ////data for ApexCharts
-  //TFccD: any = []; el1D: any = []; el2D: any = []; el3D: any = [];
-  //el4D: any = []; el5D: any = []; el6D: any = []; el7D: any = [];
-  //el8D: any = [];
-
-  TFccOptions = {
-    animationEnabled: true,
-    theme: "ligth2", // "light1", "light2", "dark1", "dark2"
-    title: {
-      text: this.allColumns[1].label
-    },
-    toolTip: this.toolTip,
-    axisY: { suffix: "%" },
-    axisX: { valueFormatString: "DD-MM HH:mm" },
-    legend: this.legend,
-    data: [{
-      type: "splineArea",
-      showInLegend: false,
-      name: this.allColumns[1].label,
-      color: "black",
-      xValueType: "dateTime",
-      xValueFormatString: "DD-MM-YYYY HH:mm",
-      legendMarkerType: "square",
-      dataPoints: this.TFccDps
-    }]
-  };
-  el1Options = {
-    animationEnabled: true,
-    theme: "light2",
-    title: {
-      text: this.allColumns[2].label
-    },
-    axisY: { suffix: "%" },
-    axisX: { valueFormatString: "DD-MM HH:mm" },
-    toolTip: this.toolTip,
-    legend: this.legend,
-    data: [{
-      type: "splineArea",
-      showInLegend: false,
-      name: this.allColumns[2].label,
-      color: "black",
-      xValueType: "dateTime",
-      xValueFormatString: "DD-MM-YYYY HH:mm",
-      legendMarkerType: "square",
-      dataPoints: this.el1Dps
-    }]
-  };
-  el2Options = {
-    animationEnabled: true,
-    theme: "light2",
-    title: {
-      text: this.allColumns[3].label
-    },
-    axisY: { suffix: "%" },
-    axisX: { valueFormatString: "DD-MM HH:mm" },
-    toolTip: this.toolTip,
-    legend: this.legend,
-    data: [{
-      type: "splineArea",
-      showInLegend: false,
-      name: this.allColumns[3].label,
-      color: "black",
-      xValueType: "dateTime",
-      xValueFormatString: "DD-MM-YYYY HH:mm",
-      legendMarkerType: "square",
-      dataPoints: this.el2Dps
-    }]
-  };
-  el3Options = {
-    animationEnabled: true,
-    theme: "light2",
-    title: {
-      text: this.allColumns[4].label
-    },
-    axisY: { suffix: "%" },
-    axisX: { valueFormatString: "DD-MM HH:mm" },
-    toolTip: this.toolTip,
-    legend: this.legend,
-    data: [{
-      type: "splineArea",
-      showInLegend: false,
-      name: this.allColumns[4].label,
-      color: "black",
-      xValueType: "dateTime",
-      xValueFormatString: "DD-MM-YYYY HH:mm",
-      legendMarkerType: "square",
-      dataPoints: this.el3Dps
-    }]
-  };
-  el4Options = {
-    animationEnabled: true,
-    theme: "light2",
-    title: {
-      text: this.allColumns[5].label
-    },
-    axisY: { suffix: "%" },
-    axisX: { valueFormatString: "DD-MM HH:mm" },
-    toolTip: this.toolTip,
-    legend: this.legend,
-    data: [{
-      type: "splineArea",
-      showInLegend: false,
-      name: this.allColumns[5].label,
-      color: "black",
-      xValueType: "dateTime",
-      xValueFormatString: "DD-MM-YYYY HH:mm",
-      legendMarkerType: "square",
-      dataPoints: this.el4Dps
-    }]
-  };
-  el5Options = {
-    animationEnabled: true,
-    theme: "light2",
-    title: {
-      text: this.allColumns[6].label
-    },
-    axisY: { suffix: "%" },
-    axisX: { valueFormatString: "DD-MM HH:mm" },
-    toolTip: this.toolTip,
-    legend: this.legend,
-    data: [{
-      type: "splineArea",
-      showInLegend: false,
-      name: this.allColumns[6].label,
-      color: "black",
-      xValueType: "dateTime",
-      xValueFormatString: "DD-MM-YYYY HH:mm",
-      legendMarkerType: "square",
-      dataPoints: this.el5Dps
-    }]
-  };
-  el6Options = {
-    animationEnabled: true,
-    theme: "light2",
-    title: {
-      text: this.allColumns[7].label
-    },
-    axisY: { suffix: "%" },
-    axisX: { valueFormatString: "DD-MM HH:mm" },
-    toolTip: this.toolTip,
-    legend: this.legend,
-    data: [{
-      type: "splineArea",
-      showInLegend: false,
-      name: this.allColumns[7].label,
-      color: "black",
-      xValueType: "dateTime",
-      xValueFormatString: "DD-MM-YYYY HH:mm",
-      legendMarkerType: "square",
-      dataPoints: this.el6Dps
-    }]
-  };
-  el7Options = {
-    animationEnabled: true,
-    theme: "light2",
-    title: {
-      text: this.allColumns[8].label
-    },
-    axisY: { suffix: "%" },
-    axisX: { valueFormatString: "DD-MM HH:mm" },
-    toolTip: this.toolTip,
-    legend: this.legend,
-    data: [{
-      type: "splineArea",
-      showInLegend: false,
-      name: this.allColumns[8].label,
-      color: "black",
-      xValueType: "dateTime",
-      xValueFormatString: "DD-MM-YYYY HH:mm",
-      legendMarkerType: "square",
-      dataPoints: this.el7Dps
-    }]
-  };
-  el8Options = {
-    animationEnabled: true,
-    theme: "light2",
-    title: {
-      text: this.allColumns[9].label
-    },
-    axisY: { suffix: "%" },
-    axisX: { valueFormatString: "DD-MM HH:mm" },
-    toolTip: this.toolTip,
-    legend: this.legend,
-    data: [{
-      type: "splineArea",
-      showInLegend: false,
-      name: this.allColumns[9].label,
-      color: "black",
-      xValueType: "dateTime",
-      xValueFormatString: "DD-MM-YYYY HH:mm",
-      legendMarkerType: "square",
-      dataPoints: this.el8Dps
-    }]
-  };
-  
-
-  getChartInstance = (chart: any) => {
-    this.charts.push(chart);
-  }
-
-  ngAfterViewInit() {
-
-    this.renderCharts();
-    this.syncCharts(this.charts, true, true, true);
-  }
-
-
-  syncCharts = (charts: any, syncToolTip: any, syncCrosshair: any, syncAxisXRange: any) => {
-    if (!this.onToolTipUpdated) {
-      this.onToolTipUpdated = function (e: any) {
-        for (var j = 0; j < charts.length; j++) {
-          if (charts[j] != e.chart)
-            charts[j].toolTip.showAtX(e.entries[0].xValue);
-        }
-      }
-    }
-
-    if (!this.onToolTipHidden) {
-      this.onToolTipHidden = function (e: any) {
-        for (var j = 0; j < charts.length; j++) {
-          if (charts[j] != e.chart)
-            charts[j].toolTip.hide();
-        }
-      }
-    }
-
-    if (!this.onCrosshairUpdated) {
-      this.onCrosshairUpdated = function (e: any) {
-        for (var j = 0; j < charts.length; j++) {
-          if (charts[j] != e.chart)
-            charts[j].axisX[0].crosshair.showAt(e.value);
-        }
-      }
-    }
-
-    if (!this.onCrosshairHidden) {
-      this.onCrosshairHidden = function (e: any) {
-        for (var j = 0; j < charts.length; j++) {
-          if (charts[j] != e.chart)
-            charts[j].axisX[0].crosshair.hide();
-        }
-      }
-    }
-
-    if (!this.onRangeChanged) {
-      this.onRangeChanged = function (e: any) {
-        for (var j = 0; j < charts.length; j++) {
-          if (e.trigger === "reset") {
-            charts[j].options.axisX.viewportMinimum = charts[j].options.axisX.viewportMaximum = null;
-            charts[j].options.axisY.viewportMinimum = charts[j].options.axisY.viewportMaximum = null;
-            charts[j].render();
-          } else if (charts[j] !== e.chart) {
-            charts[j].options.axisX.viewportMinimum = e.axisX[0].viewportMinimum;
-            charts[j].options.axisX.viewportMaximum = e.axisX[0].viewportMaximum;
-            charts[j].render();
-          }
-        }
-      }
-    }
-
-    for (var i = 0; i < charts.length; i++) {
-
-      //Sync ToolTip
-      if (syncToolTip) {
-        if (!charts[i].options.toolTip)
-          charts[i].options.toolTip = {};
-
-        charts[i].options.toolTip.updated = this.onToolTipUpdated;
-        charts[i].options.toolTip.hidden = this.onToolTipHidden;
-      }
-
-      //Sync Crosshair
-      if (syncCrosshair) {
-        if (!charts[i].options.axisX)
-          charts[i].options.axisX = { labelAngle: 0, crosshair: { enabled: true, snapToDataPoint: true, valueFormatString: "HH:mm" } };
-
-        //charts[i].options.axisX.crosshair.updated = this.onCrosshairUpdated;
-        //charts[i].options.axisX.crosshair.hidden = this.onCrosshairHidden;
-      }
-
-      //Sync Zoom / Pan
-      if (syncAxisXRange) {
-        charts[i].options.zoomEnabled = true;
-        charts[i].options.rangeChanged = this.onRangeChanged;
-      }
-
-      charts[i].render();
-    }
-  }
 }

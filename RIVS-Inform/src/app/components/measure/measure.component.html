@@ -8,18 +8,20 @@
     </mat-select>
   </mat-form-field>
 </div>
-<div>
+<div class="apexCharts">
   <div id="TFcc">
     <apx-chart [series]="TFccoptions.series"
                [chart]="TFccoptions.chart"
                [colors]="TFccoptions.colors"
                [yaxis]="TFccoptions.yaxis"
+               [title]="TFccoptions.title"
                [dataLabels]="commonOptions.dataLabels"
                [markers]="commonOptions.markers"
                [stroke]="commonOptions.stroke"
                [grid]="commonOptions.grid"
                [xaxis]="commonOptions.xaxis"
                [tooltip]="commonOptions.tooltip">
+            
     </apx-chart>
   </div>
   <div id="el1">
@@ -27,6 +29,7 @@
                [chart]="chart1options.chart"
                [colors]="chart1options.colors"
                [yaxis]="chart1options.yaxis"
+               [title]="chart1options.title"
                [dataLabels]="commonOptions.dataLabels"
                [markers]="commonOptions.markers"
                [stroke]="commonOptions.stroke"
@@ -40,6 +43,7 @@
                [chart]="chart2options.chart"
                [colors]="chart2options.colors"
                [yaxis]="chart2options.yaxis"
+               [title]="chart2options.title"
                [dataLabels]="commonOptions.dataLabels"
                [markers]="commonOptions.markers"
                [stroke]="commonOptions.stroke"
@@ -53,6 +57,7 @@
                [chart]="chart3options.chart"
                [colors]="chart3options.colors"
                [yaxis]="chart3options.yaxis"
+               [title]="chart3options.title"
                [dataLabels]="commonOptions.dataLabels"
                [markers]="commonOptions.markers"
                [stroke]="commonOptions.stroke"
@@ -66,6 +71,7 @@
                [chart]="chart4options.chart"
                [colors]="chart4options.colors"
                [yaxis]="chart4options.yaxis"
+               [title]="chart4options.title"
                [dataLabels]="commonOptions.dataLabels"
                [markers]="commonOptions.markers"
                [stroke]="commonOptions.stroke"
@@ -79,6 +85,7 @@
                [chart]="chart5options.chart"
                [colors]="chart5options.colors"
                [yaxis]="chart5options.yaxis"
+               [title]="chart5options.title"
                [dataLabels]="commonOptions.dataLabels"
                [markers]="commonOptions.markers"
                [stroke]="commonOptions.stroke"
@@ -92,6 +99,7 @@
                [chart]="chart6options.chart"
                [colors]="chart6options.colors"
                [yaxis]="chart6options.yaxis"
+               [title]="chart6options.title"
                [dataLabels]="commonOptions.dataLabels"
                [markers]="commonOptions.markers"
                [stroke]="commonOptions.stroke"
@@ -105,6 +113,7 @@
                [chart]="chart7options.chart"
                [colors]="chart7options.colors"
                [yaxis]="chart7options.yaxis"
+               [title]="chart7options.title"
                [dataLabels]="commonOptions.dataLabels"
                [markers]="commonOptions.markers"
                [stroke]="commonOptions.stroke"
@@ -118,6 +127,7 @@
                [chart]="chart8options.chart"
                [colors]="chart8options.colors"
                [yaxis]="chart8options.yaxis"
+               [title]="chart8options.title"
                [dataLabels]="commonOptions.dataLabels"
                [markers]="commonOptions.markers"
                [stroke]="commonOptions.stroke"
@@ -125,53 +135,6 @@
                [xaxis]="commonOptions.xaxis"
                [tooltip]="commonOptions.tooltip">
     </apx-chart>
-  </div>
-</div>
-<div class="flex-element">
-  <div id="TFcc">
-    <canvasjs-chart [options]="TFccOptions" (chartInstance)="getChartInstance($event)"
-                    [styles]="{width: '50%', height: '300px', 'float': 'left' }">
-    </canvasjs-chart>
-  </div>
-  <div id="el1">
-    <canvasjs-chart [options]="el1Options" (chartInstance)="getChartInstance($event)"
-                    [styles]="{width: '50%', height: '300px', 'float': 'left'}">
-    </canvasjs-chart>
-  </div>
-  <div id="el2">
-    <canvasjs-chart [options]="el2Options" (chartInstance)="getChartInstance($event)"
-                    [styles]="{width: '50%', height: '300px', 'float': 'left'}">
-    </canvasjs-chart>
-  </div>
-  <div id="el3">
-    <canvasjs-chart [options]="el3Options" (chartInstance)="getChartInstance($event)"
-                    [styles]="{width: '50%', height: '300px', 'float': 'left'}">
-    </canvasjs-chart>
-  </div>
-  <div id="el4">
-    <canvasjs-chart [options]="el4Options" (chartInstance)="getChartInstance($event)"
-                    [styles]="{width: '50%', height: '300px', 'float': 'left'}">
-    </canvasjs-chart>
-  </div>
-  <div id="el5">
-    <canvasjs-chart [options]="el5Options" (chartInstance)="getChartInstance($event)"
-                    [styles]="{width: '50%', height: '300px', 'float': 'left'}">
-    </canvasjs-chart>
-  </div>
-  <div id="el6">
-    <canvasjs-chart [options]="el6Options" (chartInstance)="getChartInstance($event)"
-                    [styles]="{width: '50%', height: '300px', 'float': 'left'}">
-    </canvasjs-chart>
-  </div>
-  <div id="el7">
-    <canvasjs-chart [options]="el7Options" (chartInstance)="getChartInstance($event)"
-                    [styles]="{width: '50%', height: '300px', 'float': 'left'}">
-    </canvasjs-chart>
-  </div>
-  <div id="el8">
-    <canvasjs-chart [options]="el8Options" (chartInstance)="getChartInstance($event)"
-                    [styles]="{width: '50%', height: '300px', 'float': 'left'}">
-    </canvasjs-chart>
   </div>
 </div>
 <div class="mat-elevation-z8 flex-element">
