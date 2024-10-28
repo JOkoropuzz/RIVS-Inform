@@ -6,7 +6,7 @@ import { AppComponent } from './app.component';
 import { NavMenuComponent } from './components/nav-menu/nav-menu.component';
 import { HomeComponent } from './components/home/home.component';
 import { TableMultipleHeader } from './components/measure/measure.component';
-import { TableService } from './servises/table.service';
+import { TableService } from './services/table.service';
 
 import { MatMenuModule } from '@angular/material/menu';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';

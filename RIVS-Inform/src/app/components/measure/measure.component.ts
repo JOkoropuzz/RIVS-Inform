@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { TableService } from '../../servises/table.service';
+import { TableService } from '../../services/table.service';
 import { Measure } from '../../models/measure';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { MatDatepickerInputEvent} from '@angular/material/datepicker';
