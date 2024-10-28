@@ -132,8 +132,11 @@ export class TableMultipleHeader implements OnInit {
 
   //string array of products name
   prodNames = this.tableServ.productNameSelector();
-
   selectedProdName?: string;
+
+  //string array of enterprise name
+  enterpriseNames = this.tableServ.enterpriseNameSelector();
+  selectedEnterprise?: string;
 
   productMeasures: Measure[]=[];
 
@@ -435,6 +438,7 @@ export class TableMultipleHeader implements OnInit {
 
   ngOnInit(): void {
     this.selectedProdName = this.tableServ.productNameSelector()[0];
+    this.selectedEnterprise = this.tableServ.enterpriseNameSelector()[0];
     this.fillColumns();
     this.hideColumns();
     this.productMeasures = this.tableServ.productSelector(this.selectedProdName);
@@ -501,7 +505,7 @@ export class TableMultipleHeader implements OnInit {
 
   //fill columns data
   fillColumns() {
-    const elems = this.tableServ.getProductElements(this.selectedProdName!);
+    const elems = this.tableServ.productElementsSelector(this.selectedProdName!);
     for (let i = 1; i < 9; i++) {
       if (elems[i - 1] != null && elems[i - 1] != undefined && elems[i - 1] != '') {
         this.allColumns.find(col => col.def === 'el' + i)!.label = elems[i - 1];
@@ -514,8 +518,26 @@ export class TableMultipleHeader implements OnInit {
   }
 
   //change selected product
-  select(value: string) {
+  selectProd(value: string) {
     this.selectedProdName = value;
+    this.fillColumns();
+    this.hideColumns();
+    if (this.startDate != undefined && this.endDate != undefined) {
+      this.productMeasures = this.tableServ.productSelectorWithDate(this.selectedProdName!, this.startDate, this.endDate);
+    }
+    else {
+      this.productMeasures = this.tableServ.productSelector(this.selectedProdName);
+    }
+    this.toggleDivsVisibility();
+    this.fillCharts();
+    this.initCharts();
+  }
+
+  //change selected enterprise
+  selectEnterprise(value: string) {
+    this.selectedEnterprise = value;
+    this.tableServ.getData(value);
+    this.selectedProdName = this.tableServ.productNameSelector()[0];
     this.fillColumns();
     this.hideColumns();
     if (this.startDate != undefined && this.endDate != undefined) {

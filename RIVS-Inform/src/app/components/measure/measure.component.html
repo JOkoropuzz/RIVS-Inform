@@ -2,9 +2,19 @@
   <div class="col-md-4">
     <mat-form-field>
       <mat-label>Продукт</mat-label>
-      <mat-select [(ngModel)]="selectedProdName" (selectionChange)="select($event.value)">
+      <mat-select [(ngModel)]="selectedProdName" (selectionChange)="selectProd($event.value)">
         <mat-option *ngFor="let prodName of prodNames" [value]="prodName">
           {{prodName}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+  <div class="col-md-4">
+    <mat-form-field>
+      <mat-label>Предприятие</mat-label>
+      <mat-select [(ngModel)]="selectedEnterprise" (selectionChange)="selectEnterprise($event.value)">
+        <mat-option *ngFor="let enterpriseName of enterpriseNames" [value]="enterpriseName">
+          {{enterpriseName}}
         </mat-option>
       </mat-select>
     </mat-form-field>

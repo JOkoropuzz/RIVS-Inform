@@ -46,7 +46,21 @@ export class TableService {
     { name: 'c3', el1: 'Be', el2: 'Fe', el3: 'Zn', el4: 'Pb', el5: 'Mb', el6: 'Ka', el7: 'Mg', el8: 'Na' },
   ];
 
-  getProductElements(prodName: string): string[] {
+  enterprises: string[] = ['ООО «Новоангарский обогатительный комбинат»', 'Что-то ещё'];
+
+  getEnterprisesNames() {
+      //deting data for enterprises
+  }
+
+  getData(enterpriseName: string): void {
+      //getting data for measures, productElements.
+  };
+
+  enterpriseNameSelector(): string[] {
+    return this.enterprises;
+  };
+
+  productElementsSelector(prodName: string): string[] {
     [prodName];
     let prodElems = this.productElements.find(prod => prod.name === prodName)
     var result = [];
