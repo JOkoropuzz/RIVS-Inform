@@ -18,8 +18,11 @@ import { JsonPipe } from '@angular/common';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MAT_DATE_LOCALE } from '@angular/material/core';
+import { LoginComponent } from './login/login.component';
+import { provideHttpClient } from '@angular/common/http';
+import { RouterModule } from '@angular/router';
 
 @NgModule({
   declarations: [
@@ -27,10 +30,13 @@ import { MAT_DATE_LOCALE } from '@angular/material/core';
     NavMenuComponent,
     HomeComponent,
     TableMultipleHeader,
+    LoginComponent,
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
+    ReactiveFormsModule,
+    RouterModule,
     NgApexchartsModule,
     JsonPipe,
     MatDatepickerModule,
@@ -43,8 +49,10 @@ import { MAT_DATE_LOCALE } from '@angular/material/core';
   ],
   providers: [
     TableService,
+    provideHttpClient(),
     provideNativeDateAdapter(),
     provideAnimationsAsync(),
+    { provide: 'apiUrl', useValue: 'https://reqres.in/api' },
     { provide: MAT_DATE_LOCALE, useValue: 'ru-RU' }
   ],
   bootstrap: [AppComponent]
