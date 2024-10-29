@@ -7,15 +7,14 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: rgba(253, 101, 133, 1);
 }
 
 .login-card {
   display: flex;
   flex-direction: column;
   margin: 10px 10px;
-  box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.3);
-  background-color: #ffffff;
+  box-shadow: 0 15px 20px 0 rgba(0, 0, 0, 0.3);
+  background-color: #808080b3;
   padding: 10px;
   border-radius: 10px;
   width: 40%;
@@ -46,4 +45,8 @@
 .card-title h1 {
   font-size: 26px;
   font-weight: bold;
+}
+
+.login-result-message {
+    color: #ff0000;
 }

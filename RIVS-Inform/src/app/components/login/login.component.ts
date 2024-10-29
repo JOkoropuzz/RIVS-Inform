@@ -2,7 +2,8 @@ import { Component } from '@angular/core';
 import { inject } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { AuthService } from '../auth/auth.service';
+import { AuthService } from '../../auth/auth.service';
+import { NavMenuService } from '../../services/nav-menu.service';
 
 @Component({
   selector: 'app-login',
@@ -12,11 +13,17 @@ import { AuthService } from '../auth/auth.service';
 export class LoginComponent {
   authService = inject(AuthService);
   router = inject(Router);
+  constructor(
+    public navService: NavMenuService
+  ) { }
+
+  loginResultMessage = '';
 
   protected loginForm = new FormGroup({
     email: new FormControl('', [Validators.required]),
     password: new FormControl('', [Validators.required])
   })
+
 
   onSubmit() {
     if (this.loginForm.valid) {
@@ -24,6 +31,11 @@ export class LoginComponent {
         .subscribe((data: any) => {
           if (this.authService.isLoggedIn()) {
             this.router.navigate(['/home']);
+            this.navService.userName.next(this.loginForm.value.email!);
+            this.navService.isUserLoggedIn.next(true);
+          }
+          else {
+            this.loginResultMessage = 'Неверный логин или пароль';
           }
         });
     }

@@ -1,6 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { AuthService } from '../../auth/auth.service';
 import { Router } from '@angular/router';
+import { NavMenuService } from '../../services/nav-menu.service';
 
 @Component({
   selector: 'app-nav-menu',
@@ -13,8 +14,17 @@ export class NavMenuComponent {
   authService = inject(AuthService);
   router = inject(Router);
 
+  constructor(
+    public navService: NavMenuService
+  ) { }
+
+  changeUserName(value: any): void {
+  }
+
   public logout() {
     this.authService.logout();
+    this.navService.userName.next('');
+    this.navService.isUserLoggedIn.next(false);
     this.router.navigate(['/login']);
   }
 

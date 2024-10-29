@@ -1,12 +1,13 @@
 <div class="login-card">
 
   <div class="card-title">
-    <h1>Login</h1>
+    <h1>Авторизация</h1>
   </div>
   <form class="form-group" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
     <input name="email" type="email" formControlName="email" placeholder="Email">
     <input type="password" formControlName="password" placeholder="Password">
-    <button>Submit</button>
+    <p class="login-result-message">{{loginResultMessage}}</p>
+    <button>Войти</button>
   </form>
 
 </div>

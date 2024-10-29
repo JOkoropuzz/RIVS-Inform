@@ -7,6 +7,7 @@ import { NavMenuComponent } from './components/nav-menu/nav-menu.component';
 import { HomeComponent } from './components/home/home.component';
 import { TableMultipleHeader } from './components/measure/measure.component';
 import { TableService } from './services/table.service';
+import { NavMenuService } from './services/nav-menu.service';
 
 import { MatMenuModule } from '@angular/material/menu';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
@@ -20,7 +21,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MAT_DATE_LOCALE } from '@angular/material/core';
-import { LoginComponent } from './login/login.component';
+import { LoginComponent } from './components/login/login.component';
 import { provideHttpClient } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 
