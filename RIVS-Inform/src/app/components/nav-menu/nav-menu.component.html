@@ -29,9 +29,9 @@
                width="32" data-view-component="true" class="avatar circle">
         </button>
         <mat-menu #menu="matMenu">
-          <button mat-menu-item disabled class="text-dark">
-            <!--<p>{{userName}}</p>-->
-          </button>
+          <div class="user-name">
+            <p>{{navService.userName.value}}</p>
+          </div>
           <button (click)="logout()" mat-menu-item>
             <span>Выход</span>
           </button>

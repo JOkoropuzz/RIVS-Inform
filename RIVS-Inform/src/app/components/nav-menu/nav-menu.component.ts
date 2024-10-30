@@ -21,7 +21,7 @@ export class NavMenuComponent {
   changeUserName(value: any): void {
   }
 
-  public logout() {
+  logout() {
     this.authService.logout();
     this.navService.userName.next('');
     this.navService.isUserLoggedIn.next(false);

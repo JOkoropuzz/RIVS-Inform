@@ -15,6 +15,13 @@ a.navbar-brand {
   user-select: none;
 }
 
+.user-name {
+  color: black;
+  font-size: 12px;
+  cursor: text;
+  text-align: center;
+}
+
 .rivs-logo {
   margin-right: 5px;
 }

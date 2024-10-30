@@ -7,5 +7,5 @@ import { BehaviorSubject, Subject} from 'rxjs';
 export class NavMenuService {
   public isUserLoggedIn: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
-  public userName = new Subject<any>();
+  public userName: BehaviorSubject<string> = new BehaviorSubject<string>('');
 }

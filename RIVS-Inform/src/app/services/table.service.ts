@@ -46,7 +46,7 @@ export class TableService {
     { name: 'c3', el1: 'Be', el2: 'Fe', el3: 'Zn', el4: 'Pb', el5: 'Mb', el6: 'Ka', el7: 'Mg', el8: 'Na' },
   ];
 
-  enterprises: string[] = ['ООО «Новоангарский обогатительный комбинат»', 'Что-то ещё'];
+  enterprises: string[] = ['ООО «Новоангарский обогатительный комбинат»', 'АО «Лебединский горно-обогатительный комбинат»'];
 
   getEnterprisesNames() {
       //deting data for enterprises
