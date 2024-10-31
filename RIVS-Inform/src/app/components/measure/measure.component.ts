@@ -1,8 +1,9 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { TableService } from '../../services/table.service';
 import { Measure } from '../../models/measure';
 import { provideNativeDateAdapter } from '@angular/material/core';
-import { MatDatepickerInputEvent} from '@angular/material/datepicker';
+import { MatDatepickerInputEvent } from '@angular/material/datepicker';
+import { NavMenuService } from '../../services/nav-menu.service';
 
 import {
   ApexAxisChartSeries,
@@ -135,7 +136,8 @@ export class TableMultipleHeader implements OnInit {
   selectedProdName?: string;
 
   //string array of enterprise name
-  enterpriseNames = this.tableServ.enterpriseNameSelector();
+  enterpriseNames?: string[];
+
   selectedEnterprise?: string;
 
   productMeasures: Measure[]=[];
@@ -146,7 +148,7 @@ export class TableMultipleHeader implements OnInit {
   //CanvasJS
   charts: any = [];
   
-  constructor(private tableServ: TableService) {}
+  constructor(private tableServ: TableService, public navService: NavMenuService) {}
 
   public initCharts(): void {
     this.TFccoptions = {
@@ -437,11 +439,23 @@ export class TableMultipleHeader implements OnInit {
   }
 
   ngOnInit(): void {
+    //получение списка предприятий для пользователя
+    this.tableServ.getEnterprisesNames(this.navService.userName.value)
+      .subscribe(res => this.enterpriseNames = res);
+    //выбор первого предприятия из списка
+    this.selectedEnterprise = this.enterpriseNames![0];
+    //получение списка продуктов выбранного предприятия
+    this.tableServ.getProducts(this.selectedEnterprise);
+    //выбор первого продукта из списка
     this.selectedProdName = this.tableServ.productNameSelector()[0];
-    this.selectedEnterprise = this.tableServ.enterpriseNameSelector()[0];
+    //получение списка измерений на выбранном предприятии
+    this.tableServ.getMeasures(this.selectedEnterprise);
+
     this.fillColumns();
     this.hideColumns();
+    
     this.productMeasures = this.tableServ.productSelector(this.selectedProdName);
+
     this.toggleDivsVisibility();
     this.fillCharts();
     this.initCharts();
@@ -536,8 +550,13 @@ export class TableMultipleHeader implements OnInit {
   //change selected enterprise
   selectEnterprise(value: string) {
     this.selectedEnterprise = value;
-    this.tableServ.getData(value);
+    //получение списка продуктов выбранного предприятия
+    this.tableServ.getProducts(this.selectedEnterprise);
+    //выбор первого продукта из списка
     this.selectedProdName = this.tableServ.productNameSelector()[0];
+    //получение списка измерений на выбранном предприятии
+    this.tableServ.getMeasures(this.selectedEnterprise);
+
     this.fillColumns();
     this.hideColumns();
     if (this.startDate != undefined && this.endDate != undefined) {

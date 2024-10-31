@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { inject, Inject } from '@angular/core';
+import { inject } from '@angular/core';
 import { catchError, tap } from 'rxjs/operators';
 import { of } from 'rxjs';
 
@@ -10,12 +10,12 @@ import { of } from 'rxjs';
 export class AuthService {
 
   httpClient = inject(HttpClient);
-  baseUrl = '/api';
+  baseUrl = 'http://localhost:8081/api';
 
-  constructor(@Inject('apiUrl') private apiUrl: URL) { }
+  constructor() { }
 
   login(data: any) {
-    return this.httpClient.post(`${this.apiUrl}/login`, data)
+    return this.httpClient.post(`${this.baseUrl}/user/login`, data)
       .pipe(tap((result) => {
         if (result) {
           localStorage.setItem('authUser', JSON.stringify(result));

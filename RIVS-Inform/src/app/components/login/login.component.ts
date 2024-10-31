@@ -20,7 +20,7 @@ export class LoginComponent {
   loginResultMessage = '';
 
   protected loginForm = new FormGroup({
-    email: new FormControl('', [Validators.required]),
+    login: new FormControl('', [Validators.required]),
     password: new FormControl('', [Validators.required])
   });
 
@@ -31,7 +31,7 @@ export class LoginComponent {
         .subscribe((data: any) => {
           if (this.authService.isLoggedIn()) {
             this.router.navigate(['/home']);
-            this.navService.userName.next(this.loginForm.value.email!);
+            this.navService.userName.next(this.loginForm.value.login!);
             this.navService.isUserLoggedIn.next(true);
           }
           else {
