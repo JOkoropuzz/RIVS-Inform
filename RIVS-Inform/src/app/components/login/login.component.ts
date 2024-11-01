@@ -35,7 +35,21 @@ export class LoginComponent {
             this.navService.isUserLoggedIn.next(true);
           }
           else {
-            this.loginResultMessage = 'Неверный логин или пароль';
+            switch (data) {
+              case 0: {
+                this.loginResultMessage = 'Отсутствует связь с сервером';
+                break;
+              }
+              case 400: {
+                this.loginResultMessage = 'Неверный логин или пароль';
+                break;
+              }
+              default: {
+                this.loginResultMessage = 'Что-то пошло не так' 
+                break;
+              } 
+            }
+            
           }
         });
     }
