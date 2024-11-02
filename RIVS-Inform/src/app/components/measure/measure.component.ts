@@ -441,7 +441,7 @@ export class TableMultipleHeader implements OnInit {
   ngOnInit(): void {
     //получение списка предприятий для пользователя
     this.tableServ.getEnterprisesNames(this.navService.userName.value)
-      .subscribe(res => this.enterpriseNames = res);
+      .subscribe(res => this.enterpriseNames = res.map(a => a.name));
     //выбор первого предприятия из списка
     this.selectedEnterprise = this.enterpriseNames![0];
     //получение списка продуктов выбранного предприятия

@@ -14,6 +14,11 @@ export interface ProductElements {
   el8?: string;
 }
 
+export interface Enterprise {
+  name: string;
+}
+
+
 
 @Injectable({ providedIn: 'root' })
 export class TableService {
@@ -54,7 +59,7 @@ export class TableService {
   measures?: Measure[];
 
   getEnterprisesNames(userLogin: string) {
-    return this.httpClient.post<string[]>(`${this.baseUrl}/enterprises`, { login: `${userLogin}` });
+    return this.httpClient.post<Enterprise[]>(`${this.baseUrl}/enterprises`, { login: `${userLogin}` });
   }
 
   getMeasures(enterpriseName: string) {
