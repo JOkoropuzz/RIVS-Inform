@@ -3,7 +3,7 @@
     <mat-form-field>
       <mat-label>Продукт</mat-label>
       <mat-select [(ngModel)]="selectedProdName" (selectionChange)="selectProd($event.value)">
-        <mat-option *ngFor="let prodName of prodNames" [value]="prodName">
+        <mat-option *ngFor="let prodName of tableServ.productNames" [value]="prodName">
           {{prodName}}
         </mat-option>
       </mat-select>

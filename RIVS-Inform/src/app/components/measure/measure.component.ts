@@ -132,7 +132,7 @@ export class TableMultipleHeader implements OnInit {
   ];
 
   //string array of products name
-  prodNames = this.tableServ.productNameSelector();
+  //prodNames = this.tableServ.productNameSelector();
   selectedProdName?: string;
 
   //string array of enterprise name
@@ -148,7 +148,7 @@ export class TableMultipleHeader implements OnInit {
   //CanvasJS
   charts: any = [];
   
-  constructor(private tableServ: TableService, public navService: NavMenuService) {}
+  constructor(public tableServ: TableService, public navService: NavMenuService) {}
 
   public initCharts(): void {
     this.TFccoptions = {
@@ -442,14 +442,16 @@ export class TableMultipleHeader implements OnInit {
     //получение списка предприятий для пользователя
     this.tableServ.getEnterprisesNames(this.navService.userName.value)
       .subscribe(res => this.enterpriseNames = res.map(a => a.name));
+
     //выбор первого предприятия из списка
     this.selectedEnterprise = this.enterpriseNames![0];
     //получение списка продуктов выбранного предприятия
     this.tableServ.getProducts(this.selectedEnterprise);
-    //выбор первого продукта из списка
-    this.selectedProdName = this.tableServ.productNameSelector()[0];
+    
     //получение списка измерений на выбранном предприятии
     this.tableServ.getMeasures(this.selectedEnterprise);
+    //выбор первого продукта из списка
+    this.selectedProdName = this.tableServ.productNameSelector()[0];
 
     this.fillColumns();
     this.hideColumns();
@@ -552,10 +554,12 @@ export class TableMultipleHeader implements OnInit {
     this.selectedEnterprise = value;
     //получение списка продуктов выбранного предприятия
     this.tableServ.getProducts(this.selectedEnterprise);
-    //выбор первого продукта из списка
-    this.selectedProdName = this.tableServ.productNameSelector()[0];
+    
     //получение списка измерений на выбранном предприятии
     this.tableServ.getMeasures(this.selectedEnterprise);
+
+    //выбор первого продукта из списка
+    this.selectedProdName = this.tableServ.productNameSelector()[0];
 
     this.fillColumns();
     this.hideColumns();

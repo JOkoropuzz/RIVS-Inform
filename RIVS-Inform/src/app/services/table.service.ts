@@ -58,6 +58,8 @@ export class TableService {
   productElements?: ProductElements[];
   measures?: Measure[];
 
+  public productNames?: string[];
+
   getEnterprisesNames(userLogin: string) {
     return this.httpClient.post<Enterprise[]>(`${this.baseUrl}/enterprises`, { login: `${userLogin}` });
   }
@@ -113,8 +115,8 @@ export class TableService {
       }
       return accumulator;
     }, []);
-
-    return unique.map(item => item['name']);
+    this.productNames = unique.map(item => item['name']);
+    return this.productNames;
   }
 
 }
