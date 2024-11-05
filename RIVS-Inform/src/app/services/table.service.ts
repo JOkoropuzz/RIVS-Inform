@@ -61,7 +61,7 @@ export class TableService {
   public productNames?: string[];
 
   getEnterprisesNames(userLogin: string) {
-    return this.httpClient.post<Enterprise[]>(`${this.baseUrl}/enterprises`, { login: `${userLogin}` });
+    return this.httpClient.post<Enterprise[]>(`${this.baseUrl}/enterprises`, { userLogin: `${userLogin}` });
   }
 
   getMeasures(enterpriseName: string) {
