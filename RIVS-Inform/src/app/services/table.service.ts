@@ -60,8 +60,8 @@ export class TableService {
 
   public productNames?: string[];
 
-  getEnterprisesNames(userLogin: string) {
-    console.error('Я обновился 3');
+  getEnterprisesNames(userLogin: string): Observable<Enterprise[]> {
+    console.error('Я обновился 4');
     return this.httpClient.post<Enterprise[]>(`${this.baseUrl}/enterprises`, { userLogin: `${userLogin}` });
   }
 

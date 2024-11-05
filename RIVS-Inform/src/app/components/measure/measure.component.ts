@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { TableService } from '../../services/table.service';
+import { Enterprise, TableService } from '../../services/table.service';
 import { Measure } from '../../models/measure';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { MatDatepickerInputEvent } from '@angular/material/datepicker';
@@ -18,7 +18,7 @@ import {
   ApexStroke,
   ApexGrid
 } from "ng-apexcharts";
-import { map } from 'rxjs';
+import { firstValueFrom, map, Observable } from 'rxjs';
 
 
 export type ChartOptions = {
@@ -441,15 +441,12 @@ export class TableMultipleHeader implements OnInit {
   }
 
   ngOnInit(): void {
-    
     //получение списка предприятий для пользователя
-     var entrs = this.tableServ.getEnterprisesNames(this.navService.userName.value);
-    entrs.subscribe((products) => {
-      this.enterpriseNames = products.map(p => p.name);
-    });
-
+    var enterprNames: Enterprise[];
+    firstValueFrom(this.tableServ.getEnterprisesNames(this.navService.userName.value)).then(res => enterprNames = res);
+    this.enterpriseNames = enterprNames!.map(e => e.name);
     //выбор первого предприятия из списка
-    this.selectedEnterprise = this.enterpriseNames![0];
+    this.selectedEnterprise = this.enterpriseNames[0];
     //получение списка продуктов выбранного предприятия
     this.tableServ.getProducts(this.selectedEnterprise);
     
