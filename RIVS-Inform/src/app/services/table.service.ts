@@ -1,7 +1,7 @@
 import { inject, Injectable } from "@angular/core";
 import { Measure } from '../models/measure';
 import { HttpClient, HttpParams } from "@angular/common/http";
-import { catchError, Observable, of, tap } from "rxjs";
+import { catchError, map, Observable, of, tap } from "rxjs";
 export interface ProductElements {
   name: string;
   el1?: string;
@@ -61,6 +61,7 @@ export class TableService {
   public productNames?: string[];
 
   getEnterprisesNames(userLogin: string) {
+    console.error('Я обновился 3');
     return this.httpClient.post<Enterprise[]>(`${this.baseUrl}/enterprises`, { userLogin: `${userLogin}` });
   }
 

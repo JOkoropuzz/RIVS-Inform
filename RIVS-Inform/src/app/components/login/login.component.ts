@@ -10,6 +10,8 @@ import { NavMenuService } from '../../services/nav-menu.service';
   templateUrl: './login.component.html',
   styleUrl: './login.component.css'
 })
+
+
 export class LoginComponent {
   authService = inject(AuthService);
   router = inject(Router);

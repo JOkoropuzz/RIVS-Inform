@@ -18,6 +18,8 @@ import {
   ApexStroke,
   ApexGrid
 } from "ng-apexcharts";
+import { map } from 'rxjs';
+
 
 export type ChartOptions = {
   series: ApexAxisChartSeries;
@@ -439,9 +441,12 @@ export class TableMultipleHeader implements OnInit {
   }
 
   ngOnInit(): void {
+    
     //получение списка предприятий для пользователя
-    this.tableServ.getEnterprisesNames(this.navService.userName.value)
-      .subscribe(res => this.enterpriseNames = res.map(a => a.name));
+     var entrs = this.tableServ.getEnterprisesNames(this.navService.userName.value);
+    entrs.subscribe((products) => {
+      this.enterpriseNames = products.map(p => p.name);
+    });
 
     //выбор первого предприятия из списка
     this.selectedEnterprise = this.enterpriseNames![0];
