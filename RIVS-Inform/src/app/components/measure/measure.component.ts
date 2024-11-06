@@ -54,7 +54,7 @@ export class TableMultipleHeader implements OnInit {
 
   startDate?: Date;
   endDate?: Date;
-
+  
   addEvent(type: string, event: MatDatepickerInputEvent<Date>) {
 
     if (type === 'inputStartDate') {
@@ -71,7 +71,7 @@ export class TableMultipleHeader implements OnInit {
     }
   }
 
-
+  public loadedFlag = Promise.resolve(false);
   public TFccoptions!: Partial<ChartOptions>;
   public chart1options!: Partial<ChartOptions>;
   public chart2options!: Partial<ChartOptions>;
@@ -442,27 +442,35 @@ export class TableMultipleHeader implements OnInit {
 
   ngOnInit(): void {
     //получение списка предприятий для пользователя
-    var enterprNames: Enterprise[];
-    firstValueFrom(this.tableServ.getEnterprisesNames(this.navService.userName.value)).then(res => enterprNames = res);
-    this.enterpriseNames = enterprNames!.map(e => e.name);
-    //выбор первого предприятия из списка
-    this.selectedEnterprise = this.enterpriseNames[0];
-    //получение списка продуктов выбранного предприятия
-    this.tableServ.getProducts(this.selectedEnterprise);
-    
-    //получение списка измерений на выбранном предприятии
-    this.tableServ.getMeasures(this.selectedEnterprise);
-    //выбор первого продукта из списка
-    this.selectedProdName = this.tableServ.productNameSelector()[0];
+    this.tableServ.getEnterprisesNames(this.navService.userName.value)
+      .subscribe(async e => {
+        this.enterpriseNames = e.map(es => es.name);
+        //выбор первого предприятия из списка
+        this.selectedEnterprise = this.enterpriseNames[0];
+        //получение списка продуктов выбранного предприятия
+        this.tableServ.productElements = await firstValueFrom(this.tableServ.getProducts(this.selectedEnterprise));
 
-    this.fillColumns();
-    this.hideColumns();
-    
-    this.productMeasures = this.tableServ.productSelector(this.selectedProdName);
+        //получение списка измерений на выбранном предприятии
+        this.tableServ.measures = await firstValueFrom(this.tableServ.getMeasures(this.selectedEnterprise));
 
-    this.toggleDivsVisibility();
-    this.fillCharts();
-    this.initCharts();
+          //выбор первого продукта из списка
+          this.selectedProdName = this.tableServ.productNameSelector()[0];
+          this.fillColumns();
+          this.hideColumns();
+
+          this.productMeasures = this.tableServ.productSelector(this.selectedProdName);
+
+          this.loadedFlag = Promise.resolve(true);
+
+          this.toggleDivsVisibility();
+          this.fillCharts();
+          this.initCharts();
+          
+        
+      });
+    
+    
+    
   }
   //fill charts data
   fillCharts() {
@@ -479,15 +487,15 @@ export class TableMultipleHeader implements OnInit {
     }
 
     for (var i = 0; i < this.productMeasures.length; i++) {
-      this.TFccDps[i] = { x: Number(Math.round(this.productMeasures[i].time.getTime())), y: Number(this.productMeasures[i].TFcc) };
-      this.el1Dps[i] = { x: Number(Math.round(this.productMeasures[i].time.getTime())), y: Number(this.productMeasures[i].el1) };
-      this.el2Dps[i] = { x: Number(Math.round(this.productMeasures[i].time.getTime())), y: Number(this.productMeasures[i].el2) };
-      this.el3Dps[i] = { x: Number(Math.round(this.productMeasures[i].time.getTime())), y: Number(this.productMeasures[i].el3) };
-      this.el4Dps[i] = { x: Number(Math.round(this.productMeasures[i].time.getTime())), y: Number(this.productMeasures[i].el4) };
-      this.el5Dps[i] = { x: Number(Math.round(this.productMeasures[i].time.getTime())), y: Number(this.productMeasures[i].el5) };
-      this.el6Dps[i] = { x: Number(Math.round(this.productMeasures[i].time.getTime())), y: Number(this.productMeasures[i].el6) };
-      this.el7Dps[i] = { x: Number(Math.round(this.productMeasures[i].time.getTime())), y: Number(this.productMeasures[i].el7) };
-      this.el8Dps[i] = { x: Number(Math.round(this.productMeasures[i].time.getTime())), y: Number(this.productMeasures[i].el8) };
+      this.TFccDps[i] = { x: Number(Math.round(new Date(this.productMeasures[i].time).getTime())), y: Number(this.productMeasures[i].TFcc) };
+      this.el1Dps[i] = { x: Number(Math.round(new Date(this.productMeasures[i].time).getTime())), y: Number(this.productMeasures[i].el1) };
+      this.el2Dps[i] = { x: Number(Math.round(new Date(this.productMeasures[i].time).getTime())), y: Number(this.productMeasures[i].el2) };
+      this.el3Dps[i] = { x: Number(Math.round(new Date(this.productMeasures[i].time).getTime())), y: Number(this.productMeasures[i].el3) };
+      this.el4Dps[i] = { x: Number(Math.round(new Date(this.productMeasures[i].time).getTime())), y: Number(this.productMeasures[i].el4) };
+      this.el5Dps[i] = { x: Number(Math.round(new Date(this.productMeasures[i].time).getTime())), y: Number(this.productMeasures[i].el5) };
+      this.el6Dps[i] = { x: Number(Math.round(new Date(this.productMeasures[i].time).getTime())), y: Number(this.productMeasures[i].el6) };
+      this.el7Dps[i] = { x: Number(Math.round(new Date(this.productMeasures[i].time).getTime())), y: Number(this.productMeasures[i].el7) };
+      this.el8Dps[i] = { x: Number(Math.round(new Date(this.productMeasures[i].time).getTime())), y: Number(this.productMeasures[i].el8) };
 
     }
   }

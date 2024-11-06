@@ -1,7 +1,7 @@
 import { inject, Injectable } from "@angular/core";
 import { Measure } from '../models/measure';
 import { HttpClient, HttpParams } from "@angular/common/http";
-import { catchError, map, Observable, of, tap } from "rxjs";
+import { catchError, firstValueFrom, map, Observable, of, tap } from "rxjs";
 export interface ProductElements {
   name: string;
   el1?: string;
@@ -25,7 +25,7 @@ export class TableService {
 
   httpClient = inject(HttpClient);
   baseUrl = 'http://localhost:8081/api';
-
+  getMeasuresFlag = false;
   //enterprises: string[] = ['ООО «Новоангарский обогатительный комбинат»', 'АО «Лебединский горно-обогатительный комбинат»'];
 
 
@@ -66,17 +66,12 @@ export class TableService {
   }
 
   getMeasures(enterpriseName: string) {
-    this.httpClient.post<Measure[]>(`${this.baseUrl}/meas`, { enterpriseName: `${enterpriseName}`}).subscribe(res => {
-      this.measures = res;
-    });
+    return this.httpClient.post<Measure[]>(`${this.baseUrl}/meas`, { enterpriseName: `${enterpriseName}` });
   };
 
   getProducts(enterpriseName: string) {
-    this.httpClient.post<ProductElements[]>(`${this.baseUrl}/products`, { enterpriseName: `${enterpriseName}`}).subscribe(res => {
-      this.productElements = res;
-    });
-
-  }
+    return this.httpClient.post<ProductElements[]>(`${this.baseUrl}/products`, { enterpriseName: `${enterpriseName}`});
+  };
 
   productElementsSelector(prodName: string): string[] {
     [prodName];
@@ -109,7 +104,7 @@ export class TableService {
   }
 
   productNameSelector(): string[] {
-
+    
     const unique = this.measures!.reduce((accumulator: Measure[], current) => {
       if (accumulator.findIndex(obj => obj['name'] === current.name) === -1) {
         accumulator.push(current);

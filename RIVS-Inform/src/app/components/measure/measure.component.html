@@ -1,5 +1,5 @@
 <div class="row">
-  <div class="col-md-4">
+  <div *ngIf="loadedFlag | async" class="col-md-4">
     <mat-form-field>
       <mat-label>Продукт</mat-label>
       <mat-select [(ngModel)]="selectedProdName" (selectionChange)="selectProd($event.value)">
@@ -9,7 +9,7 @@
       </mat-select>
     </mat-form-field>
   </div>
-  <div class="col-md-4">
+  <div *ngIf="loadedFlag | async" class="col-md-4">
     <mat-form-field>
       <mat-label>Предприятие</mat-label>
       <mat-select [(ngModel)]="selectedEnterprise" (selectionChange)="selectEnterprise($event.value)">
@@ -19,7 +19,7 @@
       </mat-select>
     </mat-form-field>
   </div>
-  <div class="col-md-4">
+  <div *ngIf="loadedFlag | async" class="col-md-4">
     <mat-form-field>
       <mat-label>Введите диапазон дат</mat-label>
       <mat-date-range-input [rangePicker]="picker">
@@ -33,7 +33,7 @@
 </div>
 <div (mouseenter) ="toggleBodyScroll(true)"  (mouseleave) ="toggleBodyScroll(false)">
   <div id="TFcc">
-    <apx-chart [series]="TFccoptions.series"
+    <apx-chart *ngIf="loadedFlag | async" [series]="TFccoptions.series"
                [chart]="TFccoptions.chart"
                [colors]="TFccoptions.colors"
                [yaxis]="TFccoptions.yaxis"
@@ -48,7 +48,7 @@
     </apx-chart>
   </div>
   <div id="el1">
-    <apx-chart [series]="chart1options.series"
+    <apx-chart *ngIf="loadedFlag | async" [series]="chart1options.series"
                [chart]="chart1options.chart"
                [colors]="chart1options.colors"
                [yaxis]="chart1options.yaxis"
@@ -62,7 +62,7 @@
     </apx-chart>
   </div>
   <div id="el2">
-    <apx-chart [series]="chart2options.series"
+    <apx-chart *ngIf="loadedFlag | async" [series]="chart2options.series"
                [chart]="chart2options.chart"
                [colors]="chart2options.colors"
                [yaxis]="chart2options.yaxis"
@@ -76,7 +76,7 @@
     </apx-chart>
   </div>
   <div id="el3">
-    <apx-chart [series]="chart3options.series"
+    <apx-chart *ngIf="loadedFlag | async" [series]="chart3options.series"
                [chart]="chart3options.chart"
                [colors]="chart3options.colors"
                [yaxis]="chart3options.yaxis"
@@ -90,7 +90,7 @@
     </apx-chart>
   </div>
   <div id="el4">
-    <apx-chart [series]="chart4options.series"
+    <apx-chart *ngIf="loadedFlag | async" [series]="chart4options.series"
                [chart]="chart4options.chart"
                [colors]="chart4options.colors"
                [yaxis]="chart4options.yaxis"
@@ -104,7 +104,7 @@
     </apx-chart>
   </div>
   <div id="el5">
-    <apx-chart [series]="chart5options.series"
+    <apx-chart *ngIf="loadedFlag | async" [series]="chart5options.series"
                [chart]="chart5options.chart"
                [colors]="chart5options.colors"
                [yaxis]="chart5options.yaxis"
@@ -118,7 +118,7 @@
     </apx-chart>
   </div>
   <div id="el6">
-    <apx-chart [series]="chart6options.series"
+    <apx-chart *ngIf="loadedFlag | async" [series]="chart6options.series"
                [chart]="chart6options.chart"
                [colors]="chart6options.colors"
                [yaxis]="chart6options.yaxis"
@@ -132,7 +132,7 @@
     </apx-chart>
   </div>
   <div id="el7">
-    <apx-chart [series]="chart7options.series"
+    <apx-chart *ngIf="loadedFlag | async" [series]="chart7options.series"
                [chart]="chart7options.chart"
                [colors]="chart7options.colors"
                [yaxis]="chart7options.yaxis"
@@ -146,7 +146,7 @@
     </apx-chart>
   </div>
   <div id="el8">
-    <apx-chart [series]="chart8options.series"
+    <apx-chart *ngIf="loadedFlag | async" [series]="chart8options.series"
                [chart]="chart8options.chart"
                [colors]="chart8options.colors"
                [yaxis]="chart8options.yaxis"
@@ -160,7 +160,7 @@
     </apx-chart>
   </div>
 </div>
-<div class="mat-elevation-z8 flex-element">
+<div *ngIf="loadedFlag | async" class="mat-elevation-z8 flex-element">
   <table mat-table [dataSource]="productMeasures" class="mat-elevation-z8">
 
     <!--<ng-container [matColumnDef]="column" *ngFor="let column of displayedColumns">
