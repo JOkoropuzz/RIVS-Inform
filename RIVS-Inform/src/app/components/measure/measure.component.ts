@@ -54,7 +54,8 @@ export class TableMultipleHeader implements OnInit {
 
   startDate?: Date;
   endDate?: Date;
-  
+
+  //событие ввода даты
   addEvent(type: string, event: MatDatepickerInputEvent<Date>) {
 
     if (type === 'inputStartDate') {
@@ -560,14 +561,15 @@ export class TableMultipleHeader implements OnInit {
   }
 
   //change selected enterprise
-  selectEnterprise(value: string) {
+  async selectEnterprise(value: string) {
     this.selectedEnterprise = value;
-    //получение списка продуктов выбранного предприятия
-    this.tableServ.getProducts(this.selectedEnterprise);
-    
-    //получение списка измерений на выбранном предприятии
-    this.tableServ.getMeasures(this.selectedEnterprise);
 
+    //получение списка продуктов выбранного предприятия
+    this.tableServ.productElements = await firstValueFrom(this.tableServ.getProducts(this.selectedEnterprise));
+
+    //получение списка измерений на выбранном предприятии
+    this.tableServ.measures = await firstValueFrom(this.tableServ.getMeasures(this.selectedEnterprise));
+    
     //выбор первого продукта из списка
     this.selectedProdName = this.tableServ.productNameSelector()[0];
 

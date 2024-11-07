@@ -61,7 +61,6 @@ export class TableService {
   public productNames?: string[];
 
   getEnterprisesNames(userLogin: string): Observable<Enterprise[]> {
-    console.error('Я обновился 4');
     return this.httpClient.post<Enterprise[]>(`${this.baseUrl}/enterprises`, { userLogin: `${userLogin}` });
   }
 
@@ -94,7 +93,7 @@ export class TableService {
 
   productSelectorWithDate(prodName: string, startDate: Date, endDate: Date): Measure[] {
     return this.measures!.filter(
-      (measure) => measure.name == prodName && measure.time > startDate && measure.time < this.addDays(endDate, 1));
+      (measure) => measure.name == prodName && new Date(measure.time) > startDate && new Date(measure.time) < this.addDays(endDate, 1));
   }
 
   addDays(date: Date, days: number): Date {
