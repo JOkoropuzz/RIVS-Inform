@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Enterprise, TableService } from '../../services/table.service';
+import { TableService } from '../../services/table.service';
 import { Measure } from '../../models/measure';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { MatDatepickerInputEvent } from '@angular/material/datepicker';
@@ -18,7 +18,7 @@ import {
   ApexStroke,
   ApexGrid
 } from "ng-apexcharts";
-import { firstValueFrom, map, Observable } from 'rxjs';
+import { firstValueFrom } from 'rxjs';
 
 
 export type ChartOptions = {
@@ -72,7 +72,9 @@ export class TableMultipleHeader implements OnInit {
     }
   }
 
+  //флаг загрузки данных. Если данных ещё нет, элементы графиков не рендерятся
   public loadedFlag = Promise.resolve(false);
+
   public TFccoptions!: Partial<ChartOptions>;
   public chart1options!: Partial<ChartOptions>;
   public chart2options!: Partial<ChartOptions>;
@@ -82,6 +84,8 @@ export class TableMultipleHeader implements OnInit {
   public chart6options!: Partial<ChartOptions>;
   public chart7options!: Partial<ChartOptions>;
   public chart8options!: Partial<ChartOptions>;
+
+  //Общие обции для графиков
   public commonOptions: Partial<ChartOptions> = {
     dataLabels: {
       enabled: false
@@ -135,7 +139,6 @@ export class TableMultipleHeader implements OnInit {
   ];
 
   //string array of products name
-  //prodNames = this.tableServ.productNameSelector();
   selectedProdName?: string;
 
   //string array of enterprise name
@@ -151,8 +154,9 @@ export class TableMultipleHeader implements OnInit {
   //CanvasJS
   charts: any = [];
   
-  constructor(public tableServ: TableService, public navService: NavMenuService) {}
+  constructor(public tableServ: TableService, public navService: NavMenuService) { }
 
+  //заполнение опций графиков
   public initCharts(): void {
     this.TFccoptions = {
       title: {
@@ -445,14 +449,19 @@ export class TableMultipleHeader implements OnInit {
     //получение списка предприятий для пользователя
     this.tableServ.getEnterprisesNames(this.navService.userName.value)
       .subscribe(async e => {
+
         this.enterpriseNames = e.map(es => es.name);
+
         //выбор первого предприятия из списка
         this.selectedEnterprise = this.enterpriseNames[0];
+
         //получение списка продуктов выбранного предприятия
-        this.tableServ.productElements = await firstValueFrom(this.tableServ.getProducts(this.selectedEnterprise));
+        this.tableServ.productElements =
+          await firstValueFrom(this.tableServ.getProducts(this.selectedEnterprise));
 
         //получение списка измерений на выбранном предприятии
-        this.tableServ.measures = await firstValueFrom(this.tableServ.getMeasures(this.selectedEnterprise));
+        this.tableServ.measures =
+          await firstValueFrom(this.tableServ.getMeasures(this.selectedEnterprise));
 
           //выбор первого продукта из списка
           this.selectedProdName = this.tableServ.productNameSelector()[0];
