@@ -3,7 +3,7 @@
     <mat-form-field>
       <mat-label>Продукт</mat-label>
       <mat-select [(ngModel)]="selectedProdName" (selectionChange)="selectProd($event.value)">
-        <mat-option *ngFor="let prodName of tableServ.productNames" [value]="prodName">
+        <mat-option *ngFor="let prodName of this.tableServ.productElements" [value]="prodName">
           {{prodName}}
         </mat-option>
       </mat-select>
@@ -23,8 +23,8 @@
     <mat-form-field>
       <mat-label>Введите диапазон дат</mat-label>
       <mat-date-range-input [rangePicker]="picker">
-        <input (dateInput)="addEvent('inputStartDate', $event)" matStartDate placeholder="Дата от">
-        <input (dateChange)="addEvent('inputEndDate', $event)" matEndDate placeholder="Дата до">
+        <input [(ngModel)]="startDate" (dateInput)="addEvent('inputStartDate', $event)" matStartDate placeholder="Дата от">
+        <input [(ngModel)]="endDate" (dateChange)="addEvent('inputEndDate', $event)" matEndDate placeholder="Дата до">
       </mat-date-range-input>
       <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
       <mat-date-range-picker #picker></mat-date-range-picker>

@@ -1,22 +1,9 @@
 import { inject, Injectable } from "@angular/core";
 import { Measure } from '../models/measure';
+import { ProductElements } from '../models/productElements';
+import { Enterprise } from '../models/Enterprise';
 import { HttpClient, HttpParams } from "@angular/common/http";
 import { catchError, firstValueFrom, map, Observable, of, tap } from "rxjs";
-export interface ProductElements {
-  name: string;
-  el1?: string;
-  el2?: string;
-  el3?: string;
-  el4?: string;
-  el5?: string;
-  el6?: string;
-  el7?: string;
-  el8?: string;
-}
-
-export interface Enterprise {
-  name: string;
-}
 
 
 
@@ -24,7 +11,7 @@ export interface Enterprise {
 export class TableService {
 
   httpClient = inject(HttpClient);
-  baseUrl = 'http://localhost:8081/api';
+  baseUrl = 'http://192.268.15.245:8081/api';
   getMeasuresFlag = false;
   //enterprises: string[] = ['ООО «Новоангарский обогатительный комбинат»', 'АО «Лебединский горно-обогатительный комбинат»'];
 
@@ -58,15 +45,36 @@ export class TableService {
   productElements?: ProductElements[];
   measures?: Measure[];
 
-  public productNames?: string[];
+  //getEnterprisesNames(userLogin: string): Observable<Enterprise[]> {
+  //  return this.httpClient.post<Enterprise[]>(`${this.baseUrl}/enterprises`, { userLogin: `${userLogin}` });
+  //}
 
-  getEnterprisesNames(userLogin: string): Observable<Enterprise[]> {
-    return this.httpClient.post<Enterprise[]>(`${this.baseUrl}/enterprises`, { userLogin: `${userLogin}` });
+  getAllData(userLogin: string): Observable<[Enterprise[], ProductElements[], string]> {
+    return this.httpClient.post<[Enterprise[], ProductElements[], string]>(`${this.baseUrl}/allData`, { userLogin: `${userLogin}` });
   }
 
-  getMeasures(enterpriseName: string) {
-    return this.httpClient.post<Measure[]>(`${this.baseUrl}/meas`, { enterpriseName: `${enterpriseName}` });
-  };
+  getMeasures(enterpriseName: string, prodName: string, startDate?: Date, endDate?: Date) {
+    let bodyStartDate;
+    let bodyEndDate;
+
+    if (startDate == undefined) {
+      bodyStartDate = 'null'
+    }
+    else {
+      bodyStartDate = startDate;
+    }
+    if (endDate == undefined) {
+      bodyEndDate = 'null'
+    }
+    else {
+      bodyEndDate = endDate
+    }
+    return this.httpClient.post<Measure[]>(`${this.baseUrl}/meas`,
+      {
+        enterpriseName: `${enterpriseName}`,
+        prodName: `${prodName}`,
+        startDate: `${startDate}`,
+        endDate: `${endDate}` }); };
 
   getProducts(enterpriseName: string) {
     return this.httpClient.post<ProductElements[]>(`${this.baseUrl}/products`, { enterpriseName: `${enterpriseName}`});
@@ -86,15 +94,15 @@ export class TableService {
     return result as string[];
   }
 
-  productSelector(prodName: string): Measure[] {
-    return this.measures!.filter(
-      (measure) => measure.name == prodName);
-  }
+  //productSelector(prodName: string): Measure[] {
+  //  return this.measures!.filter(
+  //    (measure) => measure.name == prodName);
+  //}
 
-  productSelectorWithDate(prodName: string, startDate: Date, endDate: Date): Measure[] {
-    return this.measures!.filter(
-      (measure) => measure.name == prodName && new Date(measure.time) > startDate && new Date(measure.time) < this.addDays(endDate, 1));
-  }
+  //productSelectorWithDate(prodName: string, startDate: Date, endDate: Date): Measure[] {
+  //  return this.measures!.filter(
+  //    (measure) => measure.name == prodName && new Date(measure.time) > startDate && new Date(measure.time) < this.addDays(endDate, 1));
+  //}
 
   addDays(date: Date, days: number): Date {
   let result = new Date(date);
@@ -104,14 +112,15 @@ export class TableService {
 
   productNameSelector(): string[] {
     
-    const unique = this.measures!.reduce((accumulator: Measure[], current) => {
-      if (accumulator.findIndex(obj => obj['name'] === current.name) === -1) {
-        accumulator.push(current);
-      }
-      return accumulator;
-    }, []);
-    this.productNames = unique.map(item => item['name']);
-    return this.productNames;
+    //const unique = this.measures!.reduce((accumulator: Measure[], current) => {
+    //  if (accumulator.findIndex(obj => obj['name'] === current.name) === -1) {
+    //    accumulator.push(current);
+    //  }
+    //  return accumulator;
+    //}, []);
+    //this.productNames = unique.map(item => item['name']);
+    
+    return this.productElements!.map(pe => pe.name)
   }
 
 }

@@ -55,23 +55,6 @@ export class TableMultipleHeader implements OnInit {
   startDate?: Date;
   endDate?: Date;
 
-  //событие ввода даты
-  addEvent(type: string, event: MatDatepickerInputEvent<Date>) {
-
-    if (type === 'inputStartDate') {
-     this.startDate = event.value!;
-    }
-    else {
-      this.endDate = event.value!;
-    }
-    if (this.startDate != undefined && this.endDate != undefined) {
-      this.productMeasures = this.tableServ.productSelectorWithDate(this.selectedProdName!, this.startDate, this.endDate);
-      this.toggleDivsVisibility();
-      this.fillCharts();
-      this.initCharts();
-    }
-  }
-
   //флаг загрузки данных. Если данных ещё нет, элементы графиков не рендерятся
   public loadedFlag = Promise.resolve(false);
 
@@ -85,46 +68,7 @@ export class TableMultipleHeader implements OnInit {
   public chart7options!: Partial<ChartOptions>;
   public chart8options!: Partial<ChartOptions>;
 
-  //Общие обции для графиков
-  public commonOptions: Partial<ChartOptions> = {
-    dataLabels: {
-      enabled: false
-    },
-
-    stroke: {
-      curve: "smooth"
-    },
-    markers: {
-      size: 6,
-      hover: {
-        size: 10
-      }
-    },
-    tooltip: {
-      followCursor: false,
-      theme: "dark",
-      x: {
-        format: "dd-MM-yyyy HH:mm",
-        show: true
-      },
-      
-      marker: {
-        show: false
-      },
-    },
-    grid: {
-    },
-    xaxis: {
-      tooltip: {
-        enabled: false
-      },
-      labels: {
-        datetimeUTC: false
-      },
-      type: "datetime"
-    },
-  };
-
+  //Шаблок колонок таблицы
   allColumns: DisplayColumn[] = [
     { def: 'time', label: 'Время', hide: false },
     { def: 'TFcc', label: 'TFcc', hide: false },
@@ -151,10 +95,189 @@ export class TableMultipleHeader implements OnInit {
   //string array of columns name
   displayedColumns?: string[];
 
-  //CanvasJS
-  charts: any = [];
-  
   constructor(public tableServ: TableService, public navService: NavMenuService) { }
+
+  ngOnInit(): void {
+    //получение списка предприятий, продуктов и последней даты измерений для пользователя
+    this.tableServ.getAllData(this.navService.userName.value)
+      .subscribe(async result => {
+
+        this.enterpriseNames = result[0].map(es => es.name);
+
+        //выбор первого предприятия из списка
+        this.selectedEnterprise = this.enterpriseNames[0];
+
+        //заполнение списка продуктов для первого предприятия
+        //сервер отправляет список продуктов для первого предприятия
+        this.tableServ.productElements = result[1];
+
+        //заполнение datepicker
+        this.startDate = new Date(result[2]);
+        this.endDate = new Date(result[2]);
+
+
+        //выбор первого продукта из списка
+        this.selectedProdName = this.tableServ.productNameSelector()[0];
+
+        //получение списка измерений
+        this.tableServ.measures =
+          (await firstValueFrom(this.tableServ.getMeasures(this.selectedEnterprise, this.selectedProdName, this.startDate, this.endDate))).reverse();
+
+          
+          this.fillColumns();
+          this.hideColumns();
+
+          this.productMeasures = this.tableServ.measures;
+
+          this.loadedFlag = Promise.resolve(true);
+
+          this.toggleDivsVisibility();
+          this.fillCharts();
+          this.initCharts();
+          
+      });
+    
+  }
+  //fill charts data
+  fillCharts() {
+    while (this.TFccDps.length != 0) {
+      this.TFccDps.shift();
+      this.el1Dps.shift();
+      this.el2Dps.shift();
+      this.el3Dps.shift();
+      this.el4Dps.shift();
+      this.el5Dps.shift();
+      this.el6Dps.shift();
+      this.el7Dps.shift();
+      this.el8Dps.shift();
+    }
+
+    for (var i = 0; i < this.productMeasures.length; i++) {
+      this.TFccDps[i] = { x: Number(Math.round(new Date(this.productMeasures[i].time).getTime())), y: Number(this.productMeasures[i].TFcc) };
+      this.el1Dps[i] = { x: Number(Math.round(new Date(this.productMeasures[i].time).getTime())), y: Number(this.productMeasures[i].el1) };
+      this.el2Dps[i] = { x: Number(Math.round(new Date(this.productMeasures[i].time).getTime())), y: Number(this.productMeasures[i].el2) };
+      this.el3Dps[i] = { x: Number(Math.round(new Date(this.productMeasures[i].time).getTime())), y: Number(this.productMeasures[i].el3) };
+      this.el4Dps[i] = { x: Number(Math.round(new Date(this.productMeasures[i].time).getTime())), y: Number(this.productMeasures[i].el4) };
+      this.el5Dps[i] = { x: Number(Math.round(new Date(this.productMeasures[i].time).getTime())), y: Number(this.productMeasures[i].el5) };
+      this.el6Dps[i] = { x: Number(Math.round(new Date(this.productMeasures[i].time).getTime())), y: Number(this.productMeasures[i].el6) };
+      this.el7Dps[i] = { x: Number(Math.round(new Date(this.productMeasures[i].time).getTime())), y: Number(this.productMeasures[i].el7) };
+      this.el8Dps[i] = { x: Number(Math.round(new Date(this.productMeasures[i].time).getTime())), y: Number(this.productMeasures[i].el8) };
+
+    }
+  }
+
+  //scroll disable/enable
+  toggleBodyScroll(lock: boolean) {
+    document.body.style.overflow = lock ? 'hidden' : '';
+  }
+
+  //show(hide) charts
+  toggleDivsVisibility() {
+    var divsOfCharts = [
+      document.getElementById('TFcc')!,
+      document.getElementById('el1')!,
+      document.getElementById('el2')!,
+      document.getElementById('el3')!,
+      document.getElementById('el4')!,
+      document.getElementById('el5')!,
+      document.getElementById('el6')!,
+      document.getElementById('el7')!,
+      document.getElementById('el8')!,
+    ];
+
+    divsOfCharts.forEach((el) => {
+      if (this.allColumns.find(col => col.def === el.id)!.hide) {
+        el.style.display = 'none';
+      }
+      else {
+        el.style.display = 'block';
+      }
+    } )
+  }
+
+  //fill columns data
+  fillColumns() {
+    const elems = this.tableServ.productElementsSelector(this.selectedProdName!);
+    for (let i = 1; i < 9; i++) {
+      if (elems[i - 1] != null && elems[i - 1] != undefined && elems[i - 1] != '') {
+        this.allColumns.find(col => col.def === 'el' + i)!.label = elems[i - 1];
+        this.allColumns.find(col => col.def === 'el' + i)!.hide = false;
+      }
+      else {
+        this.allColumns.find(col => col.def === 'el' + i)!.hide = true;
+      }
+    }
+  }
+
+  //change selected product
+  async selectProd(value: string) {
+    this.selectedProdName = value;
+    this.fillColumns();
+    this.hideColumns();
+    if (this.startDate != undefined && this.endDate != undefined) {
+      this.productMeasures = (await firstValueFrom(this.tableServ.getMeasures(this.selectedProdName!,
+        this.selectedProdName, this.startDate, this.endDate))).reverse();
+    }
+    else {
+      this.productMeasures = (await firstValueFrom(this.tableServ.getMeasures(this.selectedProdName!,
+        this.selectedProdName, undefined, undefined))).reverse();
+    }
+    this.toggleDivsVisibility();
+    this.fillCharts();
+    this.initCharts();
+  }
+
+  //change selected enterprise
+  async selectEnterprise(value: string) {
+    this.selectedEnterprise = value;
+
+    //получение списка продуктов выбранного предприятия
+    this.tableServ.productElements = await firstValueFrom(this.tableServ.getProducts(this.selectedEnterprise));
+
+    //выбор первого продукта из списка
+    this.selectedProdName = this.tableServ.productNameSelector()[0];
+
+    //получение списка измерений
+    this.tableServ.measures = (await firstValueFrom(this.tableServ.getMeasures(this.selectedEnterprise, this.selectedProdName, this.startDate!, this.endDate!))).reverse();
+    this.productMeasures = this.tableServ.measures;
+
+    this.fillColumns();
+    this.hideColumns();
+    this.toggleDivsVisibility();
+    this.fillCharts();
+    this.initCharts();
+  }
+
+  //событие ввода даты
+  async addEvent(type: string, event: MatDatepickerInputEvent<Date>) {
+
+    if (type === 'inputStartDate') {
+      this.startDate = event.value!;
+    }
+    else {
+      this.endDate = event.value!;
+    }
+    //получение списка измерений
+    this.tableServ.measures = (await firstValueFrom(this.tableServ.getMeasures(this.selectedEnterprise!, this.selectedProdName!, this.startDate!, this.endDate!))).reverse();
+    this.productMeasures = this.tableServ.measures;
+
+    this.toggleDivsVisibility();
+    this.fillCharts();
+    this.initCharts();
+    
+  }
+
+  // Show/Hide columns
+  hideColumns() {
+    this.displayedColumns = this.allColumns.filter(cd => !cd.hide).map(cd => cd.def)
+  }
+
+  //data for charts
+  TFccDps: any = []; el1Dps: any = []; el2Dps: any = []; el3Dps: any = [];
+  el4Dps: any = []; el5Dps: any = []; el6Dps: any = []; el7Dps: any = [];
+  el8Dps: any = [];
+
+  //ДАЛЕЕ ОПЦИИ ГРАФИКОВ
 
   //заполнение опций графиков
   public initCharts(): void {
@@ -176,7 +299,7 @@ export class TableMultipleHeader implements OnInit {
             download: false,
             zoom: false,
           }
-          
+
         },
         id: "TFcc",
         group: "social",
@@ -189,7 +312,7 @@ export class TableMultipleHeader implements OnInit {
         labels: {
           minWidth: 40
         },
-        
+
 
       }
     };
@@ -218,7 +341,7 @@ export class TableMultipleHeader implements OnInit {
       },
       colors: ["DarkRed"],
       yaxis: {
-        
+
         tickAmount: 2,
         labels: {
           minWidth: 40
@@ -392,7 +515,7 @@ export class TableMultipleHeader implements OnInit {
         }
       ],
       chart: {
-        
+
         toolbar: {
           show: false,
           tools: {
@@ -445,164 +568,43 @@ export class TableMultipleHeader implements OnInit {
     };
   }
 
-  ngOnInit(): void {
-    //получение списка предприятий для пользователя
-    this.tableServ.getEnterprisesNames(this.navService.userName.value)
-      .subscribe(async e => {
+  //Общие обции для графиков
+  public commonOptions: Partial<ChartOptions> = {
+    dataLabels: {
+      enabled: false
+    },
 
-        this.enterpriseNames = e.map(es => es.name);
-
-        //выбор первого предприятия из списка
-        this.selectedEnterprise = this.enterpriseNames[0];
-
-        //получение списка продуктов выбранного предприятия
-        this.tableServ.productElements =
-          await firstValueFrom(this.tableServ.getProducts(this.selectedEnterprise));
-
-        //получение списка измерений на выбранном предприятии
-        this.tableServ.measures =
-          await firstValueFrom(this.tableServ.getMeasures(this.selectedEnterprise));
-
-          //выбор первого продукта из списка
-          this.selectedProdName = this.tableServ.productNameSelector()[0];
-          this.fillColumns();
-          this.hideColumns();
-
-          this.productMeasures = this.tableServ.productSelector(this.selectedProdName);
-
-          this.loadedFlag = Promise.resolve(true);
-
-          this.toggleDivsVisibility();
-          this.fillCharts();
-          this.initCharts();
-          
-        
-      });
-    
-    
-    
-  }
-  //fill charts data
-  fillCharts() {
-    while (this.TFccDps.length != 0) {
-      this.TFccDps.shift();
-      this.el1Dps.shift();
-      this.el2Dps.shift();
-      this.el3Dps.shift();
-      this.el4Dps.shift();
-      this.el5Dps.shift();
-      this.el6Dps.shift();
-      this.el7Dps.shift();
-      this.el8Dps.shift();
-    }
-
-    for (var i = 0; i < this.productMeasures.length; i++) {
-      this.TFccDps[i] = { x: Number(Math.round(new Date(this.productMeasures[i].time).getTime())), y: Number(this.productMeasures[i].TFcc) };
-      this.el1Dps[i] = { x: Number(Math.round(new Date(this.productMeasures[i].time).getTime())), y: Number(this.productMeasures[i].el1) };
-      this.el2Dps[i] = { x: Number(Math.round(new Date(this.productMeasures[i].time).getTime())), y: Number(this.productMeasures[i].el2) };
-      this.el3Dps[i] = { x: Number(Math.round(new Date(this.productMeasures[i].time).getTime())), y: Number(this.productMeasures[i].el3) };
-      this.el4Dps[i] = { x: Number(Math.round(new Date(this.productMeasures[i].time).getTime())), y: Number(this.productMeasures[i].el4) };
-      this.el5Dps[i] = { x: Number(Math.round(new Date(this.productMeasures[i].time).getTime())), y: Number(this.productMeasures[i].el5) };
-      this.el6Dps[i] = { x: Number(Math.round(new Date(this.productMeasures[i].time).getTime())), y: Number(this.productMeasures[i].el6) };
-      this.el7Dps[i] = { x: Number(Math.round(new Date(this.productMeasures[i].time).getTime())), y: Number(this.productMeasures[i].el7) };
-      this.el8Dps[i] = { x: Number(Math.round(new Date(this.productMeasures[i].time).getTime())), y: Number(this.productMeasures[i].el8) };
-
-    }
-  }
-
-  //scroll disable/enable
-  toggleBodyScroll(lock: boolean) {
-    document.body.style.overflow = lock ? 'hidden' : '';
-  }
-
-  //show(hide) charts
-  toggleDivsVisibility() {
-    var divsOfCharts = [
-      document.getElementById('TFcc')!,
-      document.getElementById('el1')!,
-      document.getElementById('el2')!,
-      document.getElementById('el3')!,
-      document.getElementById('el4')!,
-      document.getElementById('el5')!,
-      document.getElementById('el6')!,
-      document.getElementById('el7')!,
-      document.getElementById('el8')!,
-    ];
-
-    divsOfCharts.forEach((el) => {
-      if (this.allColumns.find(col => col.def === el.id)!.hide) {
-        el.style.display = 'none';
+    stroke: {
+      curve: "smooth"
+    },
+    markers: {
+      size: 6,
+      hover: {
+        size: 10
       }
-      else {
-        el.style.display = 'block';
-      }
-    } )
-  }
+    },
+    tooltip: {
+      followCursor: false,
+      theme: "dark",
+      x: {
+        format: "dd-MM-yyyy HH:mm",
+        show: true
+      },
 
-  //fill columns data
-  fillColumns() {
-    const elems = this.tableServ.productElementsSelector(this.selectedProdName!);
-    for (let i = 1; i < 9; i++) {
-      if (elems[i - 1] != null && elems[i - 1] != undefined && elems[i - 1] != '') {
-        this.allColumns.find(col => col.def === 'el' + i)!.label = elems[i - 1];
-        this.allColumns.find(col => col.def === 'el' + i)!.hide = false;
-      }
-      else {
-        this.allColumns.find(col => col.def === 'el' + i)!.hide = true;
-      }
-    }
-  }
-
-  //change selected product
-  selectProd(value: string) {
-    this.selectedProdName = value;
-    this.fillColumns();
-    this.hideColumns();
-    if (this.startDate != undefined && this.endDate != undefined) {
-      this.productMeasures = this.tableServ.productSelectorWithDate(this.selectedProdName!, this.startDate, this.endDate);
-    }
-    else {
-      this.productMeasures = this.tableServ.productSelector(this.selectedProdName);
-    }
-    this.toggleDivsVisibility();
-    this.fillCharts();
-    this.initCharts();
-  }
-
-  //change selected enterprise
-  async selectEnterprise(value: string) {
-    this.selectedEnterprise = value;
-
-    //получение списка продуктов выбранного предприятия
-    this.tableServ.productElements = await firstValueFrom(this.tableServ.getProducts(this.selectedEnterprise));
-
-    //получение списка измерений на выбранном предприятии
-    this.tableServ.measures = await firstValueFrom(this.tableServ.getMeasures(this.selectedEnterprise));
-    
-    //выбор первого продукта из списка
-    this.selectedProdName = this.tableServ.productNameSelector()[0];
-
-    this.fillColumns();
-    this.hideColumns();
-    if (this.startDate != undefined && this.endDate != undefined) {
-      this.productMeasures = this.tableServ.productSelectorWithDate(this.selectedProdName!, this.startDate, this.endDate);
-    }
-    else {
-      this.productMeasures = this.tableServ.productSelector(this.selectedProdName);
-    }
-    this.toggleDivsVisibility();
-    this.fillCharts();
-    this.initCharts();
-  }
-
-  // Show/Hide columns
-  hideColumns() {
-    this.displayedColumns = this.allColumns.filter(cd => !cd.hide).map(cd => cd.def)
-  }
-
-  //data for CanvasJS
-  TFccDps: any = []; el1Dps: any = []; el2Dps: any = []; el3Dps: any = [];
-  el4Dps: any = []; el5Dps: any = []; el6Dps: any = []; el7Dps: any = [];
-  el8Dps: any = [];
-
+      marker: {
+        show: false
+      },
+    },
+    grid: {
+    },
+    xaxis: {
+      tooltip: {
+        enabled: false
+      },
+      labels: {
+        datetimeUTC: false
+      },
+      type: "datetime"
+    },
+  };
 }
