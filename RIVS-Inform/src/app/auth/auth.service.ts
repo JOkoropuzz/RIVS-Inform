@@ -15,7 +15,7 @@ export interface LoginResult {
 export class AuthService {
 
   httpClient = inject(HttpClient);
-  baseUrl = 'http://localhost:64262/api';
+  baseUrl = 'http://localhost:8081/api';
 
   login(data: any) {
     return this.httpClient.post<LoginResult>(`${this.baseUrl}/user/login`, data)
