@@ -4,19 +4,24 @@ import { inject } from '@angular/core';
 import { catchError, tap } from 'rxjs/operators';
 import { of } from 'rxjs';
 
+export interface LoginResult {
+  token?: string,
+  error?: number
+};
+
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
 
   httpClient = inject(HttpClient);
-  baseUrl = 'http://localhost:8081/api';
+  baseUrl = 'http://localhost:64262/api';
 
   login(data: any) {
-    return this.httpClient.post(`${this.baseUrl}/user/login`, data)
+    return this.httpClient.post<LoginResult>(`${this.baseUrl}/user/login`, data)
       .pipe(tap((result) => {
-        if (result) {
-          localStorage.setItem('authUser', JSON.stringify(result));
+        if (result.error != undefined && result.token != undefined) {
+          localStorage.setItem('authUser', JSON.stringify(result.token));
           localStorage.setItem('nickNameUser', data.login);
         }
       }),

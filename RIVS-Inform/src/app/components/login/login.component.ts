@@ -36,7 +36,7 @@ export class LoginComponent {
             this.navService.userName.next(this.loginForm.value.login!);
           }
           else {
-            switch (data) {
+            switch (data.error) {
               case 0: {
                 this.loginResultMessage = 'Отсутствует связь с сервером';
                 break;
