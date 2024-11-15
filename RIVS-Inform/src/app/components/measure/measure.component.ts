@@ -89,6 +89,10 @@ export class TableMultipleHeader implements OnInit {
   //string array of enterprise name
   enterpriseNames?: string[];
 
+  //string array for DOM
+  productsNames?: string[]
+
+  //выбранное предприятие
   selectedEnterprise?: string;
 
   productMeasures: Measure[]=[];
@@ -102,9 +106,8 @@ export class TableMultipleHeader implements OnInit {
     //получение списка предприятий, продуктов и последней даты измерений для пользователя
     this.tableServ.getAllData(this.navService.userName.value)
       .subscribe(async result => {
-        
-        let entres = result.enterpeises;
-        this.enterpriseNames = entres.map(es => es.name);
+        //получение имён предприятий
+        this.enterpriseNames = result.enterpeises.map(es => es.name);
 
         //выбор первого предприятия из списка
         this.selectedEnterprise = this.enterpriseNames[0];

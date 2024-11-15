@@ -55,8 +55,7 @@ export class TableService {
   //}
 
   getAllData(userLogin: string): Observable<FirstResp> {
-    let res = this.httpClient.post<FirstResp>(`${this.baseUrl}/allData`, { userLogin: `${userLogin}` });
-    return res;
+    return this.httpClient.post<FirstResp>(`${this.baseUrl}/allData`, { userLogin: `${userLogin}` });
   }
 
   getMeasures(enterpriseName: string, prodName: string, startDate?: Date, endDate?: Date) {
