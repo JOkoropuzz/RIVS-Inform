@@ -115,6 +115,7 @@ export class TableMultipleHeader implements OnInit {
         //заполнение списка продуктов для первого предприятия
         //сервер отправляет список продуктов для первого предприятия
         this.tableServ.productElements = result.products;
+        this.productsNames = this.tableServ.productElements.map(pe => pe.name);
 
         //заполнение datepicker
         this.startDate = new Date(result.lastDate[0]);
@@ -238,6 +239,7 @@ export class TableMultipleHeader implements OnInit {
 
     //получение списка продуктов выбранного предприятия
     this.tableServ.productElements = await firstValueFrom(this.tableServ.getProducts(this.selectedEnterprise));
+    this.productsNames = this.tableServ.productElements.map(pe => pe.name);
 
     //выбор первого продукта из списка
     this.selectedProdName = this.tableServ.productNameSelector()[0];
