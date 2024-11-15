@@ -104,7 +104,7 @@ export class TableMultipleHeader implements OnInit {
 
   ngOnInit(): void {
     //получение списка предприятий, продуктов и последней даты измерений для пользователя
-    this.tableServ.getAllData(this.navService.userName!.value)
+    this.tableServ.getAllData(this.navService.userName.value!)
       .subscribe(async result => {
         //получение имён предприятий
         this.enterpriseNames = result.enterpeises.map(es => es.name);

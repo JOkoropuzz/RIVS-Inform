@@ -12,13 +12,12 @@ export class AuthService {
   httpClient = inject(HttpClient);
   baseUrl = 'http://localhost:8081/api';
 
-  constructor() { }
-
   login(data: any) {
     return this.httpClient.post(`${this.baseUrl}/user/login`, data)
       .pipe(tap((result) => {
         if (result) {
           localStorage.setItem('authUser', JSON.stringify(result));
+          localStorage.setItem('nickNameUser', data.login);
         }
       }),
         catchError(error => {
@@ -30,9 +29,11 @@ export class AuthService {
 
   logout() {
     localStorage.removeItem('authUser');
+    localStorage.removeItem('nickNameUser');
   }
 
   isLoggedIn() {
-    return localStorage.getItem('authUser') !== null;
+    return (localStorage.getItem('authUser') !== null
+      && localStorage.getItem('nickNameUser') !== null);
   }
 }

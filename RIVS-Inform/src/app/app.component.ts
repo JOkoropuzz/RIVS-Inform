@@ -8,10 +8,8 @@ import { AuthService } from '../app/auth/auth.service';
 })
 export class AppComponent {
   title = 'RIVS-Inform';
-  isUserLogIn = false;
-
-  constructor(
-    public authService: AuthService
-  ) {
+  
+  constructor(public authService: AuthService) {
+    //this.authService.logout();
   }
 }
