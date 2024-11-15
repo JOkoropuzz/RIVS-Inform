@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { TableService } from '../../services/table.service';
 import { Measure } from '../../models/measure';
+import { Enterprise } from '../../models/enterprise';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { MatDatepickerInputEvent } from '@angular/material/datepicker';
 import { NavMenuService } from '../../services/nav-menu.service';
@@ -101,19 +102,20 @@ export class TableMultipleHeader implements OnInit {
     //получение списка предприятий, продуктов и последней даты измерений для пользователя
     this.tableServ.getAllData(this.navService.userName.value)
       .subscribe(async result => {
-
-        this.enterpriseNames = result[0].map(es => es.name);
+        
+        let entres = result.enterpeises;
+        this.enterpriseNames = entres.map(es => es.name);
 
         //выбор первого предприятия из списка
         this.selectedEnterprise = this.enterpriseNames[0];
 
         //заполнение списка продуктов для первого предприятия
         //сервер отправляет список продуктов для первого предприятия
-        this.tableServ.productElements = result[1];
+        this.tableServ.productElements = result.products;
 
         //заполнение datepicker
-        this.startDate = new Date(result[2]);
-        this.endDate = new Date(result[2]);
+        this.startDate = new Date(result.lastDate[0]);
+        this.endDate = new Date(result.lastDate[0]);
 
 
         //выбор первого продукта из списка

@@ -4,14 +4,19 @@ import { ProductElements } from '../models/productElements';
 import { Enterprise } from '../models/enterprise';
 import { HttpClient, HttpParams } from "@angular/common/http";
 import { catchError, firstValueFrom, map, Observable, of, tap } from "rxjs";
+import { formatDate } from '@angular/common';
 
-
+export interface FirstResp {
+  enterpeises: Enterprise[],
+  products: ProductElements[],
+  lastDate: string[]
+}
 
 @Injectable({ providedIn: 'root' })
 export class TableService {
 
   httpClient = inject(HttpClient);
-  baseUrl = 'http://192.268.15.245:8081/api';
+  baseUrl = 'http://localhost:64262/api';
   getMeasuresFlag = false;
   //enterprises: string[] = ['ООО «Новоангарский обогатительный комбинат»', 'АО «Лебединский горно-обогатительный комбинат»'];
 
@@ -49,8 +54,9 @@ export class TableService {
   //  return this.httpClient.post<Enterprise[]>(`${this.baseUrl}/enterprises`, { userLogin: `${userLogin}` });
   //}
 
-  getAllData(userLogin: string): Observable<[Enterprise[], ProductElements[], string]> {
-    return this.httpClient.post<[Enterprise[], ProductElements[], string]>(`${this.baseUrl}/allData`, { userLogin: `${userLogin}` });
+  getAllData(userLogin: string): Observable<FirstResp> {
+    let res = this.httpClient.post<FirstResp>(`${this.baseUrl}/allData`, { userLogin: `${userLogin}` });
+    return res;
   }
 
   getMeasures(enterpriseName: string, prodName: string, startDate?: Date, endDate?: Date) {
@@ -61,20 +67,20 @@ export class TableService {
       bodyStartDate = 'null'
     }
     else {
-      bodyStartDate = startDate;
+      bodyStartDate = formatDate(startDate, 'yyyy-dd-MM', 'en-US');
     }
     if (endDate == undefined) {
       bodyEndDate = 'null'
     }
     else {
-      bodyEndDate = endDate
+      bodyEndDate = formatDate(endDate, 'yyyy-dd-MM', 'en-US');
     }
     return this.httpClient.post<Measure[]>(`${this.baseUrl}/meas`,
       {
         enterpriseName: `${enterpriseName}`,
         prodName: `${prodName}`,
-        startDate: `${startDate}`,
-        endDate: `${endDate}` }); };
+        startDate: `${bodyStartDate}`,
+        endDate: `${bodyEndDate}` }); };
 
   getProducts(enterpriseName: string) {
     return this.httpClient.post<ProductElements[]>(`${this.baseUrl}/products`, { enterpriseName: `${enterpriseName}`});
@@ -123,4 +129,10 @@ export class TableService {
     return this.productElements!.map(pe => pe.name)
   }
 
+  dateToString(date: Date): string {
+  // get the year, month, date, hours, and minutes seprately and append to the string.
+    let dateString: string =
+      date.getFullYear() + "/" + date.getDate() + "/" + date.getMonth();
+  return dateString;
+}
 }
