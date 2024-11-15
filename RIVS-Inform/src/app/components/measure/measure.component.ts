@@ -48,7 +48,7 @@ export interface DisplayColumn {
   selector: 'app-measure',
   templateUrl: './measure.component.html',
   providers: [TableService, provideNativeDateAdapter()],
-  
+
 })
 
 export class TableMultipleHeader implements OnInit {
@@ -95,7 +95,7 @@ export class TableMultipleHeader implements OnInit {
   //выбранное предприятие
   selectedEnterprise?: string;
 
-  productMeasures: Measure[]=[];
+  productMeasures: Measure[] = [];
 
   //string array of columns name
   displayedColumns?: string[];
@@ -104,7 +104,7 @@ export class TableMultipleHeader implements OnInit {
 
   ngOnInit(): void {
     //получение списка предприятий, продуктов и последней даты измерений для пользователя
-    this.tableServ.getAllData(this.navService.userName.value)
+    this.tableServ.getAllData(this.navService.userName!.value)
       .subscribe(async result => {
         //получение имён предприятий
         this.enterpriseNames = result.enterpeises.map(es => es.name);
@@ -127,22 +127,23 @@ export class TableMultipleHeader implements OnInit {
 
         //получение списка измерений
         this.tableServ.measures =
-          (await firstValueFrom(this.tableServ.getMeasures(this.selectedEnterprise, this.selectedProdName, this.startDate, this.endDate))).reverse();
+          (await firstValueFrom(this.tableServ.
+            getMeasures(this.selectedEnterprise, this.selectedProdName, this.startDate, this.endDate))).reverse();
 
-          
-          this.fillColumns();
-          this.hideColumns();
 
-          this.productMeasures = this.tableServ.measures;
+        this.fillColumns();
+        this.hideColumns();
 
-          this.loadedFlag = Promise.resolve(true);
+        this.productMeasures = this.tableServ.measures;
 
-          this.toggleDivsVisibility();
-          this.fillCharts();
-          this.initCharts();
-          
+        this.loadedFlag = Promise.resolve(true);
+
+        this.toggleDivsVisibility();
+        this.fillCharts();
+        this.initCharts();
+
       });
-    
+
   }
   //fill charts data
   fillCharts() {
@@ -159,15 +160,42 @@ export class TableMultipleHeader implements OnInit {
     }
 
     for (var i = 0; i < this.productMeasures.length; i++) {
-      this.TFccDps[i] = { x: Number(Math.round(new Date(this.productMeasures[i].time).getTime())), y: Number(this.productMeasures[i].TFcc) };
-      this.el1Dps[i] = { x: Number(Math.round(new Date(this.productMeasures[i].time).getTime())), y: Number(this.productMeasures[i].el1) };
-      this.el2Dps[i] = { x: Number(Math.round(new Date(this.productMeasures[i].time).getTime())), y: Number(this.productMeasures[i].el2) };
-      this.el3Dps[i] = { x: Number(Math.round(new Date(this.productMeasures[i].time).getTime())), y: Number(this.productMeasures[i].el3) };
-      this.el4Dps[i] = { x: Number(Math.round(new Date(this.productMeasures[i].time).getTime())), y: Number(this.productMeasures[i].el4) };
-      this.el5Dps[i] = { x: Number(Math.round(new Date(this.productMeasures[i].time).getTime())), y: Number(this.productMeasures[i].el5) };
-      this.el6Dps[i] = { x: Number(Math.round(new Date(this.productMeasures[i].time).getTime())), y: Number(this.productMeasures[i].el6) };
-      this.el7Dps[i] = { x: Number(Math.round(new Date(this.productMeasures[i].time).getTime())), y: Number(this.productMeasures[i].el7) };
-      this.el8Dps[i] = { x: Number(Math.round(new Date(this.productMeasures[i].time).getTime())), y: Number(this.productMeasures[i].el8) };
+      this.TFccDps[i] = {
+        x: Number(Math.round(new Date(this.productMeasures[i].time).
+          getTime())), y: Number(this.productMeasures[i].TFcc)
+      };
+      this.el1Dps[i] = {
+        x: Number(Math.round(new Date(this.productMeasures[i].time).
+          getTime())), y: Number(this.productMeasures[i].el1)
+      };
+      this.el2Dps[i] = {
+        x: Number(Math.round(new Date(this.productMeasures[i].time).
+          getTime())), y: Number(this.productMeasures[i].el2)
+      };
+      this.el3Dps[i] = {
+        x: Number(Math.round(new Date(this.productMeasures[i].time).
+          getTime())), y: Number(this.productMeasures[i].el3)
+      };
+      this.el4Dps[i] = {
+        x: Number(Math.round(new Date(this.productMeasures[i].time).
+          getTime())), y: Number(this.productMeasures[i].el4)
+      };
+      this.el5Dps[i] = {
+        x: Number(Math.round(new Date(this.productMeasures[i].time).
+          getTime())), y: Number(this.productMeasures[i].el5)
+      };
+      this.el6Dps[i] = {
+        x: Number(Math.round(new Date(this.productMeasures[i].time).
+          getTime())), y: Number(this.productMeasures[i].el6)
+      };
+      this.el7Dps[i] = {
+        x: Number(Math.round(new Date(this.productMeasures[i].time).
+          getTime())), y: Number(this.productMeasures[i].el7)
+      };
+      this.el8Dps[i] = {
+        x: Number(Math.round(new Date(this.productMeasures[i].time).
+          getTime())), y: Number(this.productMeasures[i].el8)
+      };
 
     }
   }
@@ -198,7 +226,7 @@ export class TableMultipleHeader implements OnInit {
       else {
         el.style.display = 'block';
       }
-    } )
+    })
   }
 
   //fill columns data
@@ -245,7 +273,8 @@ export class TableMultipleHeader implements OnInit {
     this.selectedProdName = this.tableServ.productNameSelector()[0];
 
     //получение списка измерений
-    this.tableServ.measures = (await firstValueFrom(this.tableServ.getMeasures(this.selectedEnterprise, this.selectedProdName, this.startDate!, this.endDate!))).reverse();
+    this.tableServ.measures = (await firstValueFrom(this.tableServ.
+      getMeasures(this.selectedEnterprise, this.selectedProdName, this.startDate!, this.endDate!))).reverse();
     this.productMeasures = this.tableServ.measures;
 
     this.fillColumns();
@@ -271,7 +300,7 @@ export class TableMultipleHeader implements OnInit {
     this.toggleDivsVisibility();
     this.fillCharts();
     this.initCharts();
-    
+
   }
 
   // Show/Hide columns

@@ -23,8 +23,7 @@ export class NavMenuComponent {
 
   logout() {
     this.authService.logout();
-    this.navService.userName.next('');
-    this.navService.isUserLoggedIn.next(false);
+    this.navService.userName!.next('');
     this.router.navigate(['/login']);
   }
 

@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { NavMenuService } from '../app/services/nav-menu.service';
+import { AuthService } from '../app/auth/auth.service';
 
 @Component({
   selector: 'app-root',
@@ -11,8 +11,7 @@ export class AppComponent {
   isUserLogIn = false;
 
   constructor(
-    public navService: NavMenuService
+    public authService: AuthService
   ) {
-    this.navService.isUserLoggedIn.subscribe(value => this.isUserLogIn = value);
   }
 }
