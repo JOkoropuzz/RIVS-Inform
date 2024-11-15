@@ -1,7 +1,7 @@
 import { inject, Injectable } from "@angular/core";
 import { Measure } from '../models/measure';
 import { ProductElements } from '../models/productElements';
-import { Enterprise } from '../models/Enterprise';
+import { Enterprise } from '../models/enterprise';
 import { HttpClient, HttpParams } from "@angular/common/http";
 import { catchError, firstValueFrom, map, Observable, of, tap } from "rxjs";
 
