@@ -63,13 +63,13 @@ export class TableService {
     let bodyEndDate;
 
     if (startDate == undefined) {
-      bodyStartDate = 'null'
+      bodyStartDate = ''
     }
     else {
       bodyStartDate = formatDate(startDate, 'yyyy-dd-MM', 'en-US');
     }
     if (endDate == undefined) {
-      bodyEndDate = 'null'
+      bodyEndDate = ''
     }
     else {
       bodyEndDate = formatDate(endDate, 'yyyy-dd-MM', 'en-US');

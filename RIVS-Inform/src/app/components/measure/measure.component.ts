@@ -221,11 +221,11 @@ export class TableMultipleHeader implements OnInit {
     this.fillColumns();
     this.hideColumns();
     if (this.startDate != undefined && this.endDate != undefined) {
-      this.productMeasures = (await firstValueFrom(this.tableServ.getMeasures(this.selectedProdName!,
+      this.productMeasures = (await firstValueFrom(this.tableServ.getMeasures(this.selectedEnterprise!,
         this.selectedProdName, this.startDate, this.endDate))).reverse();
     }
     else {
-      this.productMeasures = (await firstValueFrom(this.tableServ.getMeasures(this.selectedProdName!,
+      this.productMeasures = (await firstValueFrom(this.tableServ.getMeasures(this.selectedEnterprise!,
         this.selectedProdName, undefined, undefined))).reverse();
     }
     this.toggleDivsVisibility();
