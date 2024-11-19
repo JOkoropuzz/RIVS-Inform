@@ -5,14 +5,14 @@
         <img src="images/favicon.png" alt="" height="32"
              width="32" data-view-component="true" class="rivs-logo">
       </div>
-      <a class="navbar-brand" [routerLink]="['/home']">RIVS-inform</a>
+      <a class="navbar-brand" [routerLink]="['/home']">ASAK-rivs</a>
       <div class="navbar-collapse collapse d-sm-inline-flex justify-content-begin"
            [ngClass]="{ show: isExpanded }">
         <ul class="navbar-nav flex-grow">
           <li class="nav-item"
               [routerLinkActive]="['link-active']"
               [routerLinkActiveOptions]="{ exact: true }">
-            <a class="nav-link text-dark" [routerLink]="['/measure']">Измерения</a>
+            <a class="nav-link text-dark" [routerLink]="['/measure']">Концентрации</a>
           </li>
           <!--<li class="nav-item"
           [routerLinkActive]="['link-active']"
@@ -22,6 +22,7 @@
         </ul>
       </div>
       <div class="navbar-brand">
+        <a class="navbar-brand">Аналитический центр</a>
         <button height="32" width="32" class="color-bg-transparent Button" aria-label="Open user navigation menu" type="button" data-view-component="true"
                 aria-expanded="false" aria-haspopup="true"
                 mat-icon-button [matMenuTriggerFor]="menu">
