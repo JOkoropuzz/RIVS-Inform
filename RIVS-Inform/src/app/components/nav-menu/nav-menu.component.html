@@ -1,43 +1,46 @@
 <header>
   <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
     <div class="container">
-      <div class="color-bg-transparent">
+      <div class="navbar-brand">
         <img src="images/favicon.png" alt="" height="32"
-             width="32" data-view-component="true" class="rivs-logo">
+             width="32" data-view-component="true"
+             class="rivs-logo">
+        <a class="navbar-brand color-bg-transparent" [routerLink]="['/home']">ASAK-rivs</a>
       </div>
-      <a class="navbar-brand" [routerLink]="['/home']">ASAK-rivs</a>
-      <div class="navbar-collapse collapse d-sm-inline-flex justify-content-begin"
-           [ngClass]="{ show: isExpanded }">
-        <ul class="navbar-nav flex-grow">
-          <li class="nav-item"
-              [routerLinkActive]="['link-active']"
-              [routerLinkActiveOptions]="{ exact: true }">
-            <a class="nav-link text-dark" [routerLink]="['/measure']">Концентрации</a>
-          </li>
-          <!--<li class="nav-item"
+      <div class="collapse navbar-collapse"
+       [ngClass]="{ show: isExpanded }">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item active"
           [routerLinkActive]="['link-active']"
           [routerLinkActiveOptions]="{ exact: true }">
-        <a class="nav-link text-dark" [routerLink]="['/log']">Лог</a>
-      </li>-->
+            <a class="nav-link text-dark" [routerLink]="['/measure']">Концентрации</a>
+          </li>
+      <!--<li class="nav-item"
+      [routerLinkActive]="['link-active']"
+      [routerLinkActiveOptions]="{ exact: true }">
+    <a class="nav-link text-dark" [routerLink]="['/log']">Лог</a>
+  </li>-->
         </ul>
       </div>
-      <div class="navbar-brand">
-        <a class="navbar-brand">Аналитический центр</a>
-        <button height="32" width="32" class="color-bg-transparent Button" aria-label="Open user navigation menu" type="button" data-view-component="true"
-                aria-expanded="false" aria-haspopup="true"
-                mat-icon-button [matMenuTriggerFor]="menu">
-          <img src="images/icon-user-profile.png" alt="" size="32" height="32"
-               width="32" data-view-component="true" class="avatar circle">
+    
+    <div class="navbar-brand">
+      <span class="position-absolute end-0 translate-middle">Аналитический центр</span>
+      <button height="32" width="32" class="color-bg-transparent Button position-absolute end-0 translate-middle"
+              aria-label="Open user navigation menu" type="button" data-view-component="true"
+              aria-expanded="false" aria-haspopup="true"
+              mat-icon-button [matMenuTriggerFor]="menu">
+        <img src="images/icon-user-profile.png" alt="" size="32" height="32"
+             width="32" data-view-component="true" class="avatar-circle">
+      </button>
+      <mat-menu #menu="matMenu">
+        <div class="user-name">
+          <p>{{navService.userName.value!}}</p>
+        </div>
+        <button (click)="logout()" mat-menu-item>
+          <span>Выход</span>
         </button>
-        <mat-menu #menu="matMenu">
-          <div class="user-name">
-            <p>{{navService.userName.value!}}</p>
-          </div>
-          <button (click)="logout()" mat-menu-item>
-            <span>Выход</span>
-          </button>
-        </mat-menu>
-      </div>
+      </mat-menu>
+    </div>
     </div>
   </nav>
 </header>

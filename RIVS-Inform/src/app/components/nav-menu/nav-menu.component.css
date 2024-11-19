@@ -1,6 +1,5 @@
 a.navbar-brand {
   white-space: normal;
-  text-align: center;
   word-break: break-all;
 }
 
@@ -17,13 +16,17 @@ a.navbar-brand {
 
 .user-name {
   color: black;
-  font-size: 12px;
+  font-size: 14px;
   cursor: text;
   text-align: center;
 }
+.avatar-circle{
+    margin-right: 8px;
+}
 
 .rivs-logo {
-  margin-right: 5px;
+  margin-bottom: 6px;
+  margin-right: 10px;
 }
 
 .color-bg-transparent {
