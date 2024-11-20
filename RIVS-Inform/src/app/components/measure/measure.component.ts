@@ -72,7 +72,7 @@ export class TableMultipleHeader implements OnInit {
   //Шаблок колонок таблицы
   allColumns: DisplayColumn[] = [
     { def: 'time', label: 'Время', hide: false },
-    { def: 'TFcc', label: 'TFcc', hide: false },
+    { def: 'TFcc', label: 'TF', hide: false },
     { def: 'el1', label: 'el1', hide: false },
     { def: 'el2', label: 'el2', hide: false },
     { def: 'el3', label: 'el3', hide: false },
@@ -248,14 +248,11 @@ export class TableMultipleHeader implements OnInit {
     this.selectedProdName = value;
     this.fillColumns();
     this.hideColumns();
-    if (this.startDate != undefined && this.endDate != undefined) {
-      this.productMeasures = (await firstValueFrom(this.tableServ.getMeasures(this.selectedEnterprise!,
-        this.selectedProdName, this.startDate, this.endDate))).reverse();
-    }
-    else {
-      this.productMeasures = (await firstValueFrom(this.tableServ.getMeasures(this.selectedEnterprise!,
-        this.selectedProdName, undefined, undefined))).reverse();
-    }
+
+    this.tableServ.measures = (await firstValueFrom(this.tableServ.getMeasures(this.selectedEnterprise!,
+      this.selectedProdName, this.startDate, this.endDate))).reverse();
+    this.productMeasures = this.tableServ.measures;
+    
     this.toggleDivsVisibility();
     this.fillCharts();
     this.initCharts();
