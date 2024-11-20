@@ -15,7 +15,6 @@ import { NavMenuService } from '../../services/nav-menu.service';
 export class LoginComponent {
   authService = inject(AuthService);
   router = inject(Router);
-  public isReadonly: boolean = false;
   constructor(
     public navService: NavMenuService
   ) { }
@@ -27,14 +26,6 @@ export class LoginComponent {
     password: new FormControl('', [Validators.required])
   });
 
-  ngOnInit(): void {
-    if (this.navService.userName == null || this.navService.userName == undefined) {
-      this.isReadonly = true;
-    }
-    else {
-      this.isReadonly = false;
-    }
-  };
 
   onSubmit() {
     if (this.loginForm.valid) {
@@ -47,7 +38,7 @@ export class LoginComponent {
           else {
             switch (data.error) {
               case 0: {
-                this.loginResultMessage = 'Отсутствует связь с сервером';
+                this.loginResultMessage = 'что-то пошло не так';
                 break;
               }
               case 400: {
@@ -55,7 +46,7 @@ export class LoginComponent {
                 break;
               }
               default: {
-                this.loginResultMessage = 'Что-то пошло не так' 
+                this.loginResultMessage = 'Отсутствует связь с сервером'; 
                 break;
               } 
             }

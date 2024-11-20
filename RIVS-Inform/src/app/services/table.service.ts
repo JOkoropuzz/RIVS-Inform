@@ -16,7 +16,7 @@ export interface FirstResp {
 export class TableService {
 
   httpClient = inject(HttpClient);
-  baseUrl = 'http://192.168.15.245/api';
+  baseUrl = 'http://192.168.15.245:8081/api';
   getMeasuresFlag = false;
   //enterprises: string[] = ['ООО «Новоангарский обогатительный комбинат»', 'АО «Лебединский горно-обогатительный комбинат»'];
 
