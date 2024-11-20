@@ -31,7 +31,7 @@
     </mat-form-field>
   </div>
 </div>
-<div (mouseenter) ="toggleBodyScroll(true)"  (mouseleave) ="toggleBodyScroll(false)">
+<div (click) ="toggleBodyScroll(true)" (touchend)="toggleBodyScroll(false)" (mouseleave) ="toggleBodyScroll(false)">
   <div id="TFcc">
     <apx-chart *ngIf="loadedFlag | async" [series]="TFccoptions.series"
                [chart]="TFccoptions.chart"
