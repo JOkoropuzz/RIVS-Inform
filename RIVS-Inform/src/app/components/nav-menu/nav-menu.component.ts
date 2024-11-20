@@ -10,7 +10,7 @@ import { NavMenuService } from '../../services/nav-menu.service';
 })
 export class NavMenuComponent {
   isExpanded = false;
-
+  public isCollapsed: boolean = true;
   authService = inject(AuthService);
   router = inject(Router);
 
