@@ -3,9 +3,13 @@
   <div class="card-title">
     <h1>Авторизация</h1>
   </div>
-  <form class="form-group" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-    <input [readonly]="authService.isLoggedIn()" name="login" type="text" formControlName="login" placeholder="Login">
-    <input [readonly]="authService.isLoggedIn()" type="password" formControlName="password" placeholder="Password">
+  <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+    <div data-mdb-input-init class="form-outline mb-4">
+      <input class="form-control" [readonly]="authService.isLoggedIn()" name="login" type="text" formControlName="login" placeholder="Login">
+    </div>
+    <div data-mdb-input-init class="form-outline mb-4">
+      <input class="form-control" [readonly]="authService.isLoggedIn()" type="password" formControlName="password" placeholder="Password">
+    </div>
     <p *ngIf="!authService.isLoggedIn()" class="login-result-message">{{loginResultMessage}}</p>
     <p *ngIf="authService.isLoggedIn()" class="login-result-message">Вы уже авторизованы!</p>
     <button>Войти</button>
