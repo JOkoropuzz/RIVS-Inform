@@ -15,6 +15,7 @@ import { NavMenuService } from '../../services/nav-menu.service';
 export class LoginComponent {
   authService = inject(AuthService);
   router = inject(Router);
+  public isReadonly: boolean = false;
   constructor(
     public navService: NavMenuService
   ) { }
@@ -26,6 +27,14 @@ export class LoginComponent {
     password: new FormControl('', [Validators.required])
   });
 
+  ngOnInit(): void {
+    if (this.navService.userName == null || this.navService.userName == undefined) {
+      this.isReadonly = true;
+    }
+    else {
+      this.isReadonly = false;
+    }
+  };
 
   onSubmit() {
     if (this.loginForm.valid) {
