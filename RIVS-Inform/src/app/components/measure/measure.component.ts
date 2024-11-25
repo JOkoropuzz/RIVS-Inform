@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { TableService } from '../../services/table.service';
+import { TableService } from '../../services/data.service';
 import { Measure } from '../../models/measure';
-import { Enterprise } from '../../models/enterprise';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { MatDatepickerInputEvent } from '@angular/material/datepicker';
 import { NavMenuService } from '../../services/nav-menu.service';
+import { MatIconModule } from '@angular/material/icon';
+
 
 import {
   ApexAxisChartSeries,
@@ -243,9 +244,27 @@ export class TableMultipleHeader implements OnInit {
     }
   }
 
+  //обновление базы данных
+  async updateDb() {
+
+    var result = await firstValueFrom(this.tableServ.updateDb(new Date));
+
+    this.fillColumns();
+    this.hideColumns();
+
+    this.tableServ.measures = (await firstValueFrom(this.tableServ.getMeasures(this.selectedEnterprise!,
+      this.selectedProdName!, this.startDate, this.endDate))).reverse();
+    this.productMeasures = this.tableServ.measures;
+
+    this.toggleDivsVisibility();
+    this.fillCharts();
+    this.initCharts();
+  }
+
   //change selected product
   async selectProd(value: string) {
     this.selectedProdName = value;
+
     this.fillColumns();
     this.hideColumns();
 

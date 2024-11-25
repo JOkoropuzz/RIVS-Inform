@@ -1,5 +1,5 @@
 <div class="row">
-  <div *ngIf="loadedFlag | async" class="col-md-4">
+  <div *ngIf="loadedFlag | async" class="col-md-3">
     <mat-form-field>
       <mat-label>Продукт</mat-label>
       <mat-select [(ngModel)]="selectedProdName" (selectionChange)="selectProd($event.value)">
@@ -30,8 +30,13 @@
       <mat-date-range-picker #picker></mat-date-range-picker>
     </mat-form-field>
   </div>
+  <div *ngIf="loadedFlag | async" class="col-md-1">
+    <button mat-fab aria-label="обновление данных" (click)="updateDb()">
+      <mat-icon>refresh</mat-icon>
+    </button>
+  </div>
 </div>
-<div (click) ="toggleBodyScroll(true)" (touchmove)="toggleBodyScroll(false)" (touchend)="toggleBodyScroll(false)" (mouseleave) ="toggleBodyScroll(false)">
+<div (click)="toggleBodyScroll(true)" (touchmove)="toggleBodyScroll(false)" (touchend)="toggleBodyScroll(false)" (mouseleave)="toggleBodyScroll(false)">
   <div id="TFcc">
     <apx-chart *ngIf="loadedFlag | async" [series]="TFccoptions.series"
                [chart]="TFccoptions.chart"
@@ -44,7 +49,7 @@
                [grid]="commonOptions.grid"
                [xaxis]="commonOptions.xaxis"
                [tooltip]="commonOptions.tooltip">
-            
+
     </apx-chart>
   </div>
   <div id="el1">
@@ -169,7 +174,11 @@
     </ng-container>-->
 
     <ng-container matColumnDef="time">
-      <th mat-header-cell *matHeaderCellDef> <p>{{allColumns[0].label}}</p> </th>
+      <th mat-header-cell *matHeaderCellDef> <p>{{allColumns[0].label}}</p>ns
+      
+      </th>
+      ns
+      
       <td mat-cell *matCellDef="let resultProducts"> {{resultProducts.time | date:'dd/MM/yyyy HH:mm'}} </td>
     </ng-container>
 

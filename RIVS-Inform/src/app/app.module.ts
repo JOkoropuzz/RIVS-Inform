@@ -6,7 +6,7 @@ import { AppComponent } from './app.component';
 import { NavMenuComponent } from './components/nav-menu/nav-menu.component';
 import { HomeComponent } from './components/home/home.component';
 import { TableMultipleHeader } from './components/measure/measure.component';
-import { TableService } from './services/table.service';
+import { TableService } from './services/data.service';
 
 import { MatMenuModule } from '@angular/material/menu';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
@@ -23,6 +23,9 @@ import { MAT_DATE_LOCALE } from '@angular/material/core';
 import { LoginComponent } from './components/login/login.component';
 import { provideHttpClient } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
+import { MatIconModule } from '@angular/material/icon';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatButtonModule } from '@angular/material/button';
 
 @NgModule({
   declarations: [
@@ -44,6 +47,9 @@ import { RouterModule } from '@angular/router';
     FormsModule,
     MatTableModule,
     MatSelectModule,
+    MatButtonModule,
+    MatDividerModule,
+    MatIconModule,
     MatMenuModule,
     NgbModule,
   ],
