@@ -246,9 +246,8 @@ export class TableMultipleHeader implements OnInit {
 
   //обновление базы данных
   async updateDb() {
-
-    var result = await firstValueFrom(this.tableServ.updateDb(new Date));
-    if (result.dateFrom == undefined || result.dateFrom == new Date(0)) {
+    var result = await firstValueFrom(this.tableServ.updateDb(''));
+    if (result.dateFrom == undefined || new Date(result.dateFrom).getFullYear() == 0 ) {
       alert('Ошибка синхронизации');
     }
     else {

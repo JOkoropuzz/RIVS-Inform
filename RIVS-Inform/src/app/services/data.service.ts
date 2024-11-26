@@ -68,10 +68,10 @@ export class TableService {
   };
 
   //запрос синхронизации измерений между SQLSERVER и MariaDb
-  updateDb(fromDate: Date) {
+  updateDb(fromDate: string) {
     let bodyDate;
-    if (fromDate == undefined) {
-      bodyDate = ''
+    if (fromDate == undefined || fromDate == '') {
+      bodyDate = formatDate(0, 'yyyy-dd-MM', 'en-US')
     }
     else {
       bodyDate = formatDate(fromDate, 'yyyy-dd-MM', 'en-US');
