@@ -10,6 +10,5 @@ export class AppComponent {
   title = 'RIVS-Inform';
   
   constructor(public authService: AuthService) {
-    //this.authService.logout();
   }
 }

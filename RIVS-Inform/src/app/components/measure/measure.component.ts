@@ -1,10 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { TableService } from '../../services/data.service';
 import { Measure } from '../../models/measure';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { MatDatepickerInputEvent } from '@angular/material/datepicker';
 import { NavMenuService } from '../../services/nav-menu.service';
-import { MatIconModule } from '@angular/material/icon';
+import { MatIconModule, MatIconRegistry } from '@angular/material/icon';
 
 
 import {
@@ -21,6 +21,9 @@ import {
   ApexGrid
 } from "ng-apexcharts";
 import { firstValueFrom } from 'rxjs';
+import { DomSanitizer } from '@angular/platform-browser';
+
+const REFRESH_ICON = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#5f6368"><path d="M480-160q-134 0-227-93t-93-227q0-134 93-227t227-93q69 0 132 28.5T720-690v-110h80v280H520v-80h168q-32-56-87.5-88T480-720q-100 0-170 70t-70 170q0 100 70 170t170 70q77 0 139-44t87-116h84q-28 106-114 173t-196 67Z"/></svg>`;
 
 
 export type ChartOptions = {
@@ -101,7 +104,15 @@ export class TableMultipleHeader implements OnInit {
   //string array of columns name
   displayedColumns?: string[];
 
-  constructor(public tableServ: TableService, public navService: NavMenuService) { }
+  constructor(public tableServ: TableService, public navService: NavMenuService) {
+    const iconRegistry = inject(MatIconRegistry);
+    const sanitizer = inject(DomSanitizer);
+
+    // Note that we provide the icon here as a string literal here due to a limitation in
+    // Stackblitz. If you want to provide the icon from a URL, you can use:
+    // `iconRegistry.addSvgIcon('thumbs-up', sanitizer.bypassSecurityTrustResourceUrl('icon.svg'));`
+    iconRegistry.addSvgIconLiteral('refresh', sanitizer.bypassSecurityTrustHtml(REFRESH_ICON));
+}
 
   ngOnInit(): void {
     //получение списка предприятий, продуктов и последней даты измерений для пользователя
