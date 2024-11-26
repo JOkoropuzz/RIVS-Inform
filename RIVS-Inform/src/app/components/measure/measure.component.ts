@@ -248,7 +248,18 @@ export class TableMultipleHeader implements OnInit {
   async updateDb() {
 
     var result = await firstValueFrom(this.tableServ.updateDb(new Date));
-
+    if (result.dateFrom == undefined || result.dateFrom == new Date(0)) {
+      alert('Ошибка синхронизации');
+    }
+    else {
+      if (result.newMeasuresCount == 0) {
+        alert('Новых измерений не найдено');
+      }
+      else {
+        alert('Успешная синхронизация. Добавлено: ' + result.addRowsCount + ' измерений');
+      }
+    }
+    
     this.fillColumns();
     this.hideColumns();
 
