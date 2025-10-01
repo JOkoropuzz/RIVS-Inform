@@ -23,7 +23,7 @@ export interface SynchroResult {
 export class TableService {
 
   httpClient = inject(HttpClient);
-  baseUrl = 'http://localhost:6070/api';
+  baseUrl = '/api';
   getMeasuresFlag = false;
   
 
