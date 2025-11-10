@@ -1,5 +1,5 @@
 export interface Measure {
-  name: string;
+  productId: number;
   time: Date;
   TFcc: number;
   el1?: number;
