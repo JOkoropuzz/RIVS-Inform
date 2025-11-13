@@ -21,19 +21,19 @@ export interface SynchronizationResult {
 @Injectable({ providedIn: 'root' })
 export class DataService {
 
-  private enterprises: Enterprise[] | null = null;
-  private readonly enterprisesCacheKey = 'enterprises-cache'; 
+  /*private enterprises: Enterprise[] | null = null;*/
+  /*private readonly enterprisesCacheKey = 'enterprises-cache'; */
 
-  private products: ProductElements[] | null = null;
-  private readonly productsCacheKey = 'products-cache';
+  //private products: ProductElements[] | null = null;
+  //private readonly productsCacheKey = 'products-cache';
 
   httpClient = inject(HttpClient);
-  baseUrl = '/api';
+  baseUrl = 'http://localhost:6070/api';
   getMeasuresFlag = false;
   
 
   //productElements?: ProductElements[];
-  measures?: Measure[];
+  /*measures?: Measure[];*/
 
   //Запрос данных для заполнения интерфейса
   //getAllData(userLogin: string): Observable<FirstResp> {
@@ -41,51 +41,51 @@ export class DataService {
   //}
 
   getEnterprises(): Observable<Enterprise[]> {
-    if (this.enterprises) {
-      return of(this.enterprises);
-    }
+    //if (this.enterprises) {
+    //  return of(this.enterprises);
+    //}
     
-    const cached = localStorage.getItem(this.enterprisesCacheKey);
-    if (cached) {
-      try {
-        const parsed = JSON.parse(cached);
-        this.enterprises = Array.isArray(parsed) ? parsed as Enterprise[] : [];
-        return of(this.enterprises);
-      } catch {
-        this.enterprises = [];
-      }
-    }
+    //const cached = localStorage.getItem(this.enterprisesCacheKey);
+    //if (cached) {
+    //  try {
+    //    const parsed = JSON.parse(cached);
+    //    this.enterprises = Array.isArray(parsed) ? parsed as Enterprise[] : [];
+    //    return of(this.enterprises);
+    //  } catch {
+    //    this.enterprises = [];
+    //  }
+    //}
     
-    return this.httpClient.get<Enterprise[]>(`${this.baseUrl}/enterprises`).pipe(
-      tap(data => {
-        this.enterprises = data;
-        localStorage.setItem(this.enterprisesCacheKey, JSON.stringify(data));
-      })
-    );
+    return this.httpClient.get<Enterprise[]>(`${this.baseUrl}/newenterprise/all`)//.pipe(
+      //tap(data => {
+        /*this.enterprises = data;*/
+        //localStorage.setItem(this.enterprisesCacheKey, JSON.stringify(data));
+      //})
+    //);
   }
 
   getProducts(enterpriseId: number): Observable<ProductElements[]> {
-    if (!this.products) {
-      const cached = localStorage.getItem(this.productsCacheKey);
-      if (cached) {
-        try {
-          const parsed = JSON.parse(cached);
-          this.products = Array.isArray(parsed) ? parsed as ProductElements[] : [];
-        }
-        catch {
-          this.clearCache();
-        }
-      }
-      else {
-        this.httpClient.get<ProductElements[]>(`${this.baseUrl}/products`).pipe(
-          tap(data => {
-            this.products = data;
-            localStorage.setItem(this.productsCacheKey, JSON.stringify(data));
-          })
-        );
-      }
-    }
-    return of(this.products?.filter(product => product.enterpriseId === enterpriseId) ?? []);
+    //if (!this.products) {
+    //  const cached = localStorage.getItem(this.productsCacheKey);
+    //  if (cached) {
+    //    try {
+    //      const parsed = JSON.parse(cached);
+    //      this.products = Array.isArray(parsed) ? parsed as ProductElements[] : [];
+    //    }
+    //    catch {
+    //      this.clearCache();
+    //    }
+    //  }
+    //  else {
+        return this.httpClient.get<ProductElements[]>(`${this.baseUrl}/products`)//.pipe(
+          //tap(data => {
+          //  this.products = data;
+          //  localStorage.setItem(this.productsCacheKey, JSON.stringify(data));
+          //})
+        //);
+    //  }
+    //}
+    /*return of(this.products?.filter(product => product.enterpriseId === enterpriseId) ?? []);*/
   }
   
   getLastDate(enterpriseId: number): Observable<Date> {
@@ -94,13 +94,13 @@ export class DataService {
       .pipe(map(res => res.lastDate));
   }
 
-  clearCache() {
-    this.enterprises = null;
-    localStorage.removeItem(this.enterprisesCacheKey);
+  //clearCache() {
+  //  this.enterprises = null;
+  //  localStorage.removeItem(this.enterprisesCacheKey);
 
-    this.products = null;
-    localStorage.removeItem(this.productsCacheKey);
-  }
+  //  this.products = null;
+  //  localStorage.removeItem(this.productsCacheKey);
+  //}
 
   //Запрос измерений
   getMeasures(prodId: number, startDate?: Date, endDate?: Date): Observable<Measure[]>{

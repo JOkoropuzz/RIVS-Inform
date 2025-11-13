@@ -1,6 +1,6 @@
 export interface ProductElements {
   enterpriseId: number;
-  productId: number;
+  id: number;
   name: string;
   el1?: string;
   el2?: string;

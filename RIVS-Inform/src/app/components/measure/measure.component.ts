@@ -71,8 +71,8 @@ export class TableMultipleHeader implements OnInit {
 
   measures$: Observable<Measure[]>;
 
-  private selectedEnterpriseSubject = new BehaviorSubject<number | null>(null);
-  private selectedProductSubject = new BehaviorSubject<number | null>(null);
+  selectedEnterpriseSubject = new BehaviorSubject<number | null>(null);
+  selectedProductSubject = new BehaviorSubject<number | null>(null);
 
   startDate: Observable<Date> = of(new Date());
   endDate: Observable<Date> = of(new Date());
@@ -128,15 +128,26 @@ export class TableMultipleHeader implements OnInit {
     this.products$ = this.selectedEnterpriseSubject.pipe(
       switchMap(enterpriseId => enterpriseId !== null
         ? this.dataService.getProducts(enterpriseId)
-        : [] // пустой массив, если предприятие не выбрано
+        : of([]) // пустой массив, если предприятие не выбрано
       )
     );
 
-    this.measures$ = this.selectedProductSubject.pipe(
-      switchMap(productId => productId !== null
-        ? this.dataService.getMeasures(productId)
-        : [] // пустой массив, если продукт не выбран
-      )
+    //this.measures$ = this.selectedProductSubject.pipe(
+    //  switchMap(productId => productId !== null
+    //    ? this.dataService.getMeasures(productId)
+    //    : of([])// пустой массив, если продукт не выбран
+    //  )
+    //);
+
+    this.measures$ = combineLatest([
+      this.selectedProductSubject,
+      this.startDate, this.endDate
+    ]).pipe(
+      switchMap(([productId, startDate, endDate]) => {
+        return productId !== null ?
+          this.dataService.getMeasures(productId, startDate, endDate)
+            : of([])
+      })
     );
 
     this.startDate = this.selectedEnterpriseSubject.pipe(
@@ -144,6 +155,16 @@ export class TableMultipleHeader implements OnInit {
         ? this.dataService.getLastDate(enterpriseId)
         : of(new Date()) // текушая дата, если предприятие не выбрано
       )
+    );
+
+    this.measures$.subscribe(mes =>
+    {
+      this.fillColumns();
+      this.hideColumns();
+      this.toggleDivsVisibility();
+      this.fillCharts(mes);
+      this.initCharts();
+    }
     );
 }
 
@@ -201,7 +222,7 @@ export class TableMultipleHeader implements OnInit {
     // Подписываемся на изменения выбранного продукта
     combineLatest([this.products$, this.selectedProductSubject]).subscribe(
       ([products, selectedId]) => {
-        this.selectedProduct = products.find(p => p.productId === selectedId);
+        this.selectedProduct = products.find(p => p.id === selectedId);
       }
     );
   }
@@ -215,11 +236,11 @@ export class TableMultipleHeader implements OnInit {
   onProductChange(productId: string) {
     this.selectedProductId = +productId;
     this.selectedProductSubject.next(this.selectedProductId);
-    this.fillColumns();
-    this.hideColumns();
-    this.toggleDivsVisibility();
-    this.fillCharts();
-    this.initCharts();
+    //this.fillColumns();
+    //this.hideColumns();
+    //this.toggleDivsVisibility();
+    ///*this.fillCharts();*/
+    //this.initCharts();
   }
 
   //fill charts data
@@ -294,24 +315,25 @@ export class TableMultipleHeader implements OnInit {
   //show(hide) charts
   toggleDivsVisibility() {
     var divsOfCharts = [
-      document.getElementById('TFcc')!,
-      document.getElementById('el1')!,
-      document.getElementById('el2')!,
-      document.getElementById('el3')!,
-      document.getElementById('el4')!,
-      document.getElementById('el5')!,
-      document.getElementById('el6')!,
-      document.getElementById('el7')!,
-      document.getElementById('el8')!,
+      document.getElementById('TFcc'),
+      document.getElementById('el1'),
+      document.getElementById('el2'),
+      document.getElementById('el3'),
+      document.getElementById('el4'),
+      document.getElementById('el5'),
+      document.getElementById('el6'),
+      document.getElementById('el7'),
+      document.getElementById('el8'),
     ];
-
     divsOfCharts.forEach((el) => {
-      if (this.allColumns.find(col => col.def === el.id)!.hide) {
-        el.style.display = 'none';
+      if (el)
+      {
+        const column = this.allColumns.find(col => col.def === el.id);
+        if (column) {
+          el.style.display = column.hide ? 'none' : 'block';
+        }
       }
-      else {
-        el.style.display = 'block';
-      }
+      
     })
   }
 
@@ -416,18 +438,18 @@ export class TableMultipleHeader implements OnInit {
   async addEvent(type: string, event: MatDatepickerInputEvent<Date>) {
 
     if (type === 'inputStartDate') {
-      this.startDate = event.value!;
+      this.startDate = of(event.value ?? new Date());
     }
     else {
-      this.endDate = event.value!;
+      this.endDate = of(event.value ?? new Date());
     }
     //получение списка измерений
-    this.tableServ.measures = (await firstValueFrom(this.tableServ.getMeasures(this.selectedEnterprise!, this.selectedProdName!, this.startDate!, this.endDate!))).reverse();
-    this.productMeasures = this.tableServ.measures;
+    /*this.dataService.measures = (await firstValueFrom(this.tableServ.getMeasures(this.selectedEnterprise!, this.selectedProdName!, this.startDate!, this.endDate!))).reverse();*/
+    /*this.productMeasures = this.tableServ.measures;*/
 
-    this.toggleDivsVisibility();
-    this.fillCharts();
-    this.initCharts();
+    /*this.toggleDivsVisibility();*/
+    /*this.fillCharts();*/
+    /*this.initCharts();*/
 
   }
 
