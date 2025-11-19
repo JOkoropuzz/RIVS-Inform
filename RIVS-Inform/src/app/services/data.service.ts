@@ -77,7 +77,8 @@ export class DataService {
     //    }
     //  }
     //  else {
-        return this.httpClient.get<ProductElements[]>(`${this.baseUrl}/products`)//.pipe(
+    return this.httpClient.get<ProductElements[]>(`${this.baseUrl}/newproduct/allByEnterprise`,
+      { params: { enterpriseId: `${enterpriseId}` } })//.pipe(
           //tap(data => {
           //  this.products = data;
           //  localStorage.setItem(this.productsCacheKey, JSON.stringify(data));

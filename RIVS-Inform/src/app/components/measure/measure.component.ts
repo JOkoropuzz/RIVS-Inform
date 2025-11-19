@@ -63,8 +63,8 @@ export interface DisplayColumn {
 export class TableMultipleHeader implements OnInit {
 
   products$: Observable<ProductElements[]>;
-  selectedProduct: ProductElements | undefined;
   selectedProductId: number | null = null;
+  selectedProductName: string | undefined = undefined;
 
   enterprises$: Observable<Enterprise[]>;
   selectedEnterpriseId: number | null = null;
@@ -159,15 +159,14 @@ export class TableMultipleHeader implements OnInit {
 
     this.measures$.subscribe(mes =>
     {
-      this.fillColumns();
-      this.hideColumns();
-      this.toggleDivsVisibility();
+      //this.fillColumns();
+      //this.hideColumns();
+      //this.toggleDivsVisibility();
       this.fillCharts(mes);
-      this.initCharts();
     }
     );
+    
 }
-
   ngOnInit(){
     ////получение списка предприятий, продуктов и последней даты измерений для пользователя
     //this.dataService.getAllData(this.navService.userName.value!)
@@ -222,20 +221,30 @@ export class TableMultipleHeader implements OnInit {
     // Подписываемся на изменения выбранного продукта
     combineLatest([this.products$, this.selectedProductSubject]).subscribe(
       ([products, selectedId]) => {
-        this.selectedProduct = products.find(p => p.id === selectedId);
+        this.fillColumns(products.find(p => p.id === selectedId));
+        this.selectedProductName = products.find(p => p.id === selectedId)?.name;
       }
     );
+    //this.selectedEnterpriseSubject.subscribe(id => {
+    //  this.selectedProductId = null;
+    //  //this.selectedProduct = undefined;
+    //  this.onProductChange(null);
+    //});
   }
 
   onEnterpriseChange(enterpriseId: string) {
     this.selectedEnterpriseId = +enterpriseId;
-    this.selectedProductId = null; // сброс выбора продукта
-    this.selectedEnterpriseSubject.next(this.selectedEnterpriseId);
+    this.selectedProductId = null;// сброс выбора продукта
+    this.onProductChange(null);
+    this.selectedEnterpriseSubject?.next(this.selectedEnterpriseId);
   }
 
-  onProductChange(productId: string) {
-    this.selectedProductId = +productId;
-    this.selectedProductSubject.next(this.selectedProductId);
+  onProductChange(productId: string | null) {
+    this.selectedProductId = productId ? +productId : null;
+    this.selectedProductSubject?.next(this.selectedProductId);
+    //this.toggleDivsVisibility();
+    this.hideColumns();
+    this.initCharts();
     //this.fillColumns();
     //this.hideColumns();
     //this.toggleDivsVisibility();
@@ -313,34 +322,34 @@ export class TableMultipleHeader implements OnInit {
   }
 
   //show(hide) charts
-  toggleDivsVisibility() {
-    var divsOfCharts = [
-      document.getElementById('TFcc'),
-      document.getElementById('el1'),
-      document.getElementById('el2'),
-      document.getElementById('el3'),
-      document.getElementById('el4'),
-      document.getElementById('el5'),
-      document.getElementById('el6'),
-      document.getElementById('el7'),
-      document.getElementById('el8'),
-    ];
-    divsOfCharts.forEach((el) => {
-      if (el)
-      {
-        const column = this.allColumns.find(col => col.def === el.id);
-        if (column) {
-          el.style.display = column.hide ? 'none' : 'block';
-        }
-      }
+  //toggleDivsVisibility() {
+  //  var divsOfCharts = [
+  //    document.getElementById('TFcc'),
+  //    document.getElementById('el1'),
+  //    document.getElementById('el2'),
+  //    document.getElementById('el3'),
+  //    document.getElementById('el4'),
+  //    document.getElementById('el5'),
+  //    document.getElementById('el6'),
+  //    document.getElementById('el7'),
+  //    document.getElementById('el8'),
+  //  ];
+  //  divsOfCharts.forEach((el) => {
+  //    if (el)
+  //    {
+  //      const column = this.allColumns.find(col => col.def === el.id);
+  //      if (column) {
+  //        el.style.display = column.hide ? 'none' : 'block';
+  //      }
+  //    }
       
-    })
-  }
+  //  })
+  //}
 
   //fill columns data
-  fillColumns() {
+  fillColumns(product: ProductElements | undefined) {
     /*const elems = this.dataService.productElementsSelector(this.selectedProdName!);*/
-    let product = this.selectedProduct;
+    //let product = this.products$.;
     let elems: string[] = [];
     if (product) {
       for (const key in product) {

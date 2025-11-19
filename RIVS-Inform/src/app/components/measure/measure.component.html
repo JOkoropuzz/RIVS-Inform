@@ -3,31 +3,23 @@
   <div class="col-md-3">
     <mat-form-field>
       <mat-label>Продукт</mat-label>
-      <!--<mat-select [(ngModel)]="selectedProdName" (selectionChange)="onProductChange($event.value)">-->
       <mat-select (selectionChange)="onProductChange($event.value)">
-        <!--<mat-option *ngFor="let prodName of productsNames" [value]="prodName">{{prodName}}</mat-option>-->
-        <!--<mat-option id="product" value="" disabled selected>Выберите продукт</mat-option>-->
         <mat-option *ngFor="let p of products$ | async" [value]="p.id">
           {{ p.name }}
         </mat-option>
       </mat-select>
     </mat-form-field>
   </div>
-  <!--<div *ngIf="loadedFlag | async" class="col-md-4">-->
   <div class="col-md-4">
     <mat-form-field>
       <mat-label>Предприятие</mat-label>
-      <!--<mat-select [(ngModel)]="selectedEnterprise" (selectionChange)="selectEnterprise($event.value)">-->
       <mat-select id="enterprise" (selectionChange)="onEnterpriseChange($event.value)">
-        <!--<mat-option *ngFor="let enterpriseName of enterpriseNames" [value]="enterpriseName">{{enterpriseName}}</mat-option>-->
-        <!--<mat-option value="" disabled selected>Выберите предприятие</mat-option>-->
         <mat-option *ngFor="let e of enterprises$ | async" [value]="e.id">
           {{ e.name }}
         </mat-option>
       </mat-select>
     </mat-form-field>
   </div>
-  <!--<div *ngIf="loadedFlag | async" class="col-md-4">-->
   <div class="col-md-4">
     <mat-form-field>
       <mat-label>Введите диапазон дат</mat-label>
@@ -47,7 +39,7 @@
   </div>
 </div>
 <div *ngIf="selectedProductSubject | async" (click)="toggleBodyScroll(true)" (touchmove)="toggleBodyScroll(false)" (touchend)="toggleBodyScroll(false)" (mouseleave)="toggleBodyScroll(false)">
-  <div id="TFcc">
+  <div *ngIf="!allColumns[1].hide" [id]="allColumns[1].def">
     <apx-chart [series]="TFccoptions.series"
                [chart]="TFccoptions.chart"
                [colors]="TFccoptions.colors"
@@ -62,7 +54,7 @@
 
     </apx-chart>
   </div>
-  <div id="el1">
+  <div *ngIf="!allColumns[2].hide" [id]="allColumns[2].def">
     <apx-chart [series]="chart1options.series"
                [chart]="chart1options.chart"
                [colors]="chart1options.colors"
@@ -76,7 +68,7 @@
                [tooltip]="commonOptions.tooltip">
     </apx-chart>
   </div>
-  <div id="el2">
+  <div *ngIf="!allColumns[3].hide" [id]="allColumns[3].def">
     <apx-chart [series]="chart2options.series"
                [chart]="chart2options.chart"
                [colors]="chart2options.colors"
@@ -90,7 +82,7 @@
                [tooltip]="commonOptions.tooltip">
     </apx-chart>
   </div>
-  <div id="el3">
+  <div *ngIf="!allColumns[4].hide" [id]="allColumns[4].def">
     <apx-chart [series]="chart3options.series"
                [chart]="chart3options.chart"
                [colors]="chart3options.colors"
@@ -104,7 +96,7 @@
                [tooltip]="commonOptions.tooltip">
     </apx-chart>
   </div>
-  <div id="el4">
+  <div *ngIf="!allColumns[5].hide" [id]="allColumns[5].def">
     <apx-chart [series]="chart4options.series"
                [chart]="chart4options.chart"
                [colors]="chart4options.colors"
@@ -118,7 +110,7 @@
                [tooltip]="commonOptions.tooltip">
     </apx-chart>
   </div>
-  <div id="el5">
+  <div *ngIf="!allColumns[6].hide" [id]="allColumns[6].def">
     <apx-chart [series]="chart5options.series"
                [chart]="chart5options.chart"
                [colors]="chart5options.colors"
@@ -132,7 +124,7 @@
                [tooltip]="commonOptions.tooltip">
     </apx-chart>
   </div>
-  <div id="el6">
+  <div *ngIf="!allColumns[7].hide" [id]="allColumns[7].def">
     <apx-chart [series]="chart6options.series"
                [chart]="chart6options.chart"
                [colors]="chart6options.colors"
@@ -146,7 +138,7 @@
                [tooltip]="commonOptions.tooltip">
     </apx-chart>
   </div>
-  <div id="el7">
+  <div *ngIf="!allColumns[8].hide" [id]="allColumns[8].def">
     <apx-chart [series]="chart7options.series"
                [chart]="chart7options.chart"
                [colors]="chart7options.colors"
@@ -160,7 +152,7 @@
                [tooltip]="commonOptions.tooltip">
     </apx-chart>
   </div>
-  <div id="el8">
+  <div *ngIf="!allColumns[9].hide" [id]="allColumns[9].def">
     <apx-chart [series]="chart8options.series"
                [chart]="chart8options.chart"
                [colors]="chart8options.colors"
@@ -238,7 +230,9 @@
     </ng-container>
 
     <ng-container matColumnDef="item-description">
-      <th mat-header-cell *matHeaderCellDef colspan="10" class="text-center"><p>Продукт "{{selectedProduct?.name}}"</p></th>
+      <th mat-header-cell *matHeaderCellDef colspan="10" class="text-center">
+        <p>Продукт "{{selectedProductName}}"</p>
+      </th>
     </ng-container>
 
     <tr mat-header-row *matHeaderRowDef="['item-description']"
