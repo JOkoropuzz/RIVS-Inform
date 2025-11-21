@@ -33,7 +33,7 @@ import { MatButtonModule } from '@angular/material/button';
     NavMenuComponent,
     HomeComponent,
     TableMultipleHeader,
-    LoginComponent,
+    LoginComponent
   ],
   imports: [
     BrowserModule,

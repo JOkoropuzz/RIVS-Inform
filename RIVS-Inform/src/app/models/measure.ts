@@ -1,13 +1,13 @@
 export interface Measure {
   productId: number;
   time: Date;
-  TFcc: number;
-  el1?: number;
-  el2?: number;
-  el3?: number;
-  el4?: number;
-  el5?: number;
-  el6?: number;
-  el7?: number;
-  el8?: number;
+  tfcc: number |  null;
+  el1: number | null;
+  el2: number | null;
+  el3: number | null;
+  el4: number | null;
+  el5: number | null;
+  el6: number | null;
+  el7: number | null;
+  el8: number | null;
 }

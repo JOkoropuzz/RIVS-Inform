@@ -1,11 +1,11 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, ViewChild} from '@angular/core';
 import { DataService } from '../../services/data.service';
 import { Measure } from '../../models/measure';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { MatDatepickerInputEvent } from '@angular/material/datepicker';
 import { NavMenuService } from '../../services/nav-menu.service';
-import { MatIconModule, MatIconRegistry } from '@angular/material/icon';
-import { BehaviorSubject, Observable, switchMap, of, combineLatest, map, } from 'rxjs';
+import { MatIconRegistry } from '@angular/material/icon';
+import { BehaviorSubject, Observable, switchMap, of, combineLatest, map, filter, } from 'rxjs';
 
 
 import {
@@ -19,12 +19,14 @@ import {
   ApexXAxis,
   ApexTooltip,
   ApexStroke,
-  ApexGrid
+  ApexGrid,
+  ChartComponent,
+  ApexOptions
 } from "ng-apexcharts";
-import { firstValueFrom } from 'rxjs';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ProductElements } from '../../models/productElements';
 import { Enterprise } from '../../models/enterprise';
+import { FormControl } from '@angular/forms';
 
 //УБРАТЬ!
 const REFRESH_ICON = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#5f6368"><path d="M480-160q-134 0-227-93t-93-227q0-134 93-227t227-93q69 0 132 28.5T720-690v-110h80v280H520v-80h168q-32-56-87.5-88T480-720q-100 0-170 70t-70 170q0 100 70 170t170 70q77 0 139-44t87-116h84q-28 106-114 173t-196 67Z"/></svg>`;
@@ -50,7 +52,7 @@ export interface DisplayColumn {
   def: string;
   label: string;
   hide: boolean;
-};
+}
 
 @Component({
   selector: 'app-measure',
@@ -60,36 +62,30 @@ export interface DisplayColumn {
 })
 
 //Разбить на отдельные компоненты
-export class TableMultipleHeader implements OnInit {
+export class TableMultipleHeader implements OnInit
+{
+  //флаг готовности графиков
+  //chartReady = false;
 
+  //productCtrl = new FormControl(null);
   products$: Observable<ProductElements[]>;
-  selectedProductId: number | null = null;
+  //selectedProductId: number | null = null;
   selectedProductName: string | undefined = undefined;
 
   enterprises$: Observable<Enterprise[]>;
-  selectedEnterpriseId: number | null = null;
+  //selectedEnterpriseId: number | null = null;
 
   measures$: Observable<Measure[]>;
 
   selectedEnterpriseSubject = new BehaviorSubject<number | null>(null);
   selectedProductSubject = new BehaviorSubject<number | null>(null);
 
-  startDate: Observable<Date> = of(new Date());
-  endDate: Observable<Date> = of(new Date());
+  pickerStartDate$ = new BehaviorSubject<Date>(new Date());
+  pickerEndDate$ = new BehaviorSubject<Date>(new Date());
 
-  //флаг загрузки данных. Если данных ещё нет, элементы графиков не рендерятся
-  //public loadedFlag = Promise.resolve(false);
-
-  public TFccoptions!: Partial<ChartOptions>;
-  public chart1options!: Partial<ChartOptions>;
-  public chart2options!: Partial<ChartOptions>;
-  public chart3options!: Partial<ChartOptions>;
-  public chart4options!: Partial<ChartOptions>;
-  public chart5options!: Partial<ChartOptions>;
-  public chart6options!: Partial<ChartOptions>;
-  public chart7options!: Partial<ChartOptions>;
-  public chart8options!: Partial<ChartOptions>;
-
+  pickerStartDate: Date | null = null;
+  pickerEndDate: Date | null = null;
+  
   //Шаблон колонок таблицы
   allColumns: DisplayColumn[] = [
     { def: 'time', label: 'Время', hide: false },
@@ -105,18 +101,24 @@ export class TableMultipleHeader implements OnInit {
   ];
 
   //data for charts
-  TFccDps: any = []; el1Dps: any = []; el2Dps: any = []; el3Dps: any = [];
-  el4Dps: any = []; el5Dps: any = []; el6Dps: any = []; el7Dps: any = [];
-  el8Dps: any = [];
+  @ViewChild('TFccChart') TFccChart!: ChartComponent;
+  @ViewChild('el1Chart') el1Chart!: ChartComponent;
+  @ViewChild('el2Chart') el2Chart!: ChartComponent;
+  @ViewChild('el3Chart') el3Chart!: ChartComponent;
+  @ViewChild('el4Chart') el4Chart!: ChartComponent;
+  @ViewChild('el5Chart') el5Chart!: ChartComponent;
+  @ViewChild('el6Chart') el6Chart!: ChartComponent;
+  @ViewChild('el7Chart') el7Chart!: ChartComponent;
+  @ViewChild('el8Chart') el8Chart!: ChartComponent;
+  TFccDps: { x: Date; y: number }[] = []; el1Dps: { x: Date; y: number }[] = [];
+  el2Dps: { x: Date; y: number }[] = []; el3Dps: { x: Date; y: number }[] = [];
+  el4Dps: { x: Date; y: number }[] = []; el5Dps: { x: Date; y: number }[] = [];
+  el6Dps: { x: Date; y: number }[] = []; el7Dps: { x: Date; y: number }[] = [];
+  el8Dps: { x: Date; y: number }[] = [];
 
   //string array of columns name
   displayedColumns?: string[];
-
-  //enterprises?: Enterprise[];
-  //selectedEnterprise?: string;
-  //productMeasures: Measure[] = [];
-  //displayedColumns?: string[];
-
+  
   constructor(public dataService: DataService, public navService: NavMenuService) {
     //УБРАТЬ
     const iconRegistry = inject(MatIconRegistry);
@@ -131,225 +133,123 @@ export class TableMultipleHeader implements OnInit {
         : of([]) // пустой массив, если предприятие не выбрано
       )
     );
-
-    //this.measures$ = this.selectedProductSubject.pipe(
-    //  switchMap(productId => productId !== null
-    //    ? this.dataService.getMeasures(productId)
-    //    : of([])// пустой массив, если продукт не выбран
-    //  )
-    //);
+    
+    this.selectedEnterpriseSubject.pipe(
+      switchMap(enterpriseId => {
+        this.selectedProductSubject.next(null);
+        return enterpriseId !== null
+          ? this.dataService.getLastDate(enterpriseId)
+          : of(new Date()); }
+        
+      )
+    ).subscribe(date => {
+      const currentDate = new Date();
+      currentDate.setHours(0, 0, 0, 0);
+      this.pickerStartDate$.next(date ?? currentDate);
+      this.pickerStartDate = date ?? currentDate;
+      this.pickerEndDate = new Date();
+    });
 
     this.measures$ = combineLatest([
-      this.selectedProductSubject,
-      this.startDate, this.endDate
+      this.selectedProductSubject.pipe(filter(id => id != null)),// только реальные продукты
+      this.products$,
+      this.pickerStartDate$,
+      this.pickerEndDate$
     ]).pipe(
-      switchMap(([productId, startDate, endDate]) => {
-        return productId !== null ?
-          this.dataService.getMeasures(productId, startDate, endDate)
-            : of([])
-      })
-    );
-
-    this.startDate = this.selectedEnterpriseSubject.pipe(
-      switchMap(enterpriseId => enterpriseId !== null
-        ? this.dataService.getLastDate(enterpriseId)
-        : of(new Date()) // текушая дата, если предприятие не выбрано
+      switchMap(([productId, products, startDate, endDate]) => {
+        // графики пока нельзя рисовать
+        //this.chartReady = false;
+        this.fillColumns(products.find(p => p.id === productId));
+        this.selectedProductName = products.find(p => p.id === productId)?.name;
+        return this.dataService.getMeasures(productId!, startDate, endDate);
+      }
       )
     );
 
     this.measures$.subscribe(mes =>
     {
-      //this.fillColumns();
-      //this.hideColumns();
-      //this.toggleDivsVisibility();
-      this.fillCharts(mes);
-    }
-    );
+      this.updateCharts(mes);
+    });
     
-}
-  ngOnInit(){
-    ////получение списка предприятий, продуктов и последней даты измерений для пользователя
-    //this.dataService.getAllData(this.navService.userName.value!)
-    //  .subscribe(async result => {
-    //    //получение имён предприятий
-    //    this.enterpriseNames = result.enterpeises.map(es => es.name);
-
-    //    //выбор первого предприятия из списка
-    //    this.selectedEnterprise = this.enterpriseNames[0];
-
-    //    //заполнение списка продуктов для первого предприятия
-    //    //сервер отправляет список продуктов для первого предприятия
-    //    this.tableServ.productElements = result.products;
-    //    this.productsNames = this.tableServ.productElements.map(pe => pe.name);
-
-    //    //заполнение datepicker
-    //    this.startDate = new Date(result.lastDate[0]);
-    //    this.endDate = new Date(result.lastDate[0]);
-
-
-    //    //выбор первого продукта из списка
-    //    this.selectedProdName = this.tableServ.productNameSelector()[0];
-
-    //    //получение списка измерений
-    //    this.tableServ.measures =
-    //      (await firstValueFrom(this.tableServ.
-    //        getMeasures(this.selectedEnterprise, this.selectedProdName, this.startDate, this.endDate))).reverse();
-
-
-    //    this.fillColumns();
-    //    this.hideColumns();
-
-    //    this.productMeasures = this.tableServ.measures;
-
-    //    this.loadedFlag = Promise.resolve(true);
-
-    //    this.toggleDivsVisibility();
-    //    this.fillCharts();
-    //    this.initCharts();
-
-    //  });
-
-    //this.fillColumns();
-    //this.hideColumns();
-
-    //this.loadedFlag = Promise.resolve(true);
-
-    /*this.toggleDivsVisibility();*/
-    //this.fillCharts();
-    //this.initCharts();
-
-    // Подписываемся на изменения выбранного продукта
-    combineLatest([this.products$, this.selectedProductSubject]).subscribe(
-      ([products, selectedId]) => {
-        this.fillColumns(products.find(p => p.id === selectedId));
-        this.selectedProductName = products.find(p => p.id === selectedId)?.name;
-      }
-    );
-    //this.selectedEnterpriseSubject.subscribe(id => {
-    //  this.selectedProductId = null;
-    //  //this.selectedProduct = undefined;
-    //  this.onProductChange(null);
-    //});
   }
 
-  onEnterpriseChange(enterpriseId: string) {
-    this.selectedEnterpriseId = +enterpriseId;
-    this.selectedProductId = null;// сброс выбора продукта
-    this.onProductChange(null);
-    this.selectedEnterpriseSubject?.next(this.selectedEnterpriseId);
-  }
-
-  onProductChange(productId: string | null) {
-    this.selectedProductId = productId ? +productId : null;
-    this.selectedProductSubject?.next(this.selectedProductId);
-    //this.toggleDivsVisibility();
-    this.hideColumns();
-    this.initCharts();
-    //this.fillColumns();
-    //this.hideColumns();
-    //this.toggleDivsVisibility();
-    ///*this.fillCharts();*/
-    //this.initCharts();
-  }
-
-  //fill charts data
-  fillCharts(measures: Measure[]) {
-    //while (this.TFccDps.length != 0) {
-    //  this.TFccDps.shift();
-    //  this.el1Dps.shift();
-    //  this.el2Dps.shift();
-    //  this.el3Dps.shift();
-    //  this.el4Dps.shift();
-    //  this.el5Dps.shift();
-    //  this.el6Dps.shift();
-    //  this.el7Dps.shift();
-    //  this.el8Dps.shift();
-    //}
-    this.TFccDps = [];
-    this.el1Dps = [];
-    this.el2Dps = [];
-    this.el3Dps = [];
-    this.el4Dps = [];
-    this.el5Dps = [];
-    this.el6Dps = [];
-    this.el7Dps = [];
-    this.el8Dps = [];
-
-    for (var i = 0; i < measures.length; i++) {
-      this.TFccDps[i] = {
-        x: Number(Math.round(new Date(measures[i].time).
-          getTime())), y: Number(measures[i].TFcc)
-      };
-      this.el1Dps[i] = {
-        x: Number(Math.round(new Date(measures[i].time).
-          getTime())), y: Number(measures[i].el1)
-      };
-      this.el2Dps[i] = {
-        x: Number(Math.round(new Date(measures[i].time).
-          getTime())), y: Number(measures[i].el2)
-      };
-      this.el3Dps[i] = {
-        x: Number(Math.round(new Date(measures[i].time).
-          getTime())), y: Number(measures[i].el3)
-      };
-      this.el4Dps[i] = {
-        x: Number(Math.round(new Date(measures[i].time).
-          getTime())), y: Number(measures[i].el4)
-      };
-      this.el5Dps[i] = {
-        x: Number(Math.round(new Date(measures[i].time).
-          getTime())), y: Number(measures[i].el5)
-      };
-      this.el6Dps[i] = {
-        x: Number(Math.round(new Date(measures[i].time).
-          getTime())), y: Number(measures[i].el6)
-      };
-      this.el7Dps[i] = {
-        x: Number(Math.round(new Date(measures[i].time).
-          getTime())), y: Number(measures[i].el7)
-      };
-      this.el8Dps[i] = {
-        x: Number(Math.round(new Date(measures[i].time).
-          getTime())), y: Number(measures[i].el8)
-      };
-
+  onTFccReady() {
+    if (this.TFccChart) {
+      this.TFccChart.updateOptions({
+        series: [...this.TFccoptions.series!],
+        title: this.TFccoptions.title,
+        tooltip: this.commonOptions.tooltip
+      }, true, true);
     }
   }
 
-  //scroll disable/enable
-  toggleBodyScroll(lock: boolean) {
-    document.body.style.overflow = lock ? 'hidden' : '';
+  ngOnInit(){
+    
+    // Подписываемся на изменения выбранного продукта
+    //combineLatest([this.products$, this.selectedProductSubject])
+    //  .subscribe(
+    //    ([products, selectedId]) => {
+
+    //      //this.clearCharts();
+    //      this.fillColumns(products.find(p => p.id === selectedId));
+    //      this.selectedProductName = products.find(p => p.id === selectedId)?.name;
+    //  }
+    //);
+  }
+  
+  fillCharts(measures: Measure[]) {
+    const updateData = (target: { x: Date, y: number }[], getter: (m: Measure) => number | undefined) => {
+      target.length = 0; // очищаем массив, не создавая новый
+      measures.forEach(m => target.push({ x: new Date(m.time), y: getter(m) ?? 0 }));
+    };
+
+    if (measures && measures.length > 0) {
+      updateData(this.TFccDps, m => m.tfcc ?? 0);
+      updateData(this.el1Dps, m => m.el1 ?? 0);
+      updateData(this.el2Dps, m => m.el2 ?? 0);
+      updateData(this.el3Dps, m => m.el3 ?? 0);
+      updateData(this.el4Dps, m => m.el4 ?? 0);
+      updateData(this.el5Dps, m => m.el5 ?? 0);
+      updateData(this.el6Dps, m => m.el6 ?? 0);
+      updateData(this.el7Dps, m => m.el7 ?? 0);
+      updateData(this.el8Dps, m => m.el8 ?? 0);
+    }
+    else {
+      [this.TFccDps, this.el1Dps, this.el2Dps, this.el3Dps, this.el4Dps,
+      this.el5Dps, this.el6Dps, this.el7Dps, this.el8Dps].forEach(arr => arr.length = 0);
+    }
   }
 
-  //show(hide) charts
-  //toggleDivsVisibility() {
-  //  var divsOfCharts = [
-  //    document.getElementById('TFcc'),
-  //    document.getElementById('el1'),
-  //    document.getElementById('el2'),
-  //    document.getElementById('el3'),
-  //    document.getElementById('el4'),
-  //    document.getElementById('el5'),
-  //    document.getElementById('el6'),
-  //    document.getElementById('el7'),
-  //    document.getElementById('el8'),
-  //  ];
-  //  divsOfCharts.forEach((el) => {
-  //    if (el)
-  //    {
-  //      const column = this.allColumns.find(col => col.def === el.id);
-  //      if (column) {
-  //        el.style.display = column.hide ? 'none' : 'block';
-  //      }
-  //    }
-      
-  //  })
+  //fillCharts(measures: Measure[])
+  //{
+  //  if (measures && measures.length > 0)
+  //  {
+  //    this.TFccDps = measures.map(m => ({ x: new Date(m.time), y: m.tfcc ?? 0 }));
+  //    this.el1Dps = measures.map(m => ({ x: new Date(m.time), y: m.el1 ?? 0 }));
+  //    this.el2Dps = measures.map(m => ({ x: new Date(m.time), y: m.el2 ?? 0 }));
+  //    this.el3Dps = measures.map(m => ({ x: new Date(m.time), y: m.el3 ?? 0 }));
+  //    this.el4Dps = measures.map(m => ({ x: new Date(m.time), y: m.el4 ?? 0 }));
+  //    this.el5Dps = measures.map(m => ({ x: new Date(m.time), y: m.el5 ?? 0 }));
+  //    this.el6Dps = measures.map(m => ({ x: new Date(m.time), y: m.el6 ?? 0 }));
+  //    this.el7Dps = measures.map(m => ({ x: new Date(m.time), y: m.el7 ?? 0 }));
+  //    this.el8Dps = measures.map(m => ({ x: new Date(m.time), y: m.el8 ?? 0 }));
+  //  }
+  //  else
+  //  {
+  //    this.TFccDps = [];
+  //    this.el1Dps = [];
+  //    this.el2Dps = [];
+  //    this.el3Dps = [];
+  //    this.el4Dps = [];
+  //    this.el5Dps = [];
+  //    this.el6Dps = [];
+  //    this.el7Dps = [];
+  //    this.el8Dps = [];
+  //  }
   //}
-
+  
   //fill columns data
   fillColumns(product: ProductElements | undefined) {
-    /*const elems = this.dataService.productElementsSelector(this.selectedProdName!);*/
-    //let product = this.products$.;
     let elems: string[] = [];
     if (product) {
       for (const key in product) {
@@ -362,6 +262,13 @@ export class TableMultipleHeader implements OnInit {
       }
     }
     
+    if (this.selectedEnterpriseSubject) {
+      this.allColumns.find(col => col.def === 'TFcc')!.hide = false;
+    }
+    else {
+      this.allColumns.find(col => col.def === 'TFcc')!.hide = true;
+    }
+
     for (let i = 1; i < 9; i++) {
       if (elems[i - 1] != null && elems[i - 1] != undefined && elems[i - 1] != '') {
         this.allColumns.find(col => col.def === 'el' + i)!.label = elems[i - 1];
@@ -371,393 +278,756 @@ export class TableMultipleHeader implements OnInit {
         this.allColumns.find(col => col.def === 'el' + i)!.hide = true;
       }
     }
+    this.hideColumns();
   }
 
   //обновление базы данных
   async updateDb() {
     this.dataService.updateDb().pipe(map(res => alert(res.message)));
-    if (this.selectedProductId){
-      this.onProductChange(this.selectedProductId.toString());
-    }
-    
-    //if (result.dateFrom == undefined || new Date(result.dateFrom).getFullYear() == 0 ) {
-    //  alert('Ошибка синхронизации');
+    //if (this.selectedProductId){
+    //  this.onProductChange(this.selectedProductId.toString());
     //}
-    //else {
-    //  if (result.newMeasuresCount == 0) {
-    //    alert('Новых измерений не найдено');
-    //  }
-    //  else {
-    //    alert('Успешная синхронизация. Добавлено: ' + result.addRowsCount + ' измерений');
-    //  }
-    //}
-    
-    //this.fillColumns();
-    //this.hideColumns();
-
-    //this.tableServ.measures = (await firstValueFrom(this.tableServ.getMeasures(this.selectedEnterprise!,
-    //  this.selectedProdName!, this.startDate, this.endDate))).reverse();
-    //this.productMeasures = this.tableServ.measures;
-
-    //this.toggleDivsVisibility();
-    //this.fillCharts();
-    //this.initCharts();
   }
-
-  //change selected product
-  //async selectProd(value: string) {
-  //  this.selectedProdName = value;
-
-  //  this.fillColumns();
-  //  this.hideColumns();
-
-  //  this.tableServ.measures = (await firstValueFrom(this.tableServ.getMeasures(this.selectedEnterprise!,
-  //    this.selectedProdName, this.startDate, this.endDate))).reverse();
-  //  this.productMeasures = this.tableServ.measures;
-    
-  //  this.toggleDivsVisibility();
-  //  this.fillCharts();
-  //  this.initCharts();
-  //}
-
-  //change selected enterprise
-  //async selectEnterprise(value: string) {
-  //  this.selectedEnterprise = value;
-
-  //  //получение списка продуктов выбранного предприятия
-  //  this.tableServ.productElements = await firstValueFrom(this.tableServ.getProducts(this.selectedEnterprise));
-  //  this.productsNames = this.tableServ.productElements.map(pe => pe.name);
-
-  //  //выбор первого продукта из списка
-  //  this.selectedProdName = this.tableServ.productNameSelector()[0];
-
-  //  //получение списка измерений
-  //  this.tableServ.measures = (await firstValueFrom(this.tableServ.
-  //    getMeasures(this.selectedEnterprise, this.selectedProdName, this.startDate!, this.endDate!))).reverse();
-  //  this.productMeasures = this.tableServ.measures;
-
-  //  this.fillColumns();
-  //  this.hideColumns();
-  //  this.toggleDivsVisibility();
-  //  this.fillCharts();
-  //  this.initCharts();
-  //}
-
+  
   //событие ввода даты
-  async addEvent(type: string, event: MatDatepickerInputEvent<Date>) {
-
+  addEvent(type: 'inputStartDate' | 'inputEndDate', event: any) {
+    const date = event.value;
     if (type === 'inputStartDate') {
-      this.startDate = of(event.value ?? new Date());
+      this.pickerStartDate$.next(date);
+    } else {
+      this.pickerEndDate$.next(date);
     }
-    else {
-      this.endDate = of(event.value ?? new Date());
+  }
+  
+  public updateCharts(measures: Measure[]) {
+
+    //заполняем данные
+    this.fillCharts(measures);
+
+    // Обновляем title, series, создавая новый массив
+    this.TFccoptions.title = { text: this.allColumns[1].label + " %" };
+    this.TFccoptions.series = [
+      {
+        name: this.allColumns[1].label,
+        data: this.TFccDps.map(p => ({ x: new Date(p.x), y: p.y ?? 0 }))
+      }
+    ];
+    this.chart1options.title = { text: this.allColumns[2].label + " %" };
+    this.chart1options.series = [
+      {
+        name: this.allColumns[2].label,
+        data: this.el1Dps.map(p => ({ x: new Date(p.x), y: p.y ?? 0 }))
+      }
+    ];
+
+    this.chart2options.title = { text: this.allColumns[3].label + " %" };
+    this.chart2options.series = [
+      {
+        name: this.allColumns[3].label,
+        data: this.el2Dps.map(p => ({ x: new Date(p.x), y: p.y ?? 0 }))
+      }
+    ];
+
+    this.chart3options.title = { text: this.allColumns[4].label + " %" };
+    this.chart3options.series = [
+      {
+        name: this.allColumns[4].label,
+        data: this.el3Dps.map(p => ({ x: new Date(p.x), y: p.y ?? 0 }))
+      }
+    ];
+
+    this.chart4options.title = { text: this.allColumns[5].label + " %" };
+    this.chart4options.series = [
+      {
+        name: this.allColumns[5].label,
+        data: this.el4Dps.map(p => ({ x: new Date(p.x), y: p.y ?? 0 }))
+      }
+    ];
+
+    this.chart5options.title = { text: this.allColumns[6].label + " %" };
+    this.chart5options.series = [
+      {
+        name: this.allColumns[6].label,
+        data: this.el5Dps.map(p => ({ x: new Date(p.x), y: p.y ?? 0 }))
+      }
+    ];
+
+    this.chart6options.title = { text: this.allColumns[7].label + " %" };
+    this.chart6options.series = [
+      {
+        name: this.allColumns[7].label,
+        data: this.el6Dps.map(p => ({ x: new Date(p.x), y: p.y ?? 0 }))
+      }
+    ];
+
+    this.chart7options.title = { text: this.allColumns[8].label + " %" };
+    this.chart7options.series = [
+      {
+        name: this.allColumns[8].label,
+        data: this.el7Dps.map(p => ({ x: new Date(p.x), y: p.y ?? 0 }))
+      }
+    ];
+
+    this.chart8options.title = { text: this.allColumns[9].label + " %" };
+    this.chart8options.series = [
+      {
+        name: this.allColumns[9].label,
+        data: this.el8Dps.map(p => ({ x: new Date(p.x), y: p.y ?? 0 }))
+      }
+    ];
+
+    if (this.TFccChart) {
+      this.TFccChart.updateSeries(this.TFccoptions.series, true);
     }
-    //получение списка измерений
-    /*this.dataService.measures = (await firstValueFrom(this.tableServ.getMeasures(this.selectedEnterprise!, this.selectedProdName!, this.startDate!, this.endDate!))).reverse();*/
-    /*this.productMeasures = this.tableServ.measures;*/
-
-    /*this.toggleDivsVisibility();*/
-    /*this.fillCharts();*/
-    /*this.initCharts();*/
-
+    if (this.el1Chart) {
+      this.el1Chart.updateSeries(this.chart1options.series, true);
+    }
+    if (this.el2Chart) {
+      this.el2Chart.updateSeries(this.chart2options.series, true);
+    }
+    if (this.el3Chart) {
+      this.el3Chart.updateSeries(this.chart3options.series, true);
+    }
+    if (this.el4Chart) {
+      this.el4Chart.updateSeries(this.chart4options.series, true);
+    }
+    if (this.el5Chart) {
+      this.el5Chart.updateSeries(this.chart5options.series, true);
+    }
+    if (this.el6Chart) {
+      this.el6Chart.updateSeries(this.chart6options.series, true);
+    }
+    if (this.el7Chart) {
+      this.el7Chart.updateSeries(this.chart7options.series, true);
+    }
+    if (this.el8Chart) {
+      this.el8Chart.updateSeries(this.chart8options.series, true);
+    }
   }
 
   // Show/Hide columns
   hideColumns() {
     this.displayedColumns = this.allColumns.filter(cd => !cd.hide).map(cd => cd.def)
   }
-  
+
   //ДАЛЕЕ ОПЦИИ ГРАФИКОВ
+  //public initCharts() {
+  //  this.TFccoptions = {
+  //    ...this.TFccoptions,
+  //    title: {
+  //      text: this.allColumns[1].label + " %",
+  //    },
+  //    series: [
+  //      {
+  //        name: this.allColumns[1].label,
+  //        data: this.TFccDps
+  //      }
+  //    ],
 
-  //заполнение опций графиков
-  public initCharts() {
-    this.TFccoptions = {
-      title: {
-        text: this.allColumns[1].label + " %",
-      },
-      series: [
-        {
-          name: this.allColumns[1].label,
-          data: this.TFccDps
-        }
-      ],
+  //    chart: {
+  //      zoom: { enabled: false },
+  //      toolbar: {
+  //        tools: {
+  //          pan: false,
+  //          download: false,
+  //          zoom: false,
+  //        }
 
-      chart: {
-        toolbar: {
-          tools: {
-            pan: false,
-            download: false,
-            zoom: false,
-          }
-
-        },
-        id: "TFcc",
-        group: "social",
-        type: "area",
-        height: 160
-      },
-      colors: ["black"],
-      yaxis: {
-        tickAmount: 2,
-        labels: {
-          minWidth: 40
-        },
+  //      },
+  //      id: "TFcc",
+  //      group: "social",
+  //      type: "area",
+  //      height: 160
+  //    },
+  //    colors: ["black"],
+  //    yaxis: {
+  //      tickAmount: 2,
+  //      labels: {
+  //        minWidth: 40
+  //      },
 
 
+  //    }
+  //  };
+  //  this.chart1options = {
+  //    ...this.chart1options,
+  //    title: {
+  //      text: this.allColumns[2].label + " %",
+  //    },
+  //    series: [
+  //      {
+  //        name: this.allColumns[2].label,
+  //        data: this.el1Dps
+  //      }
+  //    ],
+  //    chart: {
+  //      zoom: { enabled: false },
+  //      toolbar: {
+  //        show: false,
+  //        tools: {
+  //          zoom: false
+  //        }
+  //      },
+  //      id: "el1",
+  //      group: "social",
+  //      type: "area",
+  //      height: 160
+  //    },
+  //    colors: ["DarkRed"],
+  //    yaxis: {
+
+  //      tickAmount: 2,
+  //      labels: {
+  //        minWidth: 40
+  //      }
+  //    }
+  //  };
+  //  this.chart2options = {
+  //    ...this.chart2options,
+  //    title: {
+  //      text: this.allColumns[3].label + " %",
+  //    },
+  //    series: [
+  //      {
+  //        name: this.allColumns[3].label,
+  //        data: this.el2Dps
+  //      }
+  //    ],
+  //    chart: {
+  //      zoom: { enabled: false },
+  //      toolbar: {
+  //        show: false,
+  //        tools: {
+  //          zoom: false
+  //        }
+  //      },
+  //      id: "el2",
+  //      group: "social",
+  //      type: "area",
+  //      height: 160
+  //    },
+  //    colors: ["DarkBlue"],
+  //    yaxis: {
+  //      tickAmount: 2,
+  //      labels: {
+  //        minWidth: 40
+  //      }
+  //    }
+  //  };
+  //  this.chart3options = {
+  //    ...this.chart3options,
+  //    title: {
+  //      text: this.allColumns[4].label + " %",
+  //    },
+  //    series: [
+  //      {
+  //        name: this.allColumns[4].label,
+  //        data: this.el3Dps
+  //      }
+  //    ],
+  //    chart: {
+  //      zoom: { enabled: false },
+  //      toolbar: {
+  //        show: false,
+  //        tools: {
+  //          zoom: false
+  //        }
+  //      },
+  //      id: "el3",
+  //      group: "social",
+  //      type: "area",
+  //      height: 160
+  //    },
+  //    colors: ["DarkGreen"],
+  //    yaxis: {
+  //      tickAmount: 2,
+  //      labels: {
+  //        minWidth: 40
+  //      }
+  //    }
+  //  };
+  //  this.chart4options = {
+  //    ...this.chart4options,
+  //    title: {
+  //      text: this.allColumns[5].label + " %",
+  //    },
+  //    series: [
+  //      {
+  //        name: this.allColumns[5].label,
+  //        data: this.el4Dps
+  //      }
+  //    ],
+  //    chart: {
+  //      zoom: { enabled: false },
+  //      toolbar: {
+  //        show: false,
+  //        tools: {
+  //          zoom: false
+  //        }
+  //      },
+  //      id: "el4",
+  //      group: "social",
+  //      type: "area",
+  //      height: 160
+  //    },
+  //    colors: ["orange"],
+  //    yaxis: {
+  //      tickAmount: 2,
+  //      labels: {
+  //        minWidth: 40
+  //      }
+  //    }
+  //  };
+  //  this.chart5options = {
+  //    ...this.chart5options,
+  //    title: {
+  //      text: this.allColumns[6].label + " %",
+  //    },
+  //    series: [
+  //      {
+  //        name: this.allColumns[6].label,
+  //        data: this.el5Dps
+  //      }
+  //    ],
+  //    chart: {
+  //      zoom: { enabled: false },
+  //      toolbar: {
+  //        show: false,
+  //        tools: {
+  //          zoom: false
+  //        }
+  //      },
+  //      id: "el5",
+  //      group: "social",
+  //      type: "area",
+  //      height: 160
+  //    },
+  //    colors: ["Coral"],
+  //    yaxis: {
+  //      tickAmount: 2,
+  //      labels: {
+  //        minWidth: 40
+  //      }
+  //    }
+  //  };
+  //  this.chart6options = {
+  //    ...this.chart6options,
+  //    title: {
+  //      text: this.allColumns[7].label + " %",
+  //    },
+  //    series: [
+  //      {
+  //        name: this.allColumns[7].label,
+  //        data: this.el6Dps
+  //      }
+  //    ],
+  //    chart: {
+  //      zoom: { enabled: false },
+  //      toolbar: {
+  //        show: false,
+  //        tools: {
+  //          zoom: false
+  //        }
+  //      },
+  //      id: "el6",
+  //      group: "social",
+  //      type: "area",
+  //      height: 160
+  //    },
+  //    colors: ["gray"],
+  //    yaxis: {
+  //      tickAmount: 2,
+  //      labels: {
+  //        minWidth: 40
+  //      }
+  //    }
+  //  };
+  //  this.chart7options = {
+  //    ...this.chart7options,
+  //    title: {
+  //      text: this.allColumns[8].label + " %",
+  //    },
+  //    series: [
+  //      {
+  //        name: this.allColumns[8].label,
+  //        data: this.el7Dps
+  //      }
+  //    ],
+  //    chart: {
+  //      zoom: { enabled: false },
+  //      toolbar: {
+  //        show: false,
+  //        tools: {
+  //          zoom: false
+  //        }
+  //      },
+  //      id: "el7",
+  //      group: "social",
+  //      type: "area",
+  //      height: 160
+  //    },
+  //    colors: ["brown"],
+  //    yaxis: {
+  //      tickAmount: 2,
+  //      labels: {
+  //        minWidth: 40
+  //      }
+  //    }
+  //  };
+  //  this.chart8options = {
+  //    ...this.chart8options,
+  //    title: {
+  //      text: this.allColumns[9].label + " %",
+  //    },
+  //    series: [
+  //      {
+  //        name: this.allColumns[9].label,
+  //        data: this.el8Dps
+  //      }
+  //    ],
+  //    chart: {
+  //      zoom: { enabled: false },
+  //      toolbar: {
+  //        show: false,
+  //        tools: {
+  //          zoom: false
+  //        }
+  //      },
+  //      id: "el8",
+  //      group: "social",
+  //      type: "area",
+  //      height: 160
+  //    },
+  //    colors: ["Olive"],
+  //    yaxis: {
+  //      tickAmount: 2,
+  //      labels: {
+  //        minWidth: 40
+  //      }
+  //    }
+  //  };
+  //  this.commonOptions = {
+  //    dataLabels: {
+  //      enabled: false
+  //    },
+
+  //    stroke: {
+  //      curve: "smooth"
+  //    },
+  //    markers: {
+  //      size: 6,
+  //      hover: {
+  //        size: 10
+  //      }
+  //    },
+  //    tooltip: {
+  //      followCursor: false,
+  //      theme: "dark",
+  //      x: {
+  //        format: "dd-MM-yyyy HH:mm",
+  //        show: true
+  //      },
+  //      marker: {
+  //        show: false
+  //      },
+  //    },
+  //    grid: {
+  //    },
+  //    xaxis: {
+  //      tooltip: {
+  //        enabled: false
+  //      },
+  //      labels: {
+  //        datetimeUTC: false
+  //      },
+  //      type: "datetime"
+  //    },
+  //  };
+  //}
+  public TFccoptions: Partial<ChartOptions> = {
+    title: {
+      text: this.allColumns[1].label + " %",
+    },
+    series: [
+      {
+        name: this.allColumns[1].label,
+        data: this.el5Dps
       }
-    };
-
-    this.chart1options = {
-      title: {
-        text: this.allColumns[2].label + " %",
-      },
-      series: [
-        {
-          name: this.allColumns[2].label,
-          data: this.el1Dps
+    ],
+    chart: {
+      zoom: { enabled: false },
+      toolbar: {
+        tools: {
+          pan: false,
+          download: false,
+          zoom: false,
         }
-      ],
-      chart: {
-        toolbar: {
-          show: false,
-          tools: {
-            zoom: false
-          }
-        },
-        id: "el1",
-        group: "social",
-        type: "area",
-        height: 160
-      },
-      colors: ["DarkRed"],
-      yaxis: {
 
-        tickAmount: 2,
-        labels: {
-          minWidth: 40
-        }
+      },
+      id: "TFcc",
+      group: "social",
+      type: "area",
+      height: 160
+    },
+    colors: ["black"],
+    yaxis: {
+      tickAmount: 2,
+      labels: {
+        minWidth: 40
+      },
+
+
+    }
+  };
+  public chart1options: Partial<ChartOptions> = {
+    title: {
+      text: this.allColumns[2].label + " %",
+    },
+    series: [
+      {
+        name: this.allColumns[2].label,
+        data: this.el5Dps
       }
-    };
+    ],
+    chart: {
+      zoom: { enabled: false },
+      toolbar: {
+        show: false,
+        tools: {
+          zoom: false
+        }
+      },
+      id: "el1",
+      group: "social",
+      type: "area",
+      height: 160
+    },
+    colors: ["DarkRed"],
+    yaxis: {
 
-    this.chart2options = {
-      title: {
-        text: this.allColumns[3].label + " %",
-      },
-      series: [
-        {
-          name: this.allColumns[3].label,
-          data: this.el2Dps
-        }
-      ],
-      chart: {
-        toolbar: {
-          show: false,
-          tools: {
-            zoom: false
-          }
-        },
-        id: "el2",
-        group: "social",
-        type: "area",
-        height: 160
-      },
-      colors: ["DarkBlue"],
-      yaxis: {
-        tickAmount: 2,
-        labels: {
-          minWidth: 40
-        }
+      tickAmount: 2,
+      labels: {
+        minWidth: 40
       }
-    };
-
-    this.chart3options = {
-      title: {
-        text: this.allColumns[4].label + " %",
-      },
-      series: [
-        {
-          name: this.allColumns[4].label,
-          data: this.el3Dps
-        }
-      ],
-      chart: {
-        toolbar: {
-          show: false,
-          tools: {
-            zoom: false
-          }
-        },
-        id: "el3",
-        group: "social",
-        type: "area",
-        height: 160
-      },
-      colors: ["DarkGreen"],
-      yaxis: {
-        tickAmount: 2,
-        labels: {
-          minWidth: 40
-        }
+    }
+  };
+  public chart2options: Partial<ChartOptions> = {
+    title: {
+      text: this.allColumns[3].label + " %",
+    },
+    series: [
+      {
+        name: this.allColumns[3].label,
+        data: this.el5Dps
       }
-    };
-
-    this.chart4options = {
-      title: {
-        text: this.allColumns[5].label + " %",
-      },
-      series: [
-        {
-          name: this.allColumns[5].label,
-          data: this.el4Dps
+    ],
+    chart: {
+      zoom: { enabled: false },
+      toolbar: {
+        show: false,
+        tools: {
+          zoom: false
         }
-      ],
-      chart: {
-        toolbar: {
-          show: false,
-          tools: {
-            zoom: false
-          }
-        },
-        id: "el4",
-        group: "social",
-        type: "area",
-        height: 160
       },
-      colors: ["orange"],
-      yaxis: {
-        tickAmount: 2,
-        labels: {
-          minWidth: 40
-        }
+      id: "el2",
+      group: "social",
+      type: "area",
+      height: 160
+    },
+    colors: ["DarkBlue"],
+    yaxis: {
+      tickAmount: 2,
+      labels: {
+        minWidth: 40
       }
-    };
-
-    this.chart5options = {
-      title: {
+    }
+  };
+  public chart3options: Partial<ChartOptions> = {
+    title: {
+      text: this.allColumns[4].label + " %",
+    },
+    series: [
+      {
+        name: this.allColumns[4].label,
+        data: this.el5Dps
+      }
+    ],
+    chart: {
+      zoom: { enabled: false },
+      toolbar: {
+        show: false,
+        tools: {
+          zoom: false
+        }
+      },
+      id: "el3",
+      group: "social",
+      type: "area",
+      height: 160
+    },
+    colors: ["DarkGreen"],
+    yaxis: {
+      tickAmount: 2,
+      labels: {
+        minWidth: 40
+      }
+    }
+  };
+  public chart4options: Partial<ChartOptions> = {
+    title: {
+      text: this.allColumns[5].label + " %",
+    },
+    series: [
+      {
+        name: this.allColumns[5].label,
+        data: this.el5Dps
+      }
+    ],
+    chart: {
+      zoom: { enabled: false },
+      toolbar: {
+        show: false,
+        tools: {
+          zoom: false
+        }
+      },
+      id: "el4",
+      group: "social",
+      type: "area",
+      height: 160
+    },
+    colors: ["orange"],
+    yaxis: {
+      tickAmount: 2,
+      labels: {
+        minWidth: 40
+      }
+    }
+  };
+  public chart5options: Partial<ChartOptions> = {
+    title: {
         text: this.allColumns[6].label + " %",
-      },
-      series: [
-        {
+    },
+    series: [
+      {
           name: this.allColumns[6].label,
           data: this.el5Dps
-        }
-      ],
-      chart: {
-        toolbar: {
-          show: false,
-          tools: {
-            zoom: false
-          }
-        },
-        id: "el5",
-        group: "social",
-        type: "area",
-        height: 160
-      },
-      colors: ["Coral"],
-      yaxis: {
-        tickAmount: 2,
-        labels: {
-          minWidth: 40
-        }
       }
-    };
-
-    this.chart6options = {
-      title: {
-        text: this.allColumns[7].label + " %",
+    ],
+    chart: {
+      zoom: { enabled: false },
+      toolbar: {
+        show: false,
+        tools: {
+          zoom: false
+        }
       },
-      series: [
-        {
+      id: "el5",
+      group: "social",
+      type: "area",
+      height: 160
+    },
+    colors: ["Coral"],
+    yaxis: {
+      tickAmount: 2,
+      labels: {
+        minWidth: 40
+      }
+    }
+  };
+  public chart6options: Partial<ChartOptions> = {
+    title: {
+        text: this.allColumns[7].label + " %",
+    },
+    series: [
+      {
           name: this.allColumns[7].label,
           data: this.el6Dps
-        }
-      ],
-      chart: {
-        toolbar: {
-          show: false,
-          tools: {
-            zoom: false
-          }
-        },
-        id: "el6",
-        group: "social",
-        type: "area",
-        height: 160
-      },
-      colors: ["gray"],
-      yaxis: {
-        tickAmount: 2,
-        labels: {
-          minWidth: 40
-        }
       }
-    };
-
-    this.chart7options = {
-      title: {
-        text: this.allColumns[8].label + " %",
+    ],
+    chart: {
+      zoom: { enabled: false },
+      toolbar: {
+        show: false,
+        tools: {
+          zoom: false
+        }
       },
-      series: [
-        {
+      id: "el6",
+      group: "social",
+      type: "area",
+      height: 160
+    },
+    colors: ["gray"],
+    yaxis: {
+      tickAmount: 2,
+      labels: {
+        minWidth: 40
+      }
+    }
+  };
+  public chart7options: Partial<ChartOptions> = {
+    title: {
+        text: this.allColumns[8].label + " %",
+    },
+    series: [
+      {
           name: this.allColumns[8].label,
           data: this.el7Dps
-        }
-      ],
-      chart: {
-
-        toolbar: {
-          show: false,
-          tools: {
-            zoom: false
-          }
-        },
-        id: "el7",
-        group: "social",
-        type: "area",
-        height: 160
-      },
-      colors: ["brown"],
-      yaxis: {
-        tickAmount: 2,
-        labels: {
-          minWidth: 40
-        }
       }
-    };
-
-    this.chart8options = {
-      title: {
-        text: this.allColumns[9].label + " %",
+    ],
+    chart: {
+      zoom: { enabled: false },
+      toolbar: {
+        show: false,
+        tools: {
+          zoom: false
+        }
       },
-      series: [
-        {
+      id: "el7",
+      group: "social",
+      type: "area",
+      height: 160
+    },
+    colors: ["brown"],
+    yaxis: {
+      tickAmount: 2,
+      labels: {
+        minWidth: 40
+      }
+    }
+  };
+  public chart8options: Partial<ChartOptions> = {
+    title: {
+        text: this.allColumns[9].label + " %",
+    },
+    series: [
+      {
           name: this.allColumns[9].label,
           data: this.el8Dps
-        }
-      ],
-      chart: {
-        toolbar: {
-          show: false,
-          tools: {
-            zoom: false
-          }
-        },
-        id: "el8",
-        group: "social",
-        type: "area",
-        height: 160
-      },
-      colors: ["Olive"],
-      yaxis: {
-        tickAmount: 2,
-        labels: {
-          minWidth: 40
-        }
       }
-    };
-  }
-
+    ],
+    chart: {
+      zoom: { enabled: false },
+      toolbar: {
+        show: false,
+        tools: {
+          zoom: false
+        }
+      },
+      id: "el8",
+      group: "social",
+      type: "area",
+      height: 160
+    },
+    colors: ["Olive"],
+    yaxis: {
+      tickAmount: 2,
+      labels: {
+        minWidth: 40
+      }
+    }
+  };
   //Общие обции для графиков
   public commonOptions: Partial<ChartOptions> = {
     dataLabels: {
@@ -780,7 +1050,6 @@ export class TableMultipleHeader implements OnInit {
         format: "dd-MM-yyyy HH:mm",
         show: true
       },
-
       marker: {
         show: false
       },
