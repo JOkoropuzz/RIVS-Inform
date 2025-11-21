@@ -21,7 +21,7 @@ export interface SynchronizationResult {
 @Injectable({ providedIn: 'root' })
 export class DataService {
   httpClient = inject(HttpClient);
-  baseUrl = 'http://localhost:6070/api';
+  baseUrl = '/api';
   getMeasuresFlag = false;
 
   //список предприятий
