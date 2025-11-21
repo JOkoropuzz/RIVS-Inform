@@ -5,7 +5,7 @@ import { provideNativeDateAdapter } from '@angular/material/core';
 import { MatDatepickerInputEvent } from '@angular/material/datepicker';
 import { NavMenuService } from '../../services/nav-menu.service';
 import { MatIconRegistry } from '@angular/material/icon';
-import { BehaviorSubject, Observable, switchMap, of, combineLatest, map, filter, } from 'rxjs';
+import { BehaviorSubject, Observable, switchMap, of, combineLatest, map, filter, tap, } from 'rxjs';
 
 
 import {
@@ -173,16 +173,6 @@ export class TableMultipleHeader implements OnInit
     
   }
 
-  onTFccReady() {
-    if (this.TFccChart) {
-      this.TFccChart.updateOptions({
-        series: [...this.TFccoptions.series!],
-        title: this.TFccoptions.title,
-        tooltip: this.commonOptions.tooltip
-      }, true, true);
-    }
-  }
-
   ngOnInit(){
     
     // Подписываемся на изменения выбранного продукта
@@ -282,11 +272,22 @@ export class TableMultipleHeader implements OnInit
   }
 
   //обновление базы данных
-  async updateDb() {
-    this.dataService.updateDb().pipe(map(res => alert(res.message)));
-    //if (this.selectedProductId){
-    //  this.onProductChange(this.selectedProductId.toString());
-    //}
+  //async updateDb() {
+  //  this.dataService.updateDb().pipe(map(res => alert(res?.message ?? 'Не получено ответа от сервера')));
+  //  //if (this.selectedProductId){
+  //  //  this.onProductChange(this.selectedProductId.toString());
+  //  //}
+  //}
+
+  updateDb() {
+    this.dataService.updateDb()
+      .pipe(
+        tap(res => alert(res?.message ?? 'Не получено ответа от сервера'))
+      )
+      .subscribe({
+        next: () => console.log('Update finished'),
+        error: err => alert('Ошибка при обновлении базы: ' + err)
+      });
   }
   
   //событие ввода даты

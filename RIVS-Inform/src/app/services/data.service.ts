@@ -71,8 +71,9 @@ export class DataService {
   };
   
   //запрос синхронизации измерений
-  updateDb() {
-    return this.httpClient.get<SynchronizationResult>(`${this.baseUrl}/updateDb`);
+  updateDb(): Observable<SynchronizationResult | null> {
+    return this.httpClient.get<{ synchronizationResult: SynchronizationResult }>(`${this.baseUrl}/newupdatedb/upd`)
+      .pipe(map(res => res?.synchronizationResult));
   }
   
 }
