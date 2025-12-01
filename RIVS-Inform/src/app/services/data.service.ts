@@ -37,11 +37,11 @@ export class DataService {
   }
 
   //Дата последнего измерения для предприятия
-  getLastDate(enterpriseId: number): Observable<Date | null> {
-    return this.httpClient.get<{ lastDate: Date }>(`${this.baseUrl}/newmeas/lastMeasureDate`,
-      { params: { enterpriseId: `${enterpriseId}` } })
-      .pipe(map(res => res?.lastDate));
-  }
+  //getLastDate(enterpriseId: number): Observable<Date | null> {
+  //  return this.httpClient.get<{ lastDate: Date }>(`${this.baseUrl}/newmeas/lastMeasureDate`,
+  //    { params: { enterpriseId: `${enterpriseId}` } })
+  //    .pipe(map(res => res?.lastDate));
+  //}
   
   //Запрос измерений
   getMeasures(prodId: number, startDate?: Date | null, endDate?: Date | null): Observable<Measure[]>{

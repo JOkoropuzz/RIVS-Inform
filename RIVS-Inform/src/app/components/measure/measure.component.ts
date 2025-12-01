@@ -80,11 +80,9 @@ export class TableMultipleHeader implements OnInit
   selectedEnterpriseSubject = new BehaviorSubject<number | null>(null);
   selectedProductSubject = new BehaviorSubject<number | null>(null);
 
-  pickerStartDate$ = new BehaviorSubject<Date>(new Date());
+  pickerStartDate$ = new BehaviorSubject<Date>(new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate() - 2));
   pickerEndDate$ = new BehaviorSubject<Date>(new Date());
-
-  pickerStartDate: Date | null = null;
-  pickerEndDate: Date | null = null;
+  
   
   //Шаблон колонок таблицы
   allColumns: DisplayColumn[] = [
@@ -133,37 +131,26 @@ export class TableMultipleHeader implements OnInit
         : of([]) // пустой массив, если предприятие не выбрано
       )
     );
-    
-    this.selectedEnterpriseSubject.pipe(
-      switchMap(enterpriseId => {
-        this.selectedProductSubject.next(null);
-        return enterpriseId !== null
-          ? this.dataService.getLastDate(enterpriseId)
-          : of(new Date()); }
-        
-      )
-    ).subscribe(date => {
-      const currentDate = new Date();
-      currentDate.setHours(0, 0, 0, 0);
-      this.pickerStartDate$.next(date ?? currentDate);
-      this.pickerStartDate = date ?? currentDate;
-      this.pickerEndDate = new Date();
-    });
 
+    this.selectedEnterpriseSubject.subscribe(() => {
+      // каждый раз при выборе нового предприятия — сбрасываем продукт
+      this.selectedProductSubject.next(null);
+      this.selectedProductName = undefined;
+    });
+    
     this.measures$ = combineLatest([
-      this.selectedProductSubject.pipe(filter(id => id != null)),// только реальные продукты
+      this.selectedProductSubject,
       this.products$,
       this.pickerStartDate$,
       this.pickerEndDate$
     ]).pipe(
-      switchMap(([productId, products, startDate, endDate]) => {
-        // графики пока нельзя рисовать
-        //this.chartReady = false;
-        this.fillColumns(products.find(p => p.id === productId));
-        this.selectedProductName = products.find(p => p.id === productId)?.name;
-        return this.dataService.getMeasures(productId!, startDate, endDate);
-      }
-      )
+      filter(([productId, , ,]) => productId != null),
+        switchMap(([productId, products, startDate, endDate]) => {
+          const product = products.find(p => p.id === productId);
+          this.fillColumns(product);
+          this.selectedProductName = product?.name;
+          return this.dataService.getMeasures(productId!, startDate, endDate);
+        })
     );
 
     this.measures$.subscribe(mes =>
@@ -173,18 +160,8 @@ export class TableMultipleHeader implements OnInit
     
   }
 
-  ngOnInit(){
-    
-    // Подписываемся на изменения выбранного продукта
-    //combineLatest([this.products$, this.selectedProductSubject])
-    //  .subscribe(
-    //    ([products, selectedId]) => {
-
-    //      //this.clearCharts();
-    //      this.fillColumns(products.find(p => p.id === selectedId));
-    //      this.selectedProductName = products.find(p => p.id === selectedId)?.name;
-    //  }
-    //);
+  ngOnInit()
+  {
   }
   
   fillCharts(measures: Measure[]) {
@@ -209,34 +186,6 @@ export class TableMultipleHeader implements OnInit
       this.el5Dps, this.el6Dps, this.el7Dps, this.el8Dps].forEach(arr => arr.length = 0);
     }
   }
-
-  //fillCharts(measures: Measure[])
-  //{
-  //  if (measures && measures.length > 0)
-  //  {
-  //    this.TFccDps = measures.map(m => ({ x: new Date(m.time), y: m.tfcc ?? 0 }));
-  //    this.el1Dps = measures.map(m => ({ x: new Date(m.time), y: m.el1 ?? 0 }));
-  //    this.el2Dps = measures.map(m => ({ x: new Date(m.time), y: m.el2 ?? 0 }));
-  //    this.el3Dps = measures.map(m => ({ x: new Date(m.time), y: m.el3 ?? 0 }));
-  //    this.el4Dps = measures.map(m => ({ x: new Date(m.time), y: m.el4 ?? 0 }));
-  //    this.el5Dps = measures.map(m => ({ x: new Date(m.time), y: m.el5 ?? 0 }));
-  //    this.el6Dps = measures.map(m => ({ x: new Date(m.time), y: m.el6 ?? 0 }));
-  //    this.el7Dps = measures.map(m => ({ x: new Date(m.time), y: m.el7 ?? 0 }));
-  //    this.el8Dps = measures.map(m => ({ x: new Date(m.time), y: m.el8 ?? 0 }));
-  //  }
-  //  else
-  //  {
-  //    this.TFccDps = [];
-  //    this.el1Dps = [];
-  //    this.el2Dps = [];
-  //    this.el3Dps = [];
-  //    this.el4Dps = [];
-  //    this.el5Dps = [];
-  //    this.el6Dps = [];
-  //    this.el7Dps = [];
-  //    this.el8Dps = [];
-  //  }
-  //}
   
   //fill columns data
   fillColumns(product: ProductElements | undefined) {
@@ -272,13 +221,6 @@ export class TableMultipleHeader implements OnInit
   }
 
   //обновление базы данных
-  //async updateDb() {
-  //  this.dataService.updateDb().pipe(map(res => alert(res?.message ?? 'Не получено ответа от сервера')));
-  //  //if (this.selectedProductId){
-  //  //  this.onProductChange(this.selectedProductId.toString());
-  //  //}
-  //}
-
   updateDb() {
     this.dataService.updateDb()
       .pipe(
