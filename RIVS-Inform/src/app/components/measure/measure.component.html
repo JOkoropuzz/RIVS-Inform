@@ -20,11 +20,26 @@
     </mat-form-field>
   </div>
   <div class="col-md-4">
+    <!--<mat-form-field>
+    <mat-label>Введите диапазон дат</mat-label>
+    <mat-date-range-input [rangePicker]="picker">
+      <input [(ngModel)]="pickerStartDate$ | async" (dateInput)="addEvent('inputStartDate', $event)" matStartDate placeholder="Дата от">
+      <input [(ngModel)]="pickerEndDate$ | async" (dateChange)="addEvent('inputEndDate', $event)" matEndDate placeholder="Дата до">
+    </mat-date-range-input>
+    <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+    <mat-date-range-picker #picker></mat-date-range-picker>
+  </mat-form-field>-->
     <mat-form-field>
       <mat-label>Введите диапазон дат</mat-label>
       <mat-date-range-input [rangePicker]="picker">
-        <input [(ngModel)]="pickerStartDate" (dateInput)="addEvent('inputStartDate', $event)" matStartDate placeholder="Дата от">
-        <input [(ngModel)]="pickerEndDate" (dateChange)="addEvent('inputEndDate', $event)" matEndDate placeholder="Дата до">
+        <input matStartDate
+               placeholder="Дата от"
+               [value]="pickerStartDate$ | async"
+               (dateInput)="addEvent('inputStartDate', $event)">
+        <input matEndDate
+               placeholder="Дата до"
+               [value]="pickerEndDate$ | async"
+               (dateChange)="addEvent('inputEndDate', $event)">
       </mat-date-range-input>
       <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
       <mat-date-range-picker #picker></mat-date-range-picker>
