@@ -2,6 +2,7 @@ export interface ProductElements {
   enterpriseId: number;
   id: number;
   name: string;
+  el0?: string
   el1?: string;
   el2?: string;
   el3?: string;

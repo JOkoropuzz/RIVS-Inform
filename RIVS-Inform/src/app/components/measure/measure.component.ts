@@ -87,7 +87,7 @@ export class TableMultipleHeader implements OnInit
   //Шаблон колонок таблицы
   allColumns: DisplayColumn[] = [
     { def: 'time', label: 'Время', hide: false },
-    { def: 'TFcc', label: 'TF', hide: false },
+    { def: 'el0', label: 'el0', hide: true },
     { def: 'el1', label: 'el1', hide: true },
     { def: 'el2', label: 'el2', hide: true },
     { def: 'el3', label: 'el3', hide: true },
@@ -99,7 +99,7 @@ export class TableMultipleHeader implements OnInit
   ];
 
   //data for charts
-  @ViewChild('TFccChart') TFccChart!: ChartComponent;
+  @ViewChild('el0Chart') el0Chart!: ChartComponent;
   @ViewChild('el1Chart') el1Chart!: ChartComponent;
   @ViewChild('el2Chart') el2Chart!: ChartComponent;
   @ViewChild('el3Chart') el3Chart!: ChartComponent;
@@ -108,11 +108,11 @@ export class TableMultipleHeader implements OnInit
   @ViewChild('el6Chart') el6Chart!: ChartComponent;
   @ViewChild('el7Chart') el7Chart!: ChartComponent;
   @ViewChild('el8Chart') el8Chart!: ChartComponent;
-  TFccDps: { x: Date; y: number }[] = []; el1Dps: { x: Date; y: number }[] = [];
-  el2Dps: { x: Date; y: number }[] = []; el3Dps: { x: Date; y: number }[] = [];
-  el4Dps: { x: Date; y: number }[] = []; el5Dps: { x: Date; y: number }[] = [];
-  el6Dps: { x: Date; y: number }[] = []; el7Dps: { x: Date; y: number }[] = [];
-  el8Dps: { x: Date; y: number }[] = [];
+  //TFccDps: { x: Date; y: number }[] = []; el1Dps: { x: Date; y: number }[] = [];
+  //el2Dps: { x: Date; y: number }[] = []; el3Dps: { x: Date; y: number }[] = [];
+  //el4Dps: { x: Date; y: number }[] = []; el5Dps: { x: Date; y: number }[] = [];
+  //el6Dps: { x: Date; y: number }[] = []; el7Dps: { x: Date; y: number }[] = [];
+  //el8Dps: { x: Date; y: number }[] = [];
 
   //string array of columns name
   displayedColumns?: string[];
@@ -165,26 +165,33 @@ export class TableMultipleHeader implements OnInit
   }
   
   fillCharts(measures: Measure[]) {
-    const updateData = (target: { x: Date, y: number }[], getter: (m: Measure) => number | undefined) => {
-      target.length = 0; // очищаем массив, не создавая новый
-      measures.forEach(m => target.push({ x: new Date(m.time), y: getter(m) ?? 0 }));
-    };
+    const time = measures.map(m => m.time);
 
-    if (measures && measures.length > 0) {
-      updateData(this.TFccDps, m => m.tfcc ?? 0);
-      updateData(this.el1Dps, m => m.el1 ?? 0);
-      updateData(this.el2Dps, m => m.el2 ?? 0);
-      updateData(this.el3Dps, m => m.el3 ?? 0);
-      updateData(this.el4Dps, m => m.el4 ?? 0);
-      updateData(this.el5Dps, m => m.el5 ?? 0);
-      updateData(this.el6Dps, m => m.el6 ?? 0);
-      updateData(this.el7Dps, m => m.el7 ?? 0);
-      updateData(this.el8Dps, m => m.el8 ?? 0);
-    }
-    else {
-      [this.TFccDps, this.el1Dps, this.el2Dps, this.el3Dps, this.el4Dps,
-      this.el5Dps, this.el6Dps, this.el7Dps, this.el8Dps].forEach(arr => arr.length = 0);
-    }
+    // TFCC
+    //const tfccSeries = measures.map(m => ({
+    //  x: new Date(m.time),
+    //  y: m.tfcc ?? 0
+    //}));
+
+    // Elements
+    const elementMap: Record<string, { x: Date; y: number }[]> = {};
+
+    measures.forEach(m => {
+      m.elementValues.forEach(ev => {
+        if (!elementMap[ev.elementName]) {
+          elementMap[ev.elementName] = [];
+        }
+        elementMap[ev.elementName].push({
+          x: new Date(m.time),
+          y: ev.value
+        });
+      });
+    });
+
+    return {
+      //tfccSeries,
+      elementSeries: elementMap
+    };
   }
   
   //fill columns data
@@ -201,14 +208,14 @@ export class TableMultipleHeader implements OnInit
       }
     }
     
-    if (this.selectedEnterpriseSubject) {
-      this.allColumns.find(col => col.def === 'TFcc')!.hide = false;
-    }
-    else {
-      this.allColumns.find(col => col.def === 'TFcc')!.hide = true;
-    }
+    //if (this.selectedEnterpriseSubject) {
+    //  this.allColumns.find(col => col.def === 'TFcc')!.hide = false;
+    //}
+    //else {
+    //  this.allColumns.find(col => col.def === 'TFcc')!.hide = true;
+    //}
 
-    for (let i = 1; i < 9; i++) {
+    for (let i = 0; i < 9; i++) {
       if (elems[i - 1] != null && elems[i - 1] != undefined && elems[i - 1] != '') {
         this.allColumns.find(col => col.def === 'el' + i)!.label = elems[i - 1];
         this.allColumns.find(col => col.def === 'el' + i)!.hide = false;
@@ -242,459 +249,70 @@ export class TableMultipleHeader implements OnInit
     }
   }
   
-  public updateCharts(measures: Measure[]) {
+  updateCharts(measures: Measure[]) {
+    
+    //Заполняем данные
+    const { elementSeries } = this.fillCharts(measures);
 
-    //заполняем данные
-    this.fillCharts(measures);
-
-    // Обновляем title, series, создавая новый массив
-    this.TFccoptions.title = { text: this.allColumns[1].label + " %" };
-    this.TFccoptions.series = [
-      {
-        name: this.allColumns[1].label,
-        data: this.TFccDps.map(p => ({ x: new Date(p.x), y: p.y ?? 0 }))
-      }
-    ];
-    this.chart1options.title = { text: this.allColumns[2].label + " %" };
-    this.chart1options.series = [
-      {
-        name: this.allColumns[2].label,
-        data: this.el1Dps.map(p => ({ x: new Date(p.x), y: p.y ?? 0 }))
-      }
-    ];
-
-    this.chart2options.title = { text: this.allColumns[3].label + " %" };
-    this.chart2options.series = [
-      {
-        name: this.allColumns[3].label,
-        data: this.el2Dps.map(p => ({ x: new Date(p.x), y: p.y ?? 0 }))
-      }
-    ];
-
-    this.chart3options.title = { text: this.allColumns[4].label + " %" };
-    this.chart3options.series = [
-      {
-        name: this.allColumns[4].label,
-        data: this.el3Dps.map(p => ({ x: new Date(p.x), y: p.y ?? 0 }))
-      }
+    //График Tf
+    //this.TFccoptions.title = { text: this.allColumns[1].label + " %" };
+    //this.TFccoptions.series = [
+    //  {
+    //    name: this.allColumns[1].label,
+    //    data: tfccSeries.map(p => ({ x: new Date(p.x), y: p.y ?? 0 }))
+    //  }
+    //];
+    //if (this.TFccChart) {
+    //  this.TFccChart.updateSeries(this.TFccoptions.series, true);
+    //}
+    
+    // Объекты графиков и соответствующие элементы
+    const chartProps = [
+      { chart: this.chart0options, seriesLabelIndex: 1, chartRef: this.el0Chart },
+      { chart: this.chart1options, seriesLabelIndex: 2, chartRef: this.el1Chart },
+      { chart: this.chart2options, seriesLabelIndex: 3, chartRef: this.el2Chart },
+      { chart: this.chart3options, seriesLabelIndex: 4, chartRef: this.el3Chart },
+      { chart: this.chart4options, seriesLabelIndex: 5, chartRef: this.el4Chart },
+      { chart: this.chart5options, seriesLabelIndex: 6, chartRef: this.el5Chart },
+      { chart: this.chart6options, seriesLabelIndex: 7, chartRef: this.el6Chart },
+      { chart: this.chart7options, seriesLabelIndex: 8, chartRef: this.el7Chart },
+      { chart: this.chart8options, seriesLabelIndex: 9, chartRef: this.el8Chart }
     ];
 
-    this.chart4options.title = { text: this.allColumns[5].label + " %" };
-    this.chart4options.series = [
-      {
-        name: this.allColumns[5].label,
-        data: this.el4Dps.map(p => ({ x: new Date(p.x), y: p.y ?? 0 }))
-      }
-    ];
+    // Обновление всех графиков в цикле
+    chartProps.forEach(({ chart, seriesLabelIndex, chartRef }) => {
+      const label = this.allColumns[seriesLabelIndex].label;
 
-    this.chart5options.title = { text: this.allColumns[6].label + " %" };
-    this.chart5options.series = [
-      {
-        name: this.allColumns[6].label,
-        data: this.el5Dps.map(p => ({ x: new Date(p.x), y: p.y ?? 0 }))
-      }
-    ];
+      chart.title = { text: label + ' %' };
+      chart.series = [
+        {
+          name: label,
+          data: (elementSeries[label] ?? []).map(p => ({ x: new Date(p.x), y: p.y ?? 0 }))
+        }
+      ];
 
-    this.chart6options.title = { text: this.allColumns[7].label + " %" };
-    this.chart6options.series = [
-      {
-        name: this.allColumns[7].label,
-        data: this.el6Dps.map(p => ({ x: new Date(p.x), y: p.y ?? 0 }))
+      // Обновляем ApexCharts через ссылку на компонент
+      if (chartRef) {
+        chartRef.updateSeries(chart.series, true);
       }
-    ];
-
-    this.chart7options.title = { text: this.allColumns[8].label + " %" };
-    this.chart7options.series = [
-      {
-        name: this.allColumns[8].label,
-        data: this.el7Dps.map(p => ({ x: new Date(p.x), y: p.y ?? 0 }))
-      }
-    ];
-
-    this.chart8options.title = { text: this.allColumns[9].label + " %" };
-    this.chart8options.series = [
-      {
-        name: this.allColumns[9].label,
-        data: this.el8Dps.map(p => ({ x: new Date(p.x), y: p.y ?? 0 }))
-      }
-    ];
-
-    if (this.TFccChart) {
-      this.TFccChart.updateSeries(this.TFccoptions.series, true);
-    }
-    if (this.el1Chart) {
-      this.el1Chart.updateSeries(this.chart1options.series, true);
-    }
-    if (this.el2Chart) {
-      this.el2Chart.updateSeries(this.chart2options.series, true);
-    }
-    if (this.el3Chart) {
-      this.el3Chart.updateSeries(this.chart3options.series, true);
-    }
-    if (this.el4Chart) {
-      this.el4Chart.updateSeries(this.chart4options.series, true);
-    }
-    if (this.el5Chart) {
-      this.el5Chart.updateSeries(this.chart5options.series, true);
-    }
-    if (this.el6Chart) {
-      this.el6Chart.updateSeries(this.chart6options.series, true);
-    }
-    if (this.el7Chart) {
-      this.el7Chart.updateSeries(this.chart7options.series, true);
-    }
-    if (this.el8Chart) {
-      this.el8Chart.updateSeries(this.chart8options.series, true);
-    }
+    });
   }
 
-  // Show/Hide columns
+  // Show-Hide columns
   hideColumns() {
     this.displayedColumns = this.allColumns.filter(cd => !cd.hide).map(cd => cd.def)
   }
 
-  //ДАЛЕЕ ОПЦИИ ГРАФИКОВ
-  //public initCharts() {
-  //  this.TFccoptions = {
-  //    ...this.TFccoptions,
-  //    title: {
-  //      text: this.allColumns[1].label + " %",
-  //    },
-  //    series: [
-  //      {
-  //        name: this.allColumns[1].label,
-  //        data: this.TFccDps
-  //      }
-  //    ],
-
-  //    chart: {
-  //      zoom: { enabled: false },
-  //      toolbar: {
-  //        tools: {
-  //          pan: false,
-  //          download: false,
-  //          zoom: false,
-  //        }
-
-  //      },
-  //      id: "TFcc",
-  //      group: "social",
-  //      type: "area",
-  //      height: 160
-  //    },
-  //    colors: ["black"],
-  //    yaxis: {
-  //      tickAmount: 2,
-  //      labels: {
-  //        minWidth: 40
-  //      },
-
-
-  //    }
-  //  };
-  //  this.chart1options = {
-  //    ...this.chart1options,
-  //    title: {
-  //      text: this.allColumns[2].label + " %",
-  //    },
-  //    series: [
-  //      {
-  //        name: this.allColumns[2].label,
-  //        data: this.el1Dps
-  //      }
-  //    ],
-  //    chart: {
-  //      zoom: { enabled: false },
-  //      toolbar: {
-  //        show: false,
-  //        tools: {
-  //          zoom: false
-  //        }
-  //      },
-  //      id: "el1",
-  //      group: "social",
-  //      type: "area",
-  //      height: 160
-  //    },
-  //    colors: ["DarkRed"],
-  //    yaxis: {
-
-  //      tickAmount: 2,
-  //      labels: {
-  //        minWidth: 40
-  //      }
-  //    }
-  //  };
-  //  this.chart2options = {
-  //    ...this.chart2options,
-  //    title: {
-  //      text: this.allColumns[3].label + " %",
-  //    },
-  //    series: [
-  //      {
-  //        name: this.allColumns[3].label,
-  //        data: this.el2Dps
-  //      }
-  //    ],
-  //    chart: {
-  //      zoom: { enabled: false },
-  //      toolbar: {
-  //        show: false,
-  //        tools: {
-  //          zoom: false
-  //        }
-  //      },
-  //      id: "el2",
-  //      group: "social",
-  //      type: "area",
-  //      height: 160
-  //    },
-  //    colors: ["DarkBlue"],
-  //    yaxis: {
-  //      tickAmount: 2,
-  //      labels: {
-  //        minWidth: 40
-  //      }
-  //    }
-  //  };
-  //  this.chart3options = {
-  //    ...this.chart3options,
-  //    title: {
-  //      text: this.allColumns[4].label + " %",
-  //    },
-  //    series: [
-  //      {
-  //        name: this.allColumns[4].label,
-  //        data: this.el3Dps
-  //      }
-  //    ],
-  //    chart: {
-  //      zoom: { enabled: false },
-  //      toolbar: {
-  //        show: false,
-  //        tools: {
-  //          zoom: false
-  //        }
-  //      },
-  //      id: "el3",
-  //      group: "social",
-  //      type: "area",
-  //      height: 160
-  //    },
-  //    colors: ["DarkGreen"],
-  //    yaxis: {
-  //      tickAmount: 2,
-  //      labels: {
-  //        minWidth: 40
-  //      }
-  //    }
-  //  };
-  //  this.chart4options = {
-  //    ...this.chart4options,
-  //    title: {
-  //      text: this.allColumns[5].label + " %",
-  //    },
-  //    series: [
-  //      {
-  //        name: this.allColumns[5].label,
-  //        data: this.el4Dps
-  //      }
-  //    ],
-  //    chart: {
-  //      zoom: { enabled: false },
-  //      toolbar: {
-  //        show: false,
-  //        tools: {
-  //          zoom: false
-  //        }
-  //      },
-  //      id: "el4",
-  //      group: "social",
-  //      type: "area",
-  //      height: 160
-  //    },
-  //    colors: ["orange"],
-  //    yaxis: {
-  //      tickAmount: 2,
-  //      labels: {
-  //        minWidth: 40
-  //      }
-  //    }
-  //  };
-  //  this.chart5options = {
-  //    ...this.chart5options,
-  //    title: {
-  //      text: this.allColumns[6].label + " %",
-  //    },
-  //    series: [
-  //      {
-  //        name: this.allColumns[6].label,
-  //        data: this.el5Dps
-  //      }
-  //    ],
-  //    chart: {
-  //      zoom: { enabled: false },
-  //      toolbar: {
-  //        show: false,
-  //        tools: {
-  //          zoom: false
-  //        }
-  //      },
-  //      id: "el5",
-  //      group: "social",
-  //      type: "area",
-  //      height: 160
-  //    },
-  //    colors: ["Coral"],
-  //    yaxis: {
-  //      tickAmount: 2,
-  //      labels: {
-  //        minWidth: 40
-  //      }
-  //    }
-  //  };
-  //  this.chart6options = {
-  //    ...this.chart6options,
-  //    title: {
-  //      text: this.allColumns[7].label + " %",
-  //    },
-  //    series: [
-  //      {
-  //        name: this.allColumns[7].label,
-  //        data: this.el6Dps
-  //      }
-  //    ],
-  //    chart: {
-  //      zoom: { enabled: false },
-  //      toolbar: {
-  //        show: false,
-  //        tools: {
-  //          zoom: false
-  //        }
-  //      },
-  //      id: "el6",
-  //      group: "social",
-  //      type: "area",
-  //      height: 160
-  //    },
-  //    colors: ["gray"],
-  //    yaxis: {
-  //      tickAmount: 2,
-  //      labels: {
-  //        minWidth: 40
-  //      }
-  //    }
-  //  };
-  //  this.chart7options = {
-  //    ...this.chart7options,
-  //    title: {
-  //      text: this.allColumns[8].label + " %",
-  //    },
-  //    series: [
-  //      {
-  //        name: this.allColumns[8].label,
-  //        data: this.el7Dps
-  //      }
-  //    ],
-  //    chart: {
-  //      zoom: { enabled: false },
-  //      toolbar: {
-  //        show: false,
-  //        tools: {
-  //          zoom: false
-  //        }
-  //      },
-  //      id: "el7",
-  //      group: "social",
-  //      type: "area",
-  //      height: 160
-  //    },
-  //    colors: ["brown"],
-  //    yaxis: {
-  //      tickAmount: 2,
-  //      labels: {
-  //        minWidth: 40
-  //      }
-  //    }
-  //  };
-  //  this.chart8options = {
-  //    ...this.chart8options,
-  //    title: {
-  //      text: this.allColumns[9].label + " %",
-  //    },
-  //    series: [
-  //      {
-  //        name: this.allColumns[9].label,
-  //        data: this.el8Dps
-  //      }
-  //    ],
-  //    chart: {
-  //      zoom: { enabled: false },
-  //      toolbar: {
-  //        show: false,
-  //        tools: {
-  //          zoom: false
-  //        }
-  //      },
-  //      id: "el8",
-  //      group: "social",
-  //      type: "area",
-  //      height: 160
-  //    },
-  //    colors: ["Olive"],
-  //    yaxis: {
-  //      tickAmount: 2,
-  //      labels: {
-  //        minWidth: 40
-  //      }
-  //    }
-  //  };
-  //  this.commonOptions = {
-  //    dataLabels: {
-  //      enabled: false
-  //    },
-
-  //    stroke: {
-  //      curve: "smooth"
-  //    },
-  //    markers: {
-  //      size: 6,
-  //      hover: {
-  //        size: 10
-  //      }
-  //    },
-  //    tooltip: {
-  //      followCursor: false,
-  //      theme: "dark",
-  //      x: {
-  //        format: "dd-MM-yyyy HH:mm",
-  //        show: true
-  //      },
-  //      marker: {
-  //        show: false
-  //      },
-  //    },
-  //    grid: {
-  //    },
-  //    xaxis: {
-  //      tooltip: {
-  //        enabled: false
-  //      },
-  //      labels: {
-  //        datetimeUTC: false
-  //      },
-  //      type: "datetime"
-  //    },
-  //  };
-  //}
-  public TFccoptions: Partial<ChartOptions> = {
+  //Опции графиков
+  public chart0options: Partial<ChartOptions> = {
     title: {
       text: this.allColumns[1].label + " %",
     },
     series: [
       {
         name: this.allColumns[1].label,
-        data: this.el5Dps
+        //data: this.TFccDps
+        data: []
       }
     ],
     chart: {
@@ -729,7 +347,8 @@ export class TableMultipleHeader implements OnInit
     series: [
       {
         name: this.allColumns[2].label,
-        data: this.el5Dps
+        //data: this.el1Dps
+        data: []
       }
     ],
     chart: {
@@ -761,7 +380,8 @@ export class TableMultipleHeader implements OnInit
     series: [
       {
         name: this.allColumns[3].label,
-        data: this.el5Dps
+        //data: this.el2Dps
+        data: []
       }
     ],
     chart: {
@@ -792,7 +412,8 @@ export class TableMultipleHeader implements OnInit
     series: [
       {
         name: this.allColumns[4].label,
-        data: this.el5Dps
+        //data: this.el3Dps
+        data: []
       }
     ],
     chart: {
@@ -823,7 +444,8 @@ export class TableMultipleHeader implements OnInit
     series: [
       {
         name: this.allColumns[5].label,
-        data: this.el5Dps
+        //data: this.el4Dps
+        data: []
       }
     ],
     chart: {
@@ -854,7 +476,8 @@ export class TableMultipleHeader implements OnInit
     series: [
       {
           name: this.allColumns[6].label,
-          data: this.el5Dps
+        //data: this.el5Dps
+        data: []
       }
     ],
     chart: {
@@ -885,7 +508,8 @@ export class TableMultipleHeader implements OnInit
     series: [
       {
           name: this.allColumns[7].label,
-          data: this.el6Dps
+        //data: this.el6Dps
+        data: []
       }
     ],
     chart: {
@@ -916,7 +540,8 @@ export class TableMultipleHeader implements OnInit
     series: [
       {
           name: this.allColumns[8].label,
-          data: this.el7Dps
+        //data: this.el7Dps
+        data: []
       }
     ],
     chart: {
@@ -947,7 +572,8 @@ export class TableMultipleHeader implements OnInit
     series: [
       {
           name: this.allColumns[9].label,
-          data: this.el8Dps
+        //data: this.el8Dps
+          data: []
       }
     ],
     chart: {

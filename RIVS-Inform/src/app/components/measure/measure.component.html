@@ -54,11 +54,11 @@
 <div *ngIf="selectedProductSubject | async">
   <div [hidden]="allColumns[1].hide" [id]="allColumns[1].def">
       <apx-chart #TFccChart
-                   [series]="TFccoptions.series"
-                   [chart]="TFccoptions.chart"
-                   [colors]="TFccoptions.colors"
-                   [yaxis]="TFccoptions.yaxis"
-                   [title]="TFccoptions.title"
+                   [series]="chart0options.series"
+                   [chart]="chart0options.chart"
+                   [colors]="chart0options.colors"
+                   [yaxis]="chart0options.yaxis"
+                   [title]="chart0options.title"
                    [dataLabels]="commonOptions.dataLabels"
                    [markers]="commonOptions.markers"
                    [stroke]="commonOptions.stroke"
@@ -69,7 +69,8 @@
 
     </div>
     <div [hidden]="allColumns[2].hide" [id]="allColumns[2].def">
-      <apx-chart #el1Chart [series]="chart1options.series"
+      <apx-chart #el1Chart
+                 [series]="chart1options.series"
                  [chart]="chart1options.chart"
                  [colors]="chart1options.colors"
                  [yaxis]="chart1options.yaxis"
@@ -83,7 +84,8 @@
       </apx-chart>
     </div>
     <div [hidden]="allColumns[3].hide" [id]="allColumns[3].def">
-      <apx-chart #el2Chart [series]="chart2options.series"
+      <apx-chart #el2Chart
+                 [series]="chart2options.series"
                  [chart]="chart2options.chart"
                  [colors]="chart2options.colors"
                  [yaxis]="chart2options.yaxis"
@@ -97,7 +99,8 @@
       </apx-chart>
     </div>
     <div [hidden]="allColumns[4].hide" [id]="allColumns[4].def">
-      <apx-chart #el3Chart [series]="chart3options.series"
+      <apx-chart #el3Chart
+                 [series]="chart3options.series"
                  [chart]="chart3options.chart"
                  [colors]="chart3options.colors"
                  [yaxis]="chart3options.yaxis"
@@ -111,7 +114,8 @@
       </apx-chart>
     </div>
     <div [hidden]="allColumns[5].hide" [id]="allColumns[5].def">
-      <apx-chart #el4Chart [series]="chart4options.series"
+      <apx-chart #el4Chart
+                 [series]="chart4options.series"
                  [chart]="chart4options.chart"
                  [colors]="chart4options.colors"
                  [yaxis]="chart4options.yaxis"
@@ -125,7 +129,8 @@
       </apx-chart>
     </div>
     <div [hidden]="allColumns[6].hide" [id]="allColumns[6].def">
-      <apx-chart #el5Chart [series]="chart5options.series"
+      <apx-chart #el5Chart
+                 [series]="chart5options.series"
                  [chart]="chart5options.chart"
                  [colors]="chart5options.colors"
                  [yaxis]="chart5options.yaxis"
@@ -139,7 +144,8 @@
       </apx-chart>
     </div>
     <div [hidden]="allColumns[7].hide" [id]="allColumns[7].def">
-      <apx-chart #el6Chart [series]="chart6options.series"
+      <apx-chart #el6Chart
+                 [series]="chart6options.series"
                  [chart]="chart6options.chart"
                  [colors]="chart6options.colors"
                  [yaxis]="chart6options.yaxis"
@@ -153,7 +159,8 @@
       </apx-chart>
     </div>
     <div [hidden]="allColumns[8].hide" [id]="allColumns[8].def">
-      <apx-chart #el7Chart [series]="chart7options.series"
+      <apx-chart #el7Chart
+                 [series]="chart7options.series"
                  [chart]="chart7options.chart"
                  [colors]="chart7options.colors"
                  [yaxis]="chart7options.yaxis"
@@ -166,18 +173,19 @@
                  [tooltip]="commonOptions.tooltip">
       </apx-chart>
     </div>
-    <div [hidden]="allColumns[9].hide" [id]="allColumns[9].def">
-      <apx-chart #el8Chart [series]="chart8options.series"
-                 [chart]="chart8options.chart"
-                 [colors]="chart8options.colors"
-                 [yaxis]="chart8options.yaxis"
-                 [title]="chart8options.title"
-                 [dataLabels]="commonOptions.dataLabels"
-                 [markers]="commonOptions.markers"
-                 [stroke]="commonOptions.stroke"
-                 [grid]="commonOptions.grid"
-                 [xaxis]="commonOptions.xaxis"
-                 [tooltip]="commonOptions.tooltip">
+  <div [hidden]="allColumns[9].hide" [id]="allColumns[9].def">
+    <apx-chart #el8Chart
+               [series]="chart8options.series"
+               [chart]="chart8options.chart"
+               [colors]="chart8options.colors"
+               [yaxis]="chart8options.yaxis"
+               [title]="chart8options.title"
+               [dataLabels]="commonOptions.dataLabels"
+               [markers]="commonOptions.markers"
+               [stroke]="commonOptions.stroke"
+               [grid]="commonOptions.grid"
+               [xaxis]="commonOptions.xaxis"
+               [tooltip]="commonOptions.tooltip">
       </apx-chart>
     </div>
   </div>
