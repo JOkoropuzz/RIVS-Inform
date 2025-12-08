@@ -2,10 +2,9 @@ import { Component, inject, OnInit, ViewChild} from '@angular/core';
 import { DataService } from '../../services/data.service';
 import { Measure } from '../../models/measure';
 import { provideNativeDateAdapter } from '@angular/material/core';
-import { MatDatepickerInputEvent } from '@angular/material/datepicker';
 import { NavMenuService } from '../../services/nav-menu.service';
 import { MatIconRegistry } from '@angular/material/icon';
-import { BehaviorSubject, Observable, switchMap, of, combineLatest, map, filter, tap, } from 'rxjs';
+import { BehaviorSubject, Observable, startWith, switchMap, of, combineLatest, map, filter, tap, } from 'rxjs';
 
 
 import {
@@ -26,7 +25,6 @@ import {
 import { DomSanitizer } from '@angular/platform-browser';
 import { ProductElements } from '../../models/productElements';
 import { Enterprise } from '../../models/enterprise';
-import { FormControl } from '@angular/forms';
 
 //УБРАТЬ!
 const REFRESH_ICON = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#5f6368"><path d="M480-160q-134 0-227-93t-93-227q0-134 93-227t227-93q69 0 132 28.5T720-690v-110h80v280H520v-80h168q-32-56-87.5-88T480-720q-100 0-170 70t-70 170q0 100 70 170t170 70q77 0 139-44t87-116h84q-28 106-114 173t-196 67Z"/></svg>`;
@@ -64,24 +62,52 @@ export interface DisplayColumn {
 //Разбить на отдельные компоненты
 export class TableMultipleHeader implements OnInit
 {
-  //флаг готовности графиков
-  //chartReady = false;
-
-  //productCtrl = new FormControl(null);
-  products$: Observable<ProductElements[]>;
-  //selectedProductId: number | null = null;
-  selectedProductName: string | undefined = undefined;
-
-  enterprises$: Observable<Enterprise[]>;
-  //selectedEnterpriseId: number | null = null;
-
-  measures$: Observable<Measure[]>;
 
   selectedEnterpriseSubject = new BehaviorSubject<number | null>(null);
   selectedProductSubject = new BehaviorSubject<number | null>(null);
 
-  pickerStartDate$ = new BehaviorSubject<Date>(new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate() - 2));
-  pickerEndDate$ = new BehaviorSubject<Date>(new Date());
+  pickerStartDate$ = new BehaviorSubject<Date | null>(null);
+  pickerEndDate$ = new BehaviorSubject<Date | null>(null);
+
+  products$ = this.selectedEnterpriseSubject.pipe(
+    switchMap(enterpriseId => enterpriseId !== null
+      ? this.dataService.getProducts(enterpriseId)
+      : of([]) // пустой массив, если предприятие не выбрано
+    )
+  );
+  selectedProductName: string | undefined = undefined;
+
+  enterprises$ = this.dataService.getEnterprises();
+  
+  measures$ = combineLatest([
+    this.selectedProductSubject,
+    this.products$,
+    this.pickerStartDate$,
+    this.pickerEndDate$
+  ]).pipe(
+    filter(([productId, , pickerStartDate, pickerEndDate]) =>
+      productId != null && pickerStartDate != null && pickerEndDate != null
+    ),
+    switchMap(([productId, products, startDate, endDate]) => {
+      const product = products.find(p => p.id === productId);
+      this.fillColumns(product);
+      this.selectedProductName = product?.name;
+
+      return this.dataService.getMeasures(productId!, startDate!, endDate!);
+    }),
+    map(res => res ?? [])   // ← ← ← ВАЖНОЕ МЕСТО: null → []
+  );
+
+  measuresMapped$ = this.measures$.pipe(
+    map(measures =>
+      (measures ?? []).map(m => ({
+        ...m,
+        ...Object.fromEntries(
+          m.elementValues.map(ev => [ev.elementName, ev.value])
+        )
+      }))
+    )
+  );
   
   
   //Шаблон колонок таблицы
@@ -108,11 +134,6 @@ export class TableMultipleHeader implements OnInit
   @ViewChild('el6Chart') el6Chart!: ChartComponent;
   @ViewChild('el7Chart') el7Chart!: ChartComponent;
   @ViewChild('el8Chart') el8Chart!: ChartComponent;
-  //TFccDps: { x: Date; y: number }[] = []; el1Dps: { x: Date; y: number }[] = [];
-  //el2Dps: { x: Date; y: number }[] = []; el3Dps: { x: Date; y: number }[] = [];
-  //el4Dps: { x: Date; y: number }[] = []; el5Dps: { x: Date; y: number }[] = [];
-  //el6Dps: { x: Date; y: number }[] = []; el7Dps: { x: Date; y: number }[] = [];
-  //el8Dps: { x: Date; y: number }[] = [];
 
   //string array of columns name
   displayedColumns?: string[];
@@ -123,57 +144,64 @@ export class TableMultipleHeader implements OnInit
     const sanitizer = inject(DomSanitizer);
     iconRegistry.addSvgIconLiteral('refresh', sanitizer.bypassSecurityTrustHtml(REFRESH_ICON));
 
-    this.enterprises$ = this.dataService.getEnterprises();
+    /*this.enterprises$ = this.dataService.getEnterprises();*/
 
-    this.products$ = this.selectedEnterpriseSubject.pipe(
-      switchMap(enterpriseId => enterpriseId !== null
-        ? this.dataService.getProducts(enterpriseId)
-        : of([]) // пустой массив, если предприятие не выбрано
-      )
-    );
+    //this.products$ = this.selectedEnterpriseSubject.pipe(
+    //  switchMap(enterpriseId => enterpriseId !== null
+    //    ? this.dataService.getProducts(enterpriseId)
+    //    : of([]) // пустой массив, если предприятие не выбрано
+    //  )
+    //);
+
+    
 
     this.selectedEnterpriseSubject.subscribe(() => {
-      // каждый раз при выборе нового предприятия — сбрасываем продукт
+      // каждый раз при выборе нового предприятия — сбрасываем продукт 
       this.selectedProductSubject.next(null);
       this.selectedProductName = undefined;
     });
     
-    this.measures$ = combineLatest([
-      this.selectedProductSubject,
-      this.products$,
-      this.pickerStartDate$,
-      this.pickerEndDate$
-    ]).pipe(
-      filter(([productId, , ,]) => productId != null),
-        switchMap(([productId, products, startDate, endDate]) => {
-          const product = products.find(p => p.id === productId);
-          this.fillColumns(product);
-          this.selectedProductName = product?.name;
-          return this.dataService.getMeasures(productId!, startDate, endDate);
-        })
-    );
+    //this.measures$ = combineLatest([
+    //  this.selectedProductSubject,
+    //  this.products$,
+    //  this.pickerStartDate$,
+    //  this.pickerEndDate$
+    //]).pipe(
+    //  filter(([productId, , pickerStartDate, pickerEndDate]) => productId != null && pickerStartDate != null && pickerEndDate != null),
+    //    switchMap(([productId, products, startDate, endDate]) => {
+    //      const product = products.find(p => p.id === productId);
+    //      this.fillColumns(product);
+    //      this.selectedProductName = product?.name;
+    //      return this.dataService.getMeasures(productId!, startDate!, endDate!);
+    //    })
+    //);
 
     this.measures$.subscribe(mes =>
     {
       this.updateCharts(mes);
     });
+
+    //this.measuresMapped$ = this.measures$.pipe(
+    //  map(measures =>
+    //    measures.map(m => ({
+    //      ...m,
+    //      ...Object.fromEntries(
+    //        m.elementValues.map((ev, i) => ['el' + i, ev.value])
+    //      )
+    //    }))
+    //  )
+    //);
     
   }
 
   ngOnInit()
   {
   }
-  
+
+  //заполнение графиков
   fillCharts(measures: Measure[]) {
     const time = measures.map(m => m.time);
-
-    // TFCC
-    //const tfccSeries = measures.map(m => ({
-    //  x: new Date(m.time),
-    //  y: m.tfcc ?? 0
-    //}));
-
-    // Elements
+    
     const elementMap: Record<string, { x: Date; y: number }[]> = {};
 
     measures.forEach(m => {
@@ -189,12 +217,11 @@ export class TableMultipleHeader implements OnInit
     });
 
     return {
-      //tfccSeries,
       elementSeries: elementMap
     };
   }
   
-  //fill columns data
+  //заполнение колонок
   fillColumns(product: ProductElements | undefined) {
     let elems: string[] = [];
     if (product) {
@@ -208,13 +235,6 @@ export class TableMultipleHeader implements OnInit
       }
     }
     
-    //if (this.selectedEnterpriseSubject) {
-    //  this.allColumns.find(col => col.def === 'TFcc')!.hide = false;
-    //}
-    //else {
-    //  this.allColumns.find(col => col.def === 'TFcc')!.hide = true;
-    //}
-
     for (let i = 0; i < 9; i++) {
       if (elems[i - 1] != null && elems[i - 1] != undefined && elems[i - 1] != '') {
         this.allColumns.find(col => col.def === 'el' + i)!.label = elems[i - 1];
@@ -253,18 +273,6 @@ export class TableMultipleHeader implements OnInit
     
     //Заполняем данные
     const { elementSeries } = this.fillCharts(measures);
-
-    //График Tf
-    //this.TFccoptions.title = { text: this.allColumns[1].label + " %" };
-    //this.TFccoptions.series = [
-    //  {
-    //    name: this.allColumns[1].label,
-    //    data: tfccSeries.map(p => ({ x: new Date(p.x), y: p.y ?? 0 }))
-    //  }
-    //];
-    //if (this.TFccChart) {
-    //  this.TFccChart.updateSeries(this.TFccoptions.series, true);
-    //}
     
     // Объекты графиков и соответствующие элементы
     const chartProps = [
@@ -298,12 +306,12 @@ export class TableMultipleHeader implements OnInit
     });
   }
 
-  // Show-Hide columns
+  // Show-Hide для колонок
   hideColumns() {
     this.displayedColumns = this.allColumns.filter(cd => !cd.hide).map(cd => cd.def)
   }
 
-  //Опции графиков
+  //Опции графиков по умолчанию
   public chart0options: Partial<ChartOptions> = {
     title: {
       text: this.allColumns[1].label + " %",
@@ -597,7 +605,7 @@ export class TableMultipleHeader implements OnInit
       }
     }
   };
-  //Общие обции для графиков
+  //Общие обции для графиков по умолчанию
   public commonOptions: Partial<ChartOptions> = {
     dataLabels: {
       enabled: false

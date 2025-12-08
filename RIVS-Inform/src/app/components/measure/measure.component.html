@@ -20,15 +20,6 @@
     </mat-form-field>
   </div>
   <div class="col-md-4">
-    <!--<mat-form-field>
-    <mat-label>Введите диапазон дат</mat-label>
-    <mat-date-range-input [rangePicker]="picker">
-      <input [(ngModel)]="pickerStartDate$ | async" (dateInput)="addEvent('inputStartDate', $event)" matStartDate placeholder="Дата от">
-      <input [(ngModel)]="pickerEndDate$ | async" (dateChange)="addEvent('inputEndDate', $event)" matEndDate placeholder="Дата до">
-    </mat-date-range-input>
-    <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
-    <mat-date-range-picker #picker></mat-date-range-picker>
-  </mat-form-field>-->
     <mat-form-field>
       <mat-label>Введите диапазон дат</mat-label>
       <mat-date-range-input [rangePicker]="picker">
@@ -189,14 +180,8 @@
       </apx-chart>
     </div>
   </div>
-<!--<div *ngIf="loadedFlag | async" class="mat-elevation-z8 flex-element">-->
 <div *ngIf="selectedProductSubject | async" class="mat-elevation-z8 flex-element">
-  <table mat-table [dataSource]="measures$" class="mat-elevation-z8">
-
-    <!--<ng-container [matColumnDef]="column" *ngFor="let column of displayedColumns">
-      <th mat-header-cell *matHeaderCellDef> {{column}} </th>
-      <td mat-cell *matCellDef="let resultProducts"> {{resultProducts[column]}} </td>
-    </ng-container>-->
+  <!--<table mat-table [dataSource]="measures$" class="mat-elevation-z8">
 
     <ng-container matColumnDef="time">
       <th mat-header-cell *matHeaderCellDef>
@@ -206,9 +191,9 @@
       <td mat-cell *matCellDef="let resultProducts"> {{resultProducts.time | date:'dd/MM/yyyy HH:mm'}} </td>
     </ng-container>
 
-    <ng-container matColumnDef="TFcc">
+    <ng-container matColumnDef="el0">
       <th mat-header-cell *matHeaderCellDef> <p>{{allColumns[1].label}}</p> </th>
-      <td mat-cell *matCellDef="let resultProducts"> {{resultProducts.tfcc}} </td>
+      <td mat-cell *matCellDef="let resultProducts"> {{resultProducts.el0}} </td>
     </ng-container>
 
     <ng-container matColumnDef="el1">
@@ -264,6 +249,33 @@
         class="second-header-row">
     </tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+  </table>-->
+  <table mat-table [dataSource]="(measuresMapped$ | async) ?? []" class="mat-elevation-z8">
+    
+    <ng-container matColumnDef="time">
+      <th mat-header-cell *matHeaderCellDef>{{ allColumns[0].label }}</th>
+      <td mat-cell *matCellDef="let row">
+        {{ row.time | date:'dd/MM/yyyy HH:mm' }}
+      </td>
+    </ng-container>
+    
+    <ng-container *ngFor="let col of allColumns.slice(1)" [matColumnDef]="col.def">
+      <th mat-header-cell *matHeaderCellDef>{{ col.label }}</th>
+      <td mat-cell *matCellDef="let row">
+        {{ row[col.label] }}
+      </td>
+    </ng-container>
+    
+    <ng-container matColumnDef="item-description">
+      <th mat-header-cell *matHeaderCellDef colspan="10" class="text-center">
+        Продукт "{{ selectedProductName }}"
+      </th>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="['item-description']" class="first-header-row"></tr>
+    <tr mat-header-row *matHeaderRowDef="displayedColumns" class="second-header-row"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
 
   </table>
 </div>
