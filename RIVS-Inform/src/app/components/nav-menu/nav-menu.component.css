@@ -3,10 +3,14 @@ a.navbar-brand {
   word-break: break-all;
 }
 
+.navbar {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 1000;
+}
+
 .Button {
-  border: var(--borderWidth-thin) solid;
-  border-color: #0000;
-  border-radius: var(--borderRadius-medium);
   cursor: pointer;
   display: inline-flex;
   flex-direction: row;
