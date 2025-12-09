@@ -25,34 +25,36 @@ export class LoginComponent {
     login: new FormControl('', [Validators.required]),
     password: new FormControl('', [Validators.required])
   });
-
-
+  
   onSubmit() {
     if (this.loginForm.valid) {
-      this.authService.login(this.loginForm.value)
-        .subscribe((data: any) => {
+      this.authService.login(this.loginForm.value.login ?? '', this.loginForm.value.password ?? '').subscribe({
+        next: (data: any) => {
           if (this.authService.isLoggedIn()) {
             this.router.navigate(['/home']);
-            this.navService.userName.next(this.loginForm.value.login!);
+            this.navService.userName.next(this.loginForm.value.login ?? '');
           }
-          else {
-            switch (data.error) {
-              case 0: {
-                this.loginResultMessage = 'что-то пошло не так';
-                break;
-              }
-              case 400: {
-                this.loginResultMessage = 'Неверный логин или пароль';
-                break;
-              }
-              default: {
-                this.loginResultMessage = 'Отсутствует связь с сервером'; 
-                break;
-              } 
-            }
-            
+        },
+        error: (err) => {
+          if (!err.status) {
+            this.loginResultMessage = "Нет соединения с сервером";
+            return;
           }
-        });
+
+          switch (err.status) {
+            case 0:
+              this.loginResultMessage = "Нет соединения с сервером";
+              break;
+            case 400:
+            case 401:
+              this.loginResultMessage = "Неверный логин или пароль";
+              break;
+            default:
+              this.loginResultMessage = "Что-то пошло не так";
+              break;
+          }
+        }
+      });
     }
   }
 }

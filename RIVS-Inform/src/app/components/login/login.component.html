@@ -11,7 +11,7 @@
       <input class="form-control" [readonly]="authService.isLoggedIn()" type="password" formControlName="password" placeholder="Password">
     </div>
     <p *ngIf="!authService.isLoggedIn()" class="login-result-message">{{loginResultMessage}}</p>
-    <p *ngIf="authService.isLoggedIn()" class="login-result-message">Вы уже авторизованы!</p>
+    <!--<p *ngIf="authService.isLoggedIn()" class="login-result-message">Вы уже авторизованы!</p>-->
     <button>Войти</button>
   </form>
 
