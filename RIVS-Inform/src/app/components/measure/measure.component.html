@@ -21,14 +21,16 @@
   </div>
   <div class="col-md-4">
     <mat-form-field>
-      <mat-label>Введите диапазон дат</mat-label>
-      <mat-date-range-input [rangePicker]="picker">
+      <mat-label>Диапазон дат</mat-label>
+      <mat-date-range-input [rangePicker]="picker" (click)="picker.open()">
         <input matStartDate
                placeholder="Дата от"
+               readonly
                [value]="pickerStartDate$ | async"
                (dateInput)="addEvent('inputStartDate', $event)">
         <input matEndDate
                placeholder="Дата до"
+               readonly
                [value]="pickerEndDate$ | async"
                (dateChange)="addEvent('inputEndDate', $event)">
       </mat-date-range-input>

@@ -36,10 +36,11 @@
         </button>
         <mat-menu #menu="matMenu">
           <div class="user-name">
-            <p>{{navService.userName.value!}}</p>
+            <p><b>{{navService.userName.value!}}</b></p>
           </div>
           <button (click)="logout()" mat-menu-item>
             <span>Выход</span>
+            <mat-icon svgIcon="logout" style="margin-top: 9px;"></mat-icon>
           </button>
         </mat-menu>
       </div>

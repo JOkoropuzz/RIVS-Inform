@@ -10,6 +10,15 @@ a.navbar-brand {
   z-index: 1000;
 }
 
+/* Эффект наведения для всех навигационных ссылок */
+.nav-item .nav-link {
+  transition: all 0.1s ease;
+}
+
+  .nav-item .nav-link:hover {
+    background-color: rgba(0, 0, 0, 0.08); /* Легкий фон */
+  }
+
 .Button {
   cursor: pointer;
   display: inline-flex;
