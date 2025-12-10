@@ -4,7 +4,7 @@ import { Measure } from '../../models/measure';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { NavMenuService } from '../../services/nav-menu.service';
 import { MatIconRegistry } from '@angular/material/icon';
-import { BehaviorSubject, Observable, startWith, switchMap, of, combineLatest, map, filter, tap, } from 'rxjs';
+import { BehaviorSubject, switchMap, of, combineLatest, map, filter, tap, } from 'rxjs';
 
 
 import {
@@ -19,16 +19,13 @@ import {
   ApexTooltip,
   ApexStroke,
   ApexGrid,
-  ChartComponent,
-  ApexOptions
+  ChartComponent
 } from "ng-apexcharts";
 import { DomSanitizer } from '@angular/platform-browser';
 import { ProductElements } from '../../models/productElements';
-import { Enterprise } from '../../models/enterprise';
 
-//УБРАТЬ!
+//иконка обновления
 const REFRESH_ICON = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#5f6368"><path d="M480-160q-134 0-227-93t-93-227q0-134 93-227t227-93q69 0 132 28.5T720-690v-110h80v280H520v-80h168q-32-56-87.5-88T480-720q-100 0-170 70t-70 170q0 100 70 170t170 70q77 0 139-44t87-116h84q-28 106-114 173t-196 67Z"/></svg>`;
-
 
 export type ChartOptions = {
   series: ApexAxisChartSeries;
@@ -59,10 +56,9 @@ export interface DisplayColumn {
 
 })
 
-//Разбить на отдельные компоненты
+//TODO: Разбить на отдельные компоненты
 export class TableMultipleHeader implements OnInit
 {
-
   selectedEnterpriseSubject = new BehaviorSubject<number | null>(null);
   selectedProductSubject = new BehaviorSubject<number | null>(null);
 
@@ -92,10 +88,13 @@ export class TableMultipleHeader implements OnInit
       const product = products.find(p => p.id === productId);
       this.fillColumns(product);
       this.selectedProductName = product?.name;
+      //добавляем к дате 1 день 
+      const adjustedEndDate = new Date(endDate!);
+      adjustedEndDate.setDate(adjustedEndDate.getDate() + 1);
 
-      return this.dataService.getMeasures(productId!, startDate!, endDate!);
+      return this.dataService.getMeasures(productId!, startDate!, adjustedEndDate);
     }),
-    map(res => res ?? [])   // ← ← ← ВАЖНОЕ МЕСТО: null → []
+    map(res => res ?? [])
   );
 
   measuresMapped$ = this.measures$.pipe(
@@ -108,7 +107,6 @@ export class TableMultipleHeader implements OnInit
       }))
     )
   );
-  
   
   //Шаблон колонок таблицы
   allColumns: DisplayColumn[] = [
@@ -139,58 +137,22 @@ export class TableMultipleHeader implements OnInit
   displayedColumns?: string[];
   
   constructor(public dataService: DataService, public navService: NavMenuService) {
-    //УБРАТЬ
+   //регистрация иконки
     const iconRegistry = inject(MatIconRegistry);
     const sanitizer = inject(DomSanitizer);
     iconRegistry.addSvgIconLiteral('refresh', sanitizer.bypassSecurityTrustHtml(REFRESH_ICON));
-
-    /*this.enterprises$ = this.dataService.getEnterprises();*/
-
-    //this.products$ = this.selectedEnterpriseSubject.pipe(
-    //  switchMap(enterpriseId => enterpriseId !== null
-    //    ? this.dataService.getProducts(enterpriseId)
-    //    : of([]) // пустой массив, если предприятие не выбрано
-    //  )
-    //);
-
     
-
     this.selectedEnterpriseSubject.subscribe(() => {
       // каждый раз при выборе нового предприятия — сбрасываем продукт 
       this.selectedProductSubject.next(null);
       this.selectedProductName = undefined;
     });
     
-    //this.measures$ = combineLatest([
-    //  this.selectedProductSubject,
-    //  this.products$,
-    //  this.pickerStartDate$,
-    //  this.pickerEndDate$
-    //]).pipe(
-    //  filter(([productId, , pickerStartDate, pickerEndDate]) => productId != null && pickerStartDate != null && pickerEndDate != null),
-    //    switchMap(([productId, products, startDate, endDate]) => {
-    //      const product = products.find(p => p.id === productId);
-    //      this.fillColumns(product);
-    //      this.selectedProductName = product?.name;
-    //      return this.dataService.getMeasures(productId!, startDate!, endDate!);
-    //    })
-    //);
-
     this.measures$.subscribe(mes =>
     {
       this.updateCharts(mes);
     });
-
-    //this.measuresMapped$ = this.measures$.pipe(
-    //  map(measures =>
-    //    measures.map(m => ({
-    //      ...m,
-    //      ...Object.fromEntries(
-    //        m.elementValues.map((ev, i) => ['el' + i, ev.value])
-    //      )
-    //    }))
-    //  )
-    //);
+    
     
   }
 
