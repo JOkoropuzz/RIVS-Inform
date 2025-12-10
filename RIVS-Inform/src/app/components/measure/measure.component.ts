@@ -213,11 +213,11 @@ export class TableMultipleHeader implements OnInit
   updateDb() {
     this.dataService.updateDb()
       .pipe(
-        tap(res => alert(res?.message ?? 'Не получено ответа от сервера'))
+        tap(res =>
+          alert(res?.message ?? 'Не получено ответа от сервера'))
       )
       .subscribe({
-        next: () => console.log('Update finished'),
-        error: err => alert('Ошибка при обновлении базы: ' + err)
+        error: () => alert('Ошибка при обновлении базы')
       });
   }
   

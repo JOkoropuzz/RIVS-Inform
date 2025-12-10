@@ -7,8 +7,8 @@ import { map, Observable } from "rxjs";
 import { formatDate } from '@angular/common';
 
 export interface SynchronizationResult {
-  dateFrom: Date,
-  message: string,
+  dateFrom: Date | null,
+  message: string | null,
   //newMeasuresCount: number
 }
 
@@ -56,8 +56,7 @@ export class DataService {
   
   //запрос синхронизации измерений
   updateDb(): Observable<SynchronizationResult | null> {
-    return this.httpClient.get<{ synchronizationResult: SynchronizationResult }>(`${this.baseUrl}/newupdatedb/upd`)
-      .pipe(map(res => res?.synchronizationResult));
+    return this.httpClient.get<SynchronizationResult>(`${this.baseUrl}/newupdatedb/upd`);
   }
   
 }
