@@ -2,19 +2,13 @@ import { inject, Injectable } from "@angular/core";
 import { Measure } from '../models/measure';
 import { ProductElements } from '../models/productElements';
 import { Enterprise } from '../models/enterprise';
-import { HttpClient, HttpParams } from "@angular/common/http";
-import { catchError, firstValueFrom, map, Observable, of, tap } from "rxjs";
+import { HttpClient } from "@angular/common/http";
+import { map, Observable } from "rxjs";
 import { formatDate } from '@angular/common';
 
-//export interface FirstResp {
-//  enterpeises: Enterprise[],
-//  products: ProductElements[],
-//  lastDate: string[]
-//}
-
 export interface SynchronizationResult {
-  dateFrom: Date,
-  message: string,
+  dateFrom: Date | null,
+  message: string | null,
   //newMeasuresCount: number
 }
 
@@ -44,23 +38,13 @@ export class DataService {
   //}
   
   //Запрос измерений
-  getMeasures(prodId: number, startDate?: Date | null, endDate?: Date | null): Observable<Measure[]>{
+  getMeasures(prodId: number, startDate: Date, endDate: Date): Observable<Measure[]>{
     let bodyStartDate;
     let bodyEndDate;
-    //если дата не определена, то передаётся пустая строка
-    //обработка запроса без даты происходит в хранимой процедуре на стороне БД
-    if (!startDate) {
-      bodyStartDate = ''
-    }
-    else {
-      bodyStartDate = formatDate(startDate, 'yyyy-dd-MM', 'en-US');
-    }
-    if (!endDate) {
-      bodyEndDate = ''
-    }
-    else {
-      bodyEndDate = formatDate(endDate, 'yyyy-dd-MM', 'en-US');
-    }
+
+    bodyStartDate = formatDate(startDate, 'yyyy-dd-MM', 'en-US');
+    bodyEndDate = formatDate(endDate, 'yyyy-dd-MM', 'en-US');
+    
     return this.httpClient.get<Measure[]>(`${this.baseUrl}/newmeas/allByProductId`, {
       params: {
         prodId: `${prodId}`,
@@ -72,8 +56,7 @@ export class DataService {
   
   //запрос синхронизации измерений
   updateDb(): Observable<SynchronizationResult | null> {
-    return this.httpClient.get<{ synchronizationResult: SynchronizationResult }>(`${this.baseUrl}/newupdatedb/upd`)
-      .pipe(map(res => res?.synchronizationResult));
+    return this.httpClient.get<SynchronizationResult>(`${this.baseUrl}/newupdatedb/upd`);
   }
   
 }

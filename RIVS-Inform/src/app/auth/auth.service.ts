@@ -2,12 +2,13 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { catchError, tap } from 'rxjs/operators';
-import { of } from 'rxjs';
+import { Observable, of } from 'rxjs';
 
-export interface LoginResult {
-  token?: string,
-  error?: number
-};
+interface LoginResponse {
+  token: string;
+  userName: string;
+  expiration: string;
+}
 
 @Injectable({
   providedIn: 'root'
@@ -15,30 +16,29 @@ export interface LoginResult {
 export class AuthService {
 
   httpClient = inject(HttpClient);
-  baseUrl = '/api';
-
-  login(data: any) {
-    return this.httpClient.post<LoginResult>(`${this.baseUrl}/user/login`, data)
-      .pipe(tap((result) => {
-        if (result.error != undefined && result.token != undefined) {
-          localStorage.setItem('authUser', JSON.stringify(result.token));
-          localStorage.setItem('nickNameUser', data.login);
-        }
-      }),
-        catchError(error => {
-          console.log(error);
-          return of(error.status);
+  baseUrl = 'http://localhost:6070/api/Auth';
+  
+  login(username: string, password: string): Observable<LoginResponse> {
+    return this.httpClient.post<LoginResponse>(`${this.baseUrl}/login`, { username, password })
+      .pipe(
+        tap(res => {
+          localStorage.setItem('jwt', res.token);
+          localStorage.setItem('nickNameUser', res.userName);
         })
       );
   }
 
-  logout() {
-    localStorage.removeItem('authUser');
-    localStorage.removeItem('nickNameUser');
+  getToken(): string | null {
+    return localStorage.getItem('jwt');
   }
 
-  isLoggedIn() {
-    return (localStorage.getItem('authUser') !== null
-      && localStorage.getItem('nickNameUser') !== null);
+  logout(): void {
+    localStorage.removeItem('jwt');
+    localStorage.removeItem('nickNameUser');
+  }
+ 
+  isLoggedIn(): boolean {
+    return !!localStorage.getItem('jwt')
+      && !!localStorage.getItem('nickNameUser');
   }
 }

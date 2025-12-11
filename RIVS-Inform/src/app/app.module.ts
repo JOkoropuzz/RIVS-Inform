@@ -21,11 +21,12 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MAT_DATE_LOCALE } from '@angular/material/core';
 import { LoginComponent } from './components/login/login.component';
-import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatButtonModule } from '@angular/material/button';
+import { authInterceptor } from './auth/auth.interceptor';
 
 @NgModule({
   declarations: [
@@ -54,12 +55,15 @@ import { MatButtonModule } from '@angular/material/button';
     NgbModule,
   ],
   providers: [
-    DataService,
-    provideHttpClient(),
+    provideHttpClient(
+      withInterceptors([authInterceptor])
+    ),
     provideNativeDateAdapter(),
     provideAnimationsAsync(),
+    DataService,
     { provide: MAT_DATE_LOCALE, useValue: 'ru-RU' }
   ],
+
   bootstrap: [AppComponent]
 })
 export class AppModule { }

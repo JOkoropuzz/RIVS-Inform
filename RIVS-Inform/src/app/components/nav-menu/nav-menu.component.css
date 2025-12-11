@@ -3,10 +3,23 @@ a.navbar-brand {
   word-break: break-all;
 }
 
+.navbar {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 1000;
+}
+
+/* Эффект наведения для всех навигационных ссылок */
+.nav-item .nav-link {
+  transition: all 0.1s ease;
+}
+
+  .nav-item .nav-link:hover {
+    background-color: rgba(0, 0, 0, 0.08); /* Легкий фон */
+  }
+
 .Button {
-  border: var(--borderWidth-thin) solid;
-  border-color: #0000;
-  border-radius: var(--borderRadius-medium);
   cursor: pointer;
   display: inline-flex;
   flex-direction: row;

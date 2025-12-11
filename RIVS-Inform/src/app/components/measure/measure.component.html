@@ -20,24 +20,17 @@
     </mat-form-field>
   </div>
   <div class="col-md-4">
-    <!--<mat-form-field>
-    <mat-label>Введите диапазон дат</mat-label>
-    <mat-date-range-input [rangePicker]="picker">
-      <input [(ngModel)]="pickerStartDate$ | async" (dateInput)="addEvent('inputStartDate', $event)" matStartDate placeholder="Дата от">
-      <input [(ngModel)]="pickerEndDate$ | async" (dateChange)="addEvent('inputEndDate', $event)" matEndDate placeholder="Дата до">
-    </mat-date-range-input>
-    <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
-    <mat-date-range-picker #picker></mat-date-range-picker>
-  </mat-form-field>-->
     <mat-form-field>
-      <mat-label>Введите диапазон дат</mat-label>
-      <mat-date-range-input [rangePicker]="picker">
+      <mat-label>Диапазон дат</mat-label>
+      <mat-date-range-input [rangePicker]="picker" (click)="picker.open()">
         <input matStartDate
                placeholder="Дата от"
+               readonly
                [value]="pickerStartDate$ | async"
                (dateInput)="addEvent('inputStartDate', $event)">
         <input matEndDate
                placeholder="Дата до"
+               readonly
                [value]="pickerEndDate$ | async"
                (dateChange)="addEvent('inputEndDate', $event)">
       </mat-date-range-input>
@@ -54,11 +47,11 @@
 <div *ngIf="selectedProductSubject | async">
   <div [hidden]="allColumns[1].hide" [id]="allColumns[1].def">
       <apx-chart #TFccChart
-                   [series]="TFccoptions.series"
-                   [chart]="TFccoptions.chart"
-                   [colors]="TFccoptions.colors"
-                   [yaxis]="TFccoptions.yaxis"
-                   [title]="TFccoptions.title"
+                   [series]="chart0options.series"
+                   [chart]="chart0options.chart"
+                   [colors]="chart0options.colors"
+                   [yaxis]="chart0options.yaxis"
+                   [title]="chart0options.title"
                    [dataLabels]="commonOptions.dataLabels"
                    [markers]="commonOptions.markers"
                    [stroke]="commonOptions.stroke"
@@ -69,7 +62,8 @@
 
     </div>
     <div [hidden]="allColumns[2].hide" [id]="allColumns[2].def">
-      <apx-chart #el1Chart [series]="chart1options.series"
+      <apx-chart #el1Chart
+                 [series]="chart1options.series"
                  [chart]="chart1options.chart"
                  [colors]="chart1options.colors"
                  [yaxis]="chart1options.yaxis"
@@ -83,7 +77,8 @@
       </apx-chart>
     </div>
     <div [hidden]="allColumns[3].hide" [id]="allColumns[3].def">
-      <apx-chart #el2Chart [series]="chart2options.series"
+      <apx-chart #el2Chart
+                 [series]="chart2options.series"
                  [chart]="chart2options.chart"
                  [colors]="chart2options.colors"
                  [yaxis]="chart2options.yaxis"
@@ -97,7 +92,8 @@
       </apx-chart>
     </div>
     <div [hidden]="allColumns[4].hide" [id]="allColumns[4].def">
-      <apx-chart #el3Chart [series]="chart3options.series"
+      <apx-chart #el3Chart
+                 [series]="chart3options.series"
                  [chart]="chart3options.chart"
                  [colors]="chart3options.colors"
                  [yaxis]="chart3options.yaxis"
@@ -111,7 +107,8 @@
       </apx-chart>
     </div>
     <div [hidden]="allColumns[5].hide" [id]="allColumns[5].def">
-      <apx-chart #el4Chart [series]="chart4options.series"
+      <apx-chart #el4Chart
+                 [series]="chart4options.series"
                  [chart]="chart4options.chart"
                  [colors]="chart4options.colors"
                  [yaxis]="chart4options.yaxis"
@@ -125,7 +122,8 @@
       </apx-chart>
     </div>
     <div [hidden]="allColumns[6].hide" [id]="allColumns[6].def">
-      <apx-chart #el5Chart [series]="chart5options.series"
+      <apx-chart #el5Chart
+                 [series]="chart5options.series"
                  [chart]="chart5options.chart"
                  [colors]="chart5options.colors"
                  [yaxis]="chart5options.yaxis"
@@ -139,7 +137,8 @@
       </apx-chart>
     </div>
     <div [hidden]="allColumns[7].hide" [id]="allColumns[7].def">
-      <apx-chart #el6Chart [series]="chart6options.series"
+      <apx-chart #el6Chart
+                 [series]="chart6options.series"
                  [chart]="chart6options.chart"
                  [colors]="chart6options.colors"
                  [yaxis]="chart6options.yaxis"
@@ -153,7 +152,8 @@
       </apx-chart>
     </div>
     <div [hidden]="allColumns[8].hide" [id]="allColumns[8].def">
-      <apx-chart #el7Chart [series]="chart7options.series"
+      <apx-chart #el7Chart
+                 [series]="chart7options.series"
                  [chart]="chart7options.chart"
                  [colors]="chart7options.colors"
                  [yaxis]="chart7options.yaxis"
@@ -166,96 +166,48 @@
                  [tooltip]="commonOptions.tooltip">
       </apx-chart>
     </div>
-    <div [hidden]="allColumns[9].hide" [id]="allColumns[9].def">
-      <apx-chart #el8Chart [series]="chart8options.series"
-                 [chart]="chart8options.chart"
-                 [colors]="chart8options.colors"
-                 [yaxis]="chart8options.yaxis"
-                 [title]="chart8options.title"
-                 [dataLabels]="commonOptions.dataLabels"
-                 [markers]="commonOptions.markers"
-                 [stroke]="commonOptions.stroke"
-                 [grid]="commonOptions.grid"
-                 [xaxis]="commonOptions.xaxis"
-                 [tooltip]="commonOptions.tooltip">
+  <div [hidden]="allColumns[9].hide" [id]="allColumns[9].def">
+    <apx-chart #el8Chart
+               [series]="chart8options.series"
+               [chart]="chart8options.chart"
+               [colors]="chart8options.colors"
+               [yaxis]="chart8options.yaxis"
+               [title]="chart8options.title"
+               [dataLabels]="commonOptions.dataLabels"
+               [markers]="commonOptions.markers"
+               [stroke]="commonOptions.stroke"
+               [grid]="commonOptions.grid"
+               [xaxis]="commonOptions.xaxis"
+               [tooltip]="commonOptions.tooltip">
       </apx-chart>
     </div>
   </div>
-<!--<div *ngIf="loadedFlag | async" class="mat-elevation-z8 flex-element">-->
 <div *ngIf="selectedProductSubject | async" class="mat-elevation-z8 flex-element">
-  <table mat-table [dataSource]="measures$" class="mat-elevation-z8">
-
-    <!--<ng-container [matColumnDef]="column" *ngFor="let column of displayedColumns">
-      <th mat-header-cell *matHeaderCellDef> {{column}} </th>
-      <td mat-cell *matCellDef="let resultProducts"> {{resultProducts[column]}} </td>
-    </ng-container>-->
-
+  <table mat-table [dataSource]="(measuresMapped$ | async) ?? []" class="mat-elevation-z8">
+    
     <ng-container matColumnDef="time">
-      <th mat-header-cell *matHeaderCellDef>
-        <p>{{allColumns[0].label}}</p>
-      </th>
-
-      <td mat-cell *matCellDef="let resultProducts"> {{resultProducts.time | date:'dd/MM/yyyy HH:mm'}} </td>
+      <th mat-header-cell *matHeaderCellDef>{{ allColumns[0].label }}</th>
+      <td mat-cell *matCellDef="let row">
+        {{ row.time | date:'dd/MM/yyyy HH:mm' }}
+      </td>
     </ng-container>
-
-    <ng-container matColumnDef="TFcc">
-      <th mat-header-cell *matHeaderCellDef> <p>{{allColumns[1].label}}</p> </th>
-      <td mat-cell *matCellDef="let resultProducts"> {{resultProducts.tfcc}} </td>
+    
+    <ng-container *ngFor="let col of allColumns.slice(1)" [matColumnDef]="col.def">
+      <th mat-header-cell *matHeaderCellDef>{{ col.label }}</th>
+      <td mat-cell *matCellDef="let row">
+        {{ row[col.label] }}
+      </td>
     </ng-container>
-
-    <ng-container matColumnDef="el1">
-      <th mat-header-cell *matHeaderCellDef> <p>{{allColumns[2].label}}</p> </th>
-      <td mat-cell *matCellDef="let resultProducts"> {{resultProducts.el1}} </td>
-    </ng-container>
-
-    <ng-container matColumnDef="el2">
-      <th mat-header-cell *matHeaderCellDef> <p>{{allColumns[3].label}}</p> </th>
-      <td mat-cell *matCellDef="let resultProducts"> {{resultProducts.el2}} </td>
-    </ng-container>
-
-    <ng-container matColumnDef="el3">
-      <th mat-header-cell *matHeaderCellDef> <p>{{allColumns[4].label}}</p> </th>
-      <td mat-cell *matCellDef="let resultProducts"> {{resultProducts.el3}} </td>
-    </ng-container>
-
-    <ng-container matColumnDef="el4">
-      <th mat-header-cell *matHeaderCellDef> <p>{{allColumns[5].label}}</p> </th>
-      <td mat-cell *matCellDef="let resultProducts"> {{resultProducts.el4}} </td>
-    </ng-container>
-
-    <ng-container matColumnDef="el5">
-      <th mat-header-cell *matHeaderCellDef> <p>{{allColumns[6].label}}</p> </th>
-      <td mat-cell *matCellDef="let resultProducts"> {{resultProducts.el5}} </td>
-    </ng-container>
-
-    <ng-container matColumnDef="el6">
-      <th mat-header-cell *matHeaderCellDef> <p>{{allColumns[7].label}}</p> </th>
-      <td mat-cell *matCellDef="let resultProducts"> {{resultProducts.el6}} </td>
-    </ng-container>
-
-    <ng-container matColumnDef="el7">
-      <th mat-header-cell *matHeaderCellDef> <p>{{allColumns[8].label}}</p> </th>
-      <td mat-cell *matCellDef="let resultProducts"> {{resultProducts.el7}} </td>
-    </ng-container>
-
-    <ng-container matColumnDef="el8">
-      <th mat-header-cell *matHeaderCellDef> <p>{{allColumns[9].label}}</p> </th>
-      <td mat-cell *matCellDef="let resultProducts"> {{resultProducts.el8}} </td>
-    </ng-container>
-
+    
     <ng-container matColumnDef="item-description">
       <th mat-header-cell *matHeaderCellDef colspan="10" class="text-center">
-        <p>Продукт "{{selectedProductName}}"</p>
+        Продукт "{{ selectedProductName }}"
       </th>
     </ng-container>
 
-    <tr mat-header-row *matHeaderRowDef="['item-description']"
-        class="first-header-row">
-    </tr>
-    <tr mat-header-row *matHeaderRowDef="displayedColumns"
-        class="second-header-row">
-    </tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    <tr mat-header-row *matHeaderRowDef="['item-description']" class="first-header-row"></tr>
+    <tr mat-header-row *matHeaderRowDef="displayedColumns" class="second-header-row"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
 
   </table>
 </div>
