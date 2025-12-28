@@ -74,12 +74,15 @@ export class TableMultipleHeader implements OnInit
   selectedProductName: string | undefined = undefined;
 
   enterprises$ = this.dataService.getEnterprises();
-  
+
+  refresh$ = new BehaviorSubject<void>(undefined);
+
   measures$ = combineLatest([
     this.selectedProductSubject,
     this.products$,
     this.pickerStartDate$,
-    this.pickerEndDate$
+    this.pickerEndDate$,
+    this.refresh$
   ]).pipe(
     filter(([productId, , pickerStartDate, pickerEndDate]) =>
       productId != null && pickerStartDate != null && pickerEndDate != null
@@ -219,6 +222,7 @@ export class TableMultipleHeader implements OnInit
       .subscribe({
         error: () => alert('Ошибка при обновлении базы')
       });
+    this.refresh$.next();
   }
   
   //событие ввода даты
