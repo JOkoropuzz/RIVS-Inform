@@ -7,6 +7,7 @@ import { Observable, of } from 'rxjs';
 interface LoginResponse {
   token: string;
   userName: string;
+  userId: string;
   expiration: string;
 }
 
@@ -18,12 +19,13 @@ export class AuthService {
   httpClient = inject(HttpClient);
   baseUrl = 'http://localhost:6070/api/Auth';
   
-  login(username: string, password: string): Observable<LoginResponse> {
-    return this.httpClient.post<LoginResponse>(`${this.baseUrl}/login`, { username, password })
+  login(login: string, password: string): Observable<LoginResponse> {
+    return this.httpClient.post<LoginResponse>(`${this.baseUrl}/login`, { login, password })
       .pipe(
         tap(res => {
           localStorage.setItem('jwt', res.token);
           localStorage.setItem('nickNameUser', res.userName);
+          localStorage.setItem('userId', res.userId);
         })
       );
   }
@@ -35,10 +37,11 @@ export class AuthService {
   logout(): void {
     localStorage.removeItem('jwt');
     localStorage.removeItem('nickNameUser');
+    localStorage.removeItem('userId');
   }
  
   isLoggedIn(): boolean {
     return !!localStorage.getItem('jwt')
-      && !!localStorage.getItem('nickNameUser');
+      && !!localStorage.getItem('nickNameUser') && !!localStorage.getItem('userId');
   }
 }
