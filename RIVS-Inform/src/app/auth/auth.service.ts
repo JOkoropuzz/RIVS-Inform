@@ -17,7 +17,7 @@ interface LoginResponse {
 export class AuthService {
 
   httpClient = inject(HttpClient);
-  baseUrl = 'http://localhost:6070/api/Auth';
+  baseUrl = '/api/Auth';
   
   login(login: string, password: string): Observable<LoginResponse> {
     return this.httpClient.post<LoginResponse>(`${this.baseUrl}/login`, { login, password })
