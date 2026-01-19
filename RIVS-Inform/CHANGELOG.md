@@ -1,3 +1,14 @@
+# Changelog
+
+All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+
+## 1.1.0 (2026-01-19)
+
+
+### Features
+
+* добавлена библиотека для автоматизации версионности ([2c75985](https://github.com/JOkoropuzz/RIVS-Inform/commit/2c7598519e25ff1d170e1109d24783bc7c8cf71c))
+
 This file explains how Visual Studio created the project.
 
 The following tools were used to generate this project:
