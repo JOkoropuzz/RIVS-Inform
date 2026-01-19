@@ -11,8 +11,18 @@
       <input class="form-control" [readonly]="authService.isLoggedIn()" type="password" formControlName="password" placeholder="Password">
     </div>
     <p *ngIf="!authService.isLoggedIn()" class="login-result-message">{{loginResultMessage}}</p>
-    <!--<p *ngIf="authService.isLoggedIn()" class="login-result-message">Вы уже авторизованы!</p>-->
-    <button>Войти</button>
+    <button type="submit"
+            class="btn btn-primary w-100"
+            [disabled]="loginForm.invalid || isLoading">
+
+      <span *ngIf="!isLoading">
+        <i class="fas fa-sign-in-alt me-2"></i>Войти
+      </span>
+
+      <span *ngIf="isLoading">
+        <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+      </span>
+    </button>
   </form>
 
 </div>

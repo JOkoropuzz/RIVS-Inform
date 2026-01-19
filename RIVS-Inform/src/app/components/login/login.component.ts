@@ -4,6 +4,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../auth/auth.service';
 import { NavMenuService } from '../../services/nav-menu.service';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-login',
@@ -15,6 +16,7 @@ import { NavMenuService } from '../../services/nav-menu.service';
 export class LoginComponent {
   authService = inject(AuthService);
   router = inject(Router);
+  isLoading = false;
   constructor(
     public navService: NavMenuService
   ) { }
@@ -25,36 +27,49 @@ export class LoginComponent {
     login: new FormControl('', [Validators.required]),
     password: new FormControl('', [Validators.required])
   });
-  
-  onSubmit() {
-    if (this.loginForm.valid) {
-      this.authService.login(this.loginForm.value.login ?? '', this.loginForm.value.password ?? '').subscribe({
-        next: (data: any) => {
-          if (this.authService.isLoggedIn()) {
-            this.router.navigate(['/home']);
-            this.navService.userName.next(this.loginForm.value.login ?? '');
-          }
-        },
-        error: (err) => {
-          if (!err.status) {
-            this.loginResultMessage = "Нет соединения с сервером";
-            return;
-          }
 
-          switch (err.status) {
-            case 0:
+  onSubmit() {
+    if (this.loginForm.valid && !this.isLoading) { 
+      this.loginResultMessage = '';
+      
+      this.isLoading = true;
+
+      this.authService.login(
+        this.loginForm.value.login ?? '',
+        this.loginForm.value.password ?? ''
+      )
+        .pipe(
+          finalize(() => {
+            this.isLoading = false;
+          })
+        )
+        .subscribe({
+          next: (data: any) => {
+            if (this.authService.isLoggedIn()) {
+              this.router.navigate(['/home']);
+              this.navService.userName.next(this.loginForm.value.login ?? '');
+            }
+          },
+          error: (err) => {
+            if (!err.status) {
               this.loginResultMessage = "Нет соединения с сервером";
-              break;
-            case 400:
-            case 401:
-              this.loginResultMessage = "Неверный логин или пароль";
-              break;
-            default:
-              this.loginResultMessage = "Что-то пошло не так";
-              break;
+              return;
+            }
+
+            switch (err.status) {
+              case 0:
+                this.loginResultMessage = "Нет соединения с сервером";
+                break;
+              case 400:
+              case 401:
+                this.loginResultMessage = "Неверный логин или пароль";
+                break;
+              default:
+                this.loginResultMessage = "Что-то пошло не так";
+                break;
+            }
           }
-        }
-      });
+        });
     }
   }
 }
