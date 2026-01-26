@@ -5,6 +5,7 @@ import { Enterprise } from '../models/enterprise';
 import { HttpClient } from "@angular/common/http";
 import { map, Observable } from "rxjs";
 import { formatDate } from '@angular/common';
+import { PagedResponse } from "../models/PagedResponse";
 
 export interface SynchronizationResult {
   dateFrom: Date | null,
@@ -37,7 +38,7 @@ export class DataService {
   //    .pipe(map(res => res?.lastDate));
   //}
   
-  //Запрос измерений
+  //Запрос всех измерений (для графиков)
   getMeasures(prodId: number, startDate: Date, endDate: Date): Observable<Measure[]>{
     let bodyStartDate;
     let bodyEndDate;
@@ -53,6 +54,27 @@ export class DataService {
       }
     });
   };
+
+  getMeasuresPage(
+    prodId: number,
+    startDate: Date,
+    endDate: Date,
+    page: number,
+    size: number
+  ): Observable<PagedResponse<Measure>> {
+    return this.httpClient.get<PagedResponse<Measure>>(
+      `${this.baseUrl}/newmeas/pageByProductId`,
+      {
+        params: {
+          prodId: String(prodId),
+          startDate: formatDate(startDate, 'yyyy-dd-MM', 'en-US'),
+          endDate: formatDate(endDate, 'yyyy-dd-MM', 'en-US'),
+          page: String(page),
+          size: String(size)
+        }
+      }
+    );
+  }
   
   //запрос синхронизации измерений
   updateDb(): Observable<SynchronizationResult | null> {

@@ -17,7 +17,11 @@
           <li class="nav-item"
               [routerLinkActive]="['link-active']"
               [routerLinkActiveOptions]="{ exact: true }">
-            <a class="nav-link text-dark" [routerLink]="['/measure']">Концентрации</a>
+            <a class="nav-link text-dark"
+               [routerLink]="['/measure']"
+               (pointerup)="isCollapsed = true">
+              Концентрации
+            </a>
           </li>
         </ul>
       </div>

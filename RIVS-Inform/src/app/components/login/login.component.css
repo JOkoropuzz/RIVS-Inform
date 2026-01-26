@@ -12,7 +12,7 @@
 .login-card {
   display: flex;
   flex-direction: column;
-  margin: 10px 10px;
+  margin-bottom: 370px;
   box-shadow: 0 15px 20px 0 rgba(0, 0, 0, 0.3);
   background-color: #808080b3;
   padding: 10px;

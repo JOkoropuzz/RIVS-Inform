@@ -27,6 +27,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatButtonModule } from '@angular/material/button';
 import { authInterceptor } from './auth/auth.interceptor';
+import { MatPaginatorModule, MatPaginatorIntl } from '@angular/material/paginator';
+import { CustomMatPaginatorIntl } from './components/measure/CustomMatPaginatorIntl';
 
 @NgModule({
   declarations: [
@@ -53,6 +55,7 @@ import { authInterceptor } from './auth/auth.interceptor';
     MatIconModule,
     MatMenuModule,
     NgbModule,
+    MatPaginatorModule
   ],
   providers: [
     provideHttpClient(
@@ -61,7 +64,8 @@ import { authInterceptor } from './auth/auth.interceptor';
     provideNativeDateAdapter(),
     provideAnimationsAsync(),
     DataService,
-    { provide: MAT_DATE_LOCALE, useValue: 'ru-RU' }
+    { provide: MAT_DATE_LOCALE, useValue: 'ru-RU' },
+    { provide: MatPaginatorIntl, useClass: CustomMatPaginatorIntl }
   ],
 
   bootstrap: [AppComponent]

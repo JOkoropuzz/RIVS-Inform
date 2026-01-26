@@ -4,7 +4,7 @@ import { Measure } from '../../models/measure';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { NavMenuService } from '../../services/nav-menu.service';
 import { MatIconRegistry } from '@angular/material/icon';
-import { BehaviorSubject, switchMap, of, combineLatest, map, filter, tap, } from 'rxjs';
+import { BehaviorSubject, switchMap, of, combineLatest, map, filter, tap, distinctUntilChanged, shareReplay, } from 'rxjs';
 
 
 import {
@@ -77,6 +77,43 @@ export class TableMultipleHeader implements OnInit
 
   refresh$ = new BehaviorSubject<void>(undefined);
 
+  page$ = new BehaviorSubject({ pageIndex: 0, pageSize: 10 });
+  total: number = 0;
+
+  //для таблицы
+  tableMeasures$ = combineLatest([
+    this.selectedProductSubject,
+    this.products$,
+    this.pickerStartDate$,
+    this.pickerEndDate$,
+    this.page$
+  ]).pipe(
+    filter(([productId, , pickerStartDate, pickerEndDate]) =>
+      productId != null && pickerStartDate != null && pickerEndDate != null
+    ),
+    switchMap(([productId, products, startDate, endDate, page]) => {
+      const product = products.find(p => p.id === productId);
+      this.fillColumns(product);
+      this.selectedProductName = product?.name;
+      //добавляем к дате 1 день 
+      const adjustedEndDate = new Date(endDate!);
+      adjustedEndDate.setDate(adjustedEndDate.getDate() + 1);
+
+      return this.dataService.getMeasuresPage(productId!, startDate!,
+        adjustedEndDate, page.pageIndex, page.pageSize);
+    }),
+    tap(res => this.total = res.total),
+    map(measures =>
+        (measures.items ?? []).map(m => ({
+          ...m,
+          ...Object.fromEntries(
+            m.elementValues.map(ev => [ev.elementName, ev.value])
+          )
+        }))
+      )
+  );
+
+  //для графиков
   measures$ = combineLatest([
     this.selectedProductSubject,
     this.products$,
@@ -99,17 +136,7 @@ export class TableMultipleHeader implements OnInit
     }),
     map(res => res ?? [])
   );
-
-  measuresMapped$ = this.measures$.pipe(
-    map(measures =>
-      (measures ?? []).map(m => ({
-        ...m,
-        ...Object.fromEntries(
-          m.elementValues.map(ev => [ev.elementName, ev.value])
-        )
-      }))
-    )
-  );
+  
   
   //Шаблон колонок таблицы
   allColumns: DisplayColumn[] = [
@@ -301,7 +328,7 @@ export class TableMultipleHeader implements OnInit
       },
       id: "TFcc",
       group: "social",
-      type: "area",
+      type: "line",
       height: 160
     },
     colors: ["black"],
@@ -335,7 +362,7 @@ export class TableMultipleHeader implements OnInit
       },
       id: "el1",
       group: "social",
-      type: "area",
+      type: "line",
       height: 160
     },
     colors: ["DarkRed"],
@@ -368,7 +395,7 @@ export class TableMultipleHeader implements OnInit
       },
       id: "el2",
       group: "social",
-      type: "area",
+      type: "line",
       height: 160
     },
     colors: ["DarkBlue"],
@@ -400,7 +427,7 @@ export class TableMultipleHeader implements OnInit
       },
       id: "el3",
       group: "social",
-      type: "area",
+      type: "line",
       height: 160
     },
     colors: ["DarkGreen"],
@@ -432,7 +459,7 @@ export class TableMultipleHeader implements OnInit
       },
       id: "el4",
       group: "social",
-      type: "area",
+      type: "line",
       height: 160
     },
     colors: ["orange"],
@@ -464,7 +491,7 @@ export class TableMultipleHeader implements OnInit
       },
       id: "el5",
       group: "social",
-      type: "area",
+      type: "line",
       height: 160
     },
     colors: ["Coral"],
@@ -496,7 +523,7 @@ export class TableMultipleHeader implements OnInit
       },
       id: "el6",
       group: "social",
-      type: "area",
+      type: "line",
       height: 160
     },
     colors: ["gray"],
@@ -528,7 +555,7 @@ export class TableMultipleHeader implements OnInit
       },
       id: "el7",
       group: "social",
-      type: "area",
+      type: "line",
       height: 160
     },
     colors: ["brown"],
@@ -560,7 +587,7 @@ export class TableMultipleHeader implements OnInit
       },
       id: "el8",
       group: "social",
-      type: "area",
+      type: "line",
       height: 160
     },
     colors: ["Olive"],
@@ -578,7 +605,8 @@ export class TableMultipleHeader implements OnInit
     },
 
     stroke: {
-      curve: "smooth"
+      colors: ["Grey"],
+      curve: 'smooth'
     },
     markers: {
       size: 6,
