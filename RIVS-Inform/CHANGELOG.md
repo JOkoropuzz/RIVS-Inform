@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.3.0](https://github.com/JOkoropuzz/RIVS-Inform/compare/v1.1.0...v1.3.0) (2026-01-26)
+
+
+### Features
+
+* Изменено положение окна авторизации на странице, данные разбиты на отдельные запросы для таблицы и графиков, добавлена пагинация таблиц, mat-paginator создан класс для перевода на русский. тип графиков изменен на линию, кнопка скрытия и открытия навигации на узких экранах автоматически скрывается при нажатии на ссылку ([771794e](https://github.com/JOkoropuzz/RIVS-Inform/commit/771794e4c02e0efda2bed992916e32dfe7a520c9))
+
 ## 1.1.0 (2026-01-19)
 
 
