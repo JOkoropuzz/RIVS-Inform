@@ -5,7 +5,7 @@
         <img src="images/favicon.png" alt="" height="32"
              width="32" data-view-component="true"
              class="rivs-logo">
-        <a class="navbar-brand color-bg-transparent" [routerLink]="['/home']">ASAK-RIVS</a>
+        <a class="navbar-brand color-bg-transparent" [routerLink]="['/home']">AC-RIVS</a>
       </div>
       <button class="navbar-toggler" type="button" (click)="isCollapsed = !isCollapsed" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
               aria-controls="navbarSupportedContent" [attr.aria-expanded]="!isCollapsed" aria-label="Toggle navigation">
@@ -29,7 +29,10 @@
       <div class="navbar-brand collapse navbar-collapse" id="navbarNavDropdown"
            [ngClass]="{ show: isExpanded }" [ngbCollapse]="isCollapsed">
         <div class="container-fluid text-center d-none d-lg-block">
-          <span class="position-absolute end-0 translate-middle">Аналитический Центр</span>
+          <div class="d-flex justify-content-end align-items-center gap-3">
+            <span>{{ (navService.enterpriseName$ | async) || '' }}</span>
+            <!--<span class="ac-title">Аналитический Центр</span>-->
+          </div>
         </div>
         <button height="32" width="32" class="color-bg-transparent Button"
                 aria-label="Open user navigation menu" type="button" data-view-component="true"
@@ -40,7 +43,7 @@
         </button>
         <mat-menu #menu="matMenu">
           <div class="user-name">
-            <p><b>{{navService.userName.value!}}</b></p>
+            <p><b>{{ (navService.userName$ | async) || '' }}</b></p>
           </div>
           <button (click)="logout()" mat-menu-item>
             <span>Выход</span>

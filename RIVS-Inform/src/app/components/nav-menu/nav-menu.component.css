@@ -59,3 +59,8 @@ html {
 .box-shadow {
   box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
 }
+
+.ac-title {
+  font-size: 12px;
+  font-weight: 600;
+}

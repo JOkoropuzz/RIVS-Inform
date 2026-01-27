@@ -1,2 +1,8 @@
 .apexCharts {
 }
+.fab-wrapper {
+  position: fixed;
+  right: max(20px, env(safe-area-inset-right));
+  bottom: max(20px, env(safe-area-inset-bottom));
+  z-index: 1000;
+}

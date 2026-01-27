@@ -75,7 +75,25 @@ export class DataService {
       }
     );
   }
-  
+
+  //Запрос данных в csv
+  getCsvFile(prodId: number, startDate: Date, endDate: Date): Observable<Blob> {
+    let bodyStartDate;
+    let bodyEndDate;
+
+    bodyStartDate = formatDate(startDate, 'yyyy-dd-MM', 'en-US');
+    bodyEndDate = formatDate(endDate, 'yyyy-dd-MM', 'en-US');
+
+    return this.httpClient.get(`${this.baseUrl}/export/csv`, {
+      params: {
+        prodId: `${prodId}`,
+        startDate: `${bodyStartDate}`,
+        endDate: `${bodyEndDate}`
+      },
+      responseType: 'blob'
+    });
+  }
+
   //запрос синхронизации измерений
   updateDb(): Observable<SynchronizationResult | null> {
     return this.httpClient.get<SynchronizationResult>(`${this.baseUrl}/newupdatedb/upd`);

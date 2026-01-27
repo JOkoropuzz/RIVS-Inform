@@ -37,7 +37,7 @@ export class NavMenuComponent {
 
   logout() {
     this.authService.logout();
-    this.navService.userName!.next('');
+    //this.navService.userName!.next('');
     this.router.navigate(['/login']);
   }
 

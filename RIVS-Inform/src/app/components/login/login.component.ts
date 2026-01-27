@@ -47,7 +47,7 @@ export class LoginComponent {
           next: (data: any) => {
             if (this.authService.isLoggedIn()) {
               this.router.navigate(['/home']);
-              this.navService.userName.next(this.loginForm.value.login ?? '');
+              //this.navService.userName$.next(this.loginForm.value.login ?? '');
             }
           },
           error: (err) => {
