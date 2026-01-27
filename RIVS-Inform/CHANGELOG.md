@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.4.0](https://github.com/JOkoropuzz/RIVS-Inform/compare/v1.3.0...v1.4.0) (2026-01-27)
+
+
+### Features
+
+* добавлена кнопка скачивания csv. изменена логика сервиса аутентификации, добавлена проверка администратора, сокрытие селектора предприятий для НЕ админской роли, изменен цвет кнопки обновления, добавлена логика парсинга jwt для определения параметров из токена, добавлен обработчик кнопки скачиваня csv и запрос к беку для него, убрано лого АЦ, изменено основной лого, добавлено название предприятия в меню навигации, изменена логика получения имени пользователя и предприятия в меню навигации ([0411dd5](https://github.com/JOkoropuzz/RIVS-Inform/commit/0411dd5cce724bb3935f5dc56466056039f68659))
+
 ## [1.3.0](https://github.com/JOkoropuzz/RIVS-Inform/compare/v1.1.0...v1.3.0) (2026-01-26)
 
 
