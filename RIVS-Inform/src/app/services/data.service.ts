@@ -2,7 +2,7 @@ import { inject, Injectable } from "@angular/core";
 import { Measure } from '../models/measure';
 import { ProductElements } from '../models/productElements';
 import { Enterprise } from '../models/enterprise';
-import { HttpClient } from "@angular/common/http";
+import { HttpClient, HttpResponse } from "@angular/common/http";
 import { map, Observable } from "rxjs";
 import { formatDate } from '@angular/common';
 import { PagedResponse } from "../models/PagedResponse";
@@ -77,7 +77,7 @@ export class DataService {
   }
 
   //Запрос данных в csv
-  getCsvFile(prodId: number, startDate: Date, endDate: Date): Observable<Blob> {
+  getCsvFile(prodId: number, startDate: Date, endDate: Date): Observable<HttpResponse<Blob>> {
     let bodyStartDate;
     let bodyEndDate;
 
@@ -90,7 +90,8 @@ export class DataService {
         startDate: `${bodyStartDate}`,
         endDate: `${bodyEndDate}`
       },
-      responseType: 'blob'
+      responseType: 'blob',
+      observe: 'response'
     });
   }
 

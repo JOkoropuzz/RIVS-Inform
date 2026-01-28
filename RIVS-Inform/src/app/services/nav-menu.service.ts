@@ -9,7 +9,7 @@ export class NavMenuService {
   authService = inject(AuthService);
 
   readonly enterpriseName$ = this.authService.currentEnterprise$.pipe(
-    map(e => e?.Name ?? null)
+    map(e => e?.name ?? null)
   );
 
   readonly userName$ = this.authService.currentUserName$;

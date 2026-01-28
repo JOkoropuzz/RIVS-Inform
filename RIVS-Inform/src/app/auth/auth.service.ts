@@ -66,9 +66,12 @@ export class AuthService {
       }
 
       this.isAdmin$.pipe(take(1)).subscribe(isAdmin => {
-        if (isAdmin) {
+        if (isAdmin)
+        {
           this._currentEnterprise.next(null);
-        } else {
+        }
+        else
+        {
           const enterprise = enterprises[0];
           this._currentEnterprise.next(enterprise);
         }

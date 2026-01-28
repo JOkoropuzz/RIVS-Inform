@@ -4,7 +4,7 @@
       <mat-label>Предприятие</mat-label>
       <mat-select id="enterprise" (selectionChange)="selectedEnterpriseSubject.next(+($event.value))">
         <mat-option *ngFor="let e of enterprises$ | async" [value]="e.id">
-          {{ e.Name }}
+          {{ e.name }}
         </mat-option>
       </mat-select>
     </mat-form-field>
@@ -216,7 +216,7 @@
   </mat-paginator>
 </div>
 <div *ngIf="selectedProductSubject.value != null && ((measures$ | async)?.length ?? 0) > 0" class="fab-wrapper">
-  <button mat-fab color="primary">
+  <button mat-fab color="primary" (click)="downloadCsv()">
     <mat-icon svgIcon="csv" aria-hidden="false" aria-label="Скачать csv"></mat-icon>
   </button>
 </div>

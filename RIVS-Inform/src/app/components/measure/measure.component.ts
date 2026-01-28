@@ -330,7 +330,13 @@ export class TableMultipleHeader implements OnInit
       const adjustedEndDate = new Date(endDate);
       adjustedEndDate.setDate(adjustedEndDate.getDate() + 1);
       this.dataService.getCsvFile(productId, startDate, adjustedEndDate).subscribe({
-        next: (blob) => this.saveFile(blob, 'data.csv'),
+        next: (res) => {
+          const contentDisposition = res.headers.get('content-disposition');
+          const fileName =
+            this.getFileName(contentDisposition) || 'export.csv';
+
+          this.saveFile(res.body!, fileName);
+        },
         error: (err) => console.error('Ошибка скачивания CSV', err)
       });
     }
@@ -338,6 +344,19 @@ export class TableMultipleHeader implements OnInit
       console.error('Ошибка скачивания CSV');
     }
     
+  }
+
+  //Получение имени файла
+  private getFileName(contentDisposition: string | null): string | null {
+    if (!contentDisposition) return null;
+    
+    const utf8 = /filename\*=UTF-8''(.+)/i.exec(contentDisposition);
+    if (utf8) {
+      return decodeURIComponent(utf8[1]);
+    }
+    
+    const match = /filename="?([^"]+)"?/i.exec(contentDisposition);
+    return match?.[1] ?? null;
   }
 
   private saveFile(blob: Blob, filename: string): void {
