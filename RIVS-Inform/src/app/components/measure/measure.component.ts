@@ -84,7 +84,7 @@ export class TableMultipleHeader implements OnInit
 
   refresh$ = new BehaviorSubject<void>(undefined);
 
-  page$ = new BehaviorSubject({ pageIndex: 0, pageSize: 10 });
+  page$ = new BehaviorSubject({ pageIndex: 0, pageSize: 40 });
   total: number = 0;
 
   //для таблицы
