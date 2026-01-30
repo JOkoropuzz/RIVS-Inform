@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.5.0](https://github.com/JOkoropuzz/RIVS-Inform/compare/v1.4.0...v1.5.0) (2026-01-30)
+
+
+### Features
+
+* добавлена логика получения имени файла с сервера, доделан обработчи и логика скачивания файла csv, правки имени переменной предприятия ([26c9a3a](https://github.com/JOkoropuzz/RIVS-Inform/commit/26c9a3ac6c84f3e52f6b808c8621ff7a69e3b85f))
+
+
+### Bug Fixes
+
+* изменено кол-во строк на стринце с 10 на 40, наименование изменено на АСАК-ИНФОРМ, кнопка выгрузки csv перемещена в левую нижнюю часть экрана ([d9c03ad](https://github.com/JOkoropuzz/RIVS-Inform/commit/d9c03adc208e43bd6207a2cc3aa496243d55ed9e))
+
 ## [1.4.0](https://github.com/JOkoropuzz/RIVS-Inform/compare/v1.3.0...v1.4.0) (2026-01-27)
 
 
