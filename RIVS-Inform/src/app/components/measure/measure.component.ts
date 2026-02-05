@@ -2,7 +2,6 @@ import { Component, inject, OnInit, ViewChild} from '@angular/core';
 import { DataService } from '../../services/data.service';
 import { Measure } from '../../models/measure';
 import { provideNativeDateAdapter } from '@angular/material/core';
-import { NavMenuService } from '../../services/nav-menu.service';
 import { MatIconRegistry } from '@angular/material/icon';
 import { BehaviorSubject, switchMap, of, combineLatest, map, filter, tap, distinctUntilChanged, shareReplay, } from 'rxjs';
 import { AuthService } from '../../auth/auth.service';
@@ -173,7 +172,7 @@ export class TableMultipleHeader implements OnInit
   //string array of columns name
   displayedColumns?: string[];
   
-  constructor(public dataService: DataService, public navService: NavMenuService) {
+  constructor(public dataService: DataService) {
    //регистрация иконки
     const iconRegistry = inject(MatIconRegistry);
     const sanitizer = inject(DomSanitizer);

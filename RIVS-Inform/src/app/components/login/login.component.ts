@@ -3,7 +3,6 @@ import { inject } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../auth/auth.service';
-import { NavMenuService } from '../../services/nav-menu.service';
 import { finalize } from 'rxjs';
 
 @Component({
@@ -17,9 +16,6 @@ export class LoginComponent {
   authService = inject(AuthService);
   router = inject(Router);
   isLoading = false;
-  constructor(
-    public navService: NavMenuService
-  ) { }
 
   loginResultMessage = '';
 
