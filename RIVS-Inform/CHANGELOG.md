@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.5.2](https://github.com/JOkoropuzz/RIVS-Inform/compare/v1.5.1...v1.5.2) (2026-02-05)
+
+
+### Bug Fixes
+
+* изменены маршруты запросов к api; исправлены надписи пагинатора ([e35e1b0](https://github.com/JOkoropuzz/RIVS-Inform/commit/e35e1b08450d2cec4482278e544215ed39950cd4))
+
 ### [1.5.1](https://github.com/JOkoropuzz/RIVS-Inform/compare/v1.5.0...v1.5.1) (2026-02-05)
 
 
