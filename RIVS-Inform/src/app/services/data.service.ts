@@ -22,12 +22,12 @@ export class DataService {
   //список предприятий
   getEnterprises(): Observable<Enterprise[]> {
    
-    return this.httpClient.get<Enterprise[]>(`${this.baseUrl}/newenterprise/all`)
+    return this.httpClient.get<Enterprise[]>(`${this.baseUrl}/enterprises`)
   }
 
   //продукты по предприятию
   getProducts(enterpriseId: number): Observable<ProductElements[]> {
-    return this.httpClient.get<ProductElements[]>(`${this.baseUrl}/newproduct/allByEnterprise`,
+    return this.httpClient.get<ProductElements[]>(`${this.baseUrl}/products`,
       { params: { enterpriseId: `${enterpriseId}` } })
   }
 
@@ -46,7 +46,7 @@ export class DataService {
     bodyStartDate = formatDate(startDate, 'yyyy-dd-MM', 'en-US');
     bodyEndDate = formatDate(endDate, 'yyyy-dd-MM', 'en-US');
     
-    return this.httpClient.get<Measure[]>(`${this.baseUrl}/newmeas/allByProductId`, {
+    return this.httpClient.get<Measure[]>(`${this.baseUrl}/meas`, {
       params: {
         prodId: `${prodId}`,
         startDate: `${bodyStartDate}`,
@@ -63,7 +63,7 @@ export class DataService {
     size: number
   ): Observable<PagedResponse<Measure>> {
     return this.httpClient.get<PagedResponse<Measure>>(
-      `${this.baseUrl}/newmeas/pageByProductId`,
+      `${this.baseUrl}/meas/paged`,
       {
         params: {
           prodId: String(prodId),
@@ -97,7 +97,7 @@ export class DataService {
 
   //запрос синхронизации измерений
   updateDb(): Observable<SynchronizationResult | null> {
-    return this.httpClient.get<SynchronizationResult>(`${this.baseUrl}/newupdatedb/upd`);
+    return this.httpClient.get<SynchronizationResult>(`${this.baseUrl}/synchronization/update-db`);
   }
   
 }

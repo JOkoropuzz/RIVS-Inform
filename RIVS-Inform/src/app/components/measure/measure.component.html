@@ -212,6 +212,7 @@
   </table>
   <mat-paginator [length]="total"
                  [pageSize]="40"
+                 [hidePageSize]="true"
                  (page)="page$.next($event)">
   </mat-paginator>
 </div>
