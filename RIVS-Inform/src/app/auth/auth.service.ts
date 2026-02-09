@@ -1,25 +1,25 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { inject } from '@angular/core';
-import { take, tap } from 'rxjs/operators';
+import { catchError, finalize, map, take, tap } from 'rxjs/operators';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { jwtDecode } from 'jwt-decode';
 import { Enterprise } from '../models/enterprise';
 
 interface LoginResponse {
-  token: string;
   userName: string;
   userId: string;
+  roleName: string;
   expiration: string;
+  enterprises: Enterprise[];
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-
-  httpClient = inject(HttpClient);
-  baseUrl = '/api/Auth';
+  
+  baseUrl = 'http://localhost:6070/api/Auth';
 
   private readonly _isAdmin = new BehaviorSubject<boolean>(false);
   readonly isAdmin$ = this._isAdmin.asObservable();
@@ -30,40 +30,25 @@ export class AuthService {
   private readonly _currentUserName = new BehaviorSubject<string | null>(null);
   readonly currentUserName$ = this._currentUserName.asObservable();
 
-  constructor() {
-    const token = localStorage.getItem('jwt');
-    if (token) {
-      this.setToken(token);
-    }
-    else {
-      this.logout();
-    }
+  private userInfoKey = 'userInfo';
+
+  constructor(private httpClient: HttpClient) {
   }
 
   login(login: string, password: string): Observable<LoginResponse> {
-    return this.httpClient.post<LoginResponse>(`${this.baseUrl}/login`, { login, password })
-      .pipe(
-        tap(res => {
-          localStorage.setItem('jwt', res.token);
-          this.setToken(res.token);
-        })
-      );
+    return this.httpClient.post<LoginResponse>(`${this.baseUrl}/login`, { login, password }, {
+      withCredentials: true
+    }).pipe(
+      tap(userInfo => {
+        this.setUserInfo(userInfo);
+      })
+    );
   }
 
-  getToken(): string | null {
-    return localStorage.getItem('jwt');
-  }
-
-  private setToken(token: string) {
+  private setUserInfo(userInfo: LoginResponse | null) {
     try {
-      const payload: any = jwtDecode(token);
-      const nameClaim = payload['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name'];
-      this._isAdmin.next(nameClaim === 'admin');
-      this._currentUserName.next(nameClaim);
-      let enterprises: Enterprise[] = [];
-      if (payload['Enterprises']) {
-        enterprises = JSON.parse(payload['Enterprises']);
-      }
+      this._isAdmin.next(userInfo?.roleName === 'admin');
+      this._currentUserName.next(userInfo?.userName ?? null);
 
       this.isAdmin$.pipe(take(1)).subscribe(isAdmin => {
         if (isAdmin)
@@ -72,8 +57,8 @@ export class AuthService {
         }
         else
         {
-          const enterprise = enterprises[0];
-          this._currentEnterprise.next(enterprise);
+          const enterprise = userInfo?.enterprises[0];
+          this._currentEnterprise.next(enterprise ?? null);
         }
       });
     } catch (e) {
@@ -82,15 +67,42 @@ export class AuthService {
     }
   }
 
-  logout(): void {
-    localStorage.removeItem('jwt');
+  logout(): Observable<void> {
+    return this.httpClient.post<void>(`${this.baseUrl}/logout`, {}, {
+      withCredentials: true
+    }).pipe(
+      finalize(() => this.clearSession())
+    );
+  }
+
+  isLoggedIn(): Observable<boolean> {
+    return this.currentUserName$.pipe(
+      map(name => !!name),
+      take(1)
+    );
+  }
+
+  checkAuth(): Observable<boolean> {
+    return this.httpClient.get<LoginResponse>(`${this.baseUrl}/me`, {
+      withCredentials: true
+    }).pipe(
+      map(userInfo => {
+        this.setUserInfo(userInfo);
+        localStorage.setItem(this.userInfoKey, JSON.stringify(userInfo));
+        return true;
+      }),
+      catchError(() => {
+        this.clearSession();
+        return of(false);
+      })
+    );
+  }
+
+  clearSession(): void {
+    localStorage.removeItem(this.userInfoKey);
     this._isAdmin.next(false);
     this._currentEnterprise.next(null);
     this._currentUserName.next(null);
   }
- 
-  isLoggedIn(): boolean {
-    return !!localStorage.getItem('jwt');
-  }
-  
+
 }

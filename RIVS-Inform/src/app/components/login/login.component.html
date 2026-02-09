@@ -5,10 +5,10 @@
   </div>
   <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
     <div data-mdb-input-init class="form-outline mb-4">
-      <input class="form-control" [readonly]="authService.isLoggedIn()" name="login" type="text" formControlName="login" placeholder="Login">
+      <input class="form-control" name="login" type="text" formControlName="login" placeholder="Login">
     </div>
     <div data-mdb-input-init class="form-outline mb-4">
-      <input class="form-control" [readonly]="authService.isLoggedIn()" type="password" formControlName="password" placeholder="Password">
+      <input class="form-control" type="password" formControlName="password" placeholder="Password">
     </div>
     <p *ngIf="!authService.isLoggedIn()" class="login-result-message">{{loginResultMessage}}</p>
     <button type="submit"

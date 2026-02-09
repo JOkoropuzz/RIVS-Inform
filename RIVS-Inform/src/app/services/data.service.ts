@@ -3,21 +3,15 @@ import { Measure } from '../models/measure';
 import { ProductElements } from '../models/productElements';
 import { Enterprise } from '../models/enterprise';
 import { HttpClient, HttpResponse } from "@angular/common/http";
-import { map, Observable } from "rxjs";
+import { Observable } from "rxjs";
 import { formatDate } from '@angular/common';
 import { PagedResponse } from "../models/PagedResponse";
-
-export interface SynchronizationResult {
-  dateFrom: Date | null,
-  message: string | null,
-  //newMeasuresCount: number
-}
+import { SynchronizationResult } from "../models/SynchronizationResult";
 
 @Injectable({ providedIn: 'root' })
 export class DataService {
   httpClient = inject(HttpClient);
-  baseUrl = '/api';
-  getMeasuresFlag = false;
+  baseUrl = 'http://localhost:6070/api';
 
   //список предприятий
   getEnterprises(): Observable<Enterprise[]> {

@@ -1,4 +1,4 @@
-<app-nav-menu *ngIf="this.authService.isLoggedIn()"></app-nav-menu>
+<app-nav-menu *ngIf="authService.isLoggedIn() | async"></app-nav-menu>
 <body>
   <div class="container">
     <router-outlet></router-outlet>

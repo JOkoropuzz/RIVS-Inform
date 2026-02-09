@@ -1,32 +1,40 @@
-import { HttpInterceptorFn, HttpErrorResponse } from '@angular/common/http';
-import { inject } from '@angular/core';
+import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { AuthService } from './auth.service';
 import { catchError, throwError } from 'rxjs';
+import { inject } from '@angular/core';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
-  const authService = inject(AuthService);
   const router = inject(Router);
+  const authService = inject(AuthService);
+  
+  const authReq = req.clone({
+    withCredentials: true 
+  });
 
-  const token = authService.getToken();
-
-  let clonedRequest = req;
-
-  if (token) {
-    clonedRequest = req.clone({
-      setHeaders: { Authorization: `Bearer ${token}` }
-    });
-  }
-
-  return next(clonedRequest).pipe(
+  return next(authReq).pipe(
     catchError((error: HttpErrorResponse) => {
       if (error.status === 401) {
-        authService.logout();
-        
-        router.navigate(['/']);
+        handleUnauthorized(authService, router);
       }
-      
+
+      if (error.status === 403) {
+        router.navigate(['/access-denied']);
+      }
+
       return throwError(() => error);
     })
   );
 };
+
+function handleUnauthorized(authService: AuthService, router: Router): void {
+  
+  authService.clearSession();
+  
+  router.navigate(['/login'], {
+    queryParams: {
+      returnUrl: router.url,
+      reason: 'session-expired'
+    }
+  });
+}
