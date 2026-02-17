@@ -18,9 +18,9 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
         handleUnauthorized(authService, router);
       }
 
-      if (error.status === 403) {
-        router.navigate(['/access-denied']);
-      }
+      //if (error.status === 403) {
+      //  router.navigate(['/access-denied']);
+      //}
 
       return throwError(() => error);
     })

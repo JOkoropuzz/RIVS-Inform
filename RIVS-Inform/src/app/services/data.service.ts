@@ -11,7 +11,7 @@ import { SynchronizationResult } from "../models/SynchronizationResult";
 @Injectable({ providedIn: 'root' })
 export class DataService {
   httpClient = inject(HttpClient);
-  baseUrl = 'http://localhost:6070/api';
+  baseUrl = '/api';
 
   //список предприятий
   getEnterprises(): Observable<Enterprise[]> {
