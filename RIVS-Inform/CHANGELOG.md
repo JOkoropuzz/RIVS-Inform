@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.6.1](https://github.com/JOkoropuzz/RIVS-Inform/compare/v1.6.0...v1.6.1) (2026-02-17)
+
+
+### Bug Fixes
+
+* убраны отладочные строки, добавлены коментарии ([63ae8e3](https://github.com/JOkoropuzz/RIVS-Inform/commit/63ae8e32a39d8c69fa7b888bff0ffe65c6af8261))
+
 ## [1.6.0](https://github.com/JOkoropuzz/RIVS-Inform/compare/v1.5.2...v1.6.0) (2026-02-09)
 
 
