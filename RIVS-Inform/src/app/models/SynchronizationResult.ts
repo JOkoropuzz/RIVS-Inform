@@ -1,5 +1,5 @@
 export interface SynchronizationResult {
-  dateFrom: Date | null,
+  //dateFrom: Date | null,
   message: string | null,
   //newMeasuresCount: number
 }
