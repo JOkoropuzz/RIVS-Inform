@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.7.0](https://github.com/JOkoropuzz/RIVS-Inform/compare/v1.6.2...v1.7.0) (2026-04-07)
+
+
+### Features
+
+* добавлена обработка SSE для синхронизации. Добавлен прогресс бар для синхронизации. Исправлена ошибка, при которой не отображался ответ сервера при авторизации ([662c63f](https://github.com/JOkoropuzz/RIVS-Inform/commit/662c63fead26e40ab71be83a2f90f57a20a95d1c))
+
 ### [1.6.2](https://github.com/JOkoropuzz/RIVS-Inform/compare/v1.6.1...v1.6.2) (2026-03-18)
 
 
