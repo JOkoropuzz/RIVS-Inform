@@ -6,3 +6,8 @@
   bottom: max(20px, env(safe-area-inset-bottom));
   z-index: 1000;
 }
+
+.progress-message {
+  font-size: 13px;
+  color: var(--mat-sys-on-surface-variant, #666);
+}

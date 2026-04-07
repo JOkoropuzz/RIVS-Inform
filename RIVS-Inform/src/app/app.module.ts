@@ -29,6 +29,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { authInterceptor } from './auth/auth.interceptor';
 import { MatPaginatorModule, MatPaginatorIntl } from '@angular/material/paginator';
 import { CustomMatPaginatorIntl } from './components/measure/CustomMatPaginatorIntl';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 
 @NgModule({
   declarations: [
@@ -55,6 +57,8 @@ import { CustomMatPaginatorIntl } from './components/measure/CustomMatPaginatorI
     MatIconModule,
     MatMenuModule,
     NgbModule,
+    MatProgressSpinnerModule,
+    MatProgressBarModule,
     MatPaginatorModule
   ],
   providers: [

@@ -6,7 +6,6 @@ import { MatIconRegistry } from '@angular/material/icon';
 import { BehaviorSubject, switchMap, of, combineLatest, map, filter, tap, distinctUntilChanged, shareReplay, } from 'rxjs';
 import { AuthService } from '../../auth/auth.service';
 
-
 import {
   ApexAxisChartSeries,
   ApexTitleSubtitle,
@@ -171,7 +170,9 @@ export class TableMultipleHeader implements OnInit
 
   //string array of columns name
   displayedColumns?: string[];
-  
+  progressMessage = '';
+  isSyncing = false;
+
   constructor(public dataService: DataService) {
    //регистрация иконки
     const iconRegistry = inject(MatIconRegistry);
@@ -256,15 +257,26 @@ export class TableMultipleHeader implements OnInit
 
   //обновление базы данных
   updateDb() {
+    this.isSyncing = true;
+    this.progressMessage = '';
+
     this.dataService.updateDb()
-      .pipe(
-        tap(res =>
-          alert(res?.message ?? 'Не получено ответа от сервера'))
-      )
       .subscribe({
-        error: () => alert('Ошибка при обновлении базы')
+        next: ({ type, data }) => {
+          if (type === 'status' || type === 'progress') {
+            this.progressMessage = data;
+          }
+          if (type === 'done') {
+            this.isSyncing = false;
+            this.progressMessage = data;
+            this.refresh$.next();
+          }
+        },
+        error: ({ data }) => {
+          this.isSyncing = false;
+          this.progressMessage = data ?? 'Ошибка при обновлении базы';
+        }
       });
-    this.refresh$.next();
   }
   
   //событие ввода даты

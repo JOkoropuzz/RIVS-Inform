@@ -10,7 +10,9 @@
     <div data-mdb-input-init class="form-outline mb-4">
       <input class="form-control" type="password" formControlName="password" placeholder="Password">
     </div>
-    <p *ngIf="!authService.isLoggedIn()" class="login-result-message">{{loginResultMessage}}</p>
+    <p *ngIf="loginResultMessage" class="login-result-message">
+      {{loginResultMessage}}
+    </p>
     <button type="submit"
             class="btn btn-primary w-100"
             [disabled]="loginForm.invalid || isLoading">

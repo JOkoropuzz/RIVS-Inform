@@ -90,8 +90,35 @@ export class DataService {
   }
 
   //запрос синхронизации измерений
-  updateDb(): Observable<SynchronizationResult | null> {
-    return this.httpClient.get<SynchronizationResult>(`${this.baseUrl}/synchronization/update-db`);
+  updateDb(): Observable<{ type: string, data: string }> {
+    return new Observable(observer => {
+      const eventSource = new EventSource(
+        `${this.baseUrl}/synchronization/update-db`,
+        { withCredentials: true }
+      );
+
+      eventSource.addEventListener('status', (e: MessageEvent) => {
+        observer.next({ type: 'status', data: e.data });
+      });
+
+      eventSource.addEventListener('progress', (e: MessageEvent) => {
+        observer.next({ type: 'progress', data: e.data });
+      });
+
+      eventSource.addEventListener('done', (e: MessageEvent) => {
+        observer.next({ type: 'done', data: e.data });
+        eventSource.close();
+        observer.complete();
+      });
+
+      eventSource.addEventListener('error', (e: MessageEvent) => {
+        observer.error({ type: 'error', data: e.data });
+        eventSource.close();
+      });
+
+      // Закрываем при отписке
+      return () => eventSource.close();
+    });
   }
   
 }

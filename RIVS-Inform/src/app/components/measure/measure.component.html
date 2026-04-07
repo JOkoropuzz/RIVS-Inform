@@ -39,9 +39,16 @@
     </mat-form-field>
   </div>
   <div *ngIf="selectedProductSubject | async" class="col-md-1">
-    <button mat-fab aria-label="обновление данных" (click)="updateDb()" color="primary">
-      <mat-icon svgIcon="refresh" aria-hidden="false" aria-label="Обновить данные"></mat-icon>
+    <button mat-fab aria-label="обновление данных" (click)="updateDb()"
+            color="primary" [disabled]="isSyncing">
+      <mat-icon *ngIf="!isSyncing" svgIcon="refresh" aria-hidden="false"></mat-icon>
+      <mat-spinner *ngIf="isSyncing" diameter="24" color="accent"></mat-spinner>
     </button>
+  </div>
+
+  <div *ngIf="isSyncing || progressMessage" class="col-12 mt-2">
+    <mat-progress-bar *ngIf="isSyncing" mode="indeterminate"></mat-progress-bar>
+    <p class="progress-message mt-1">{{ progressMessage }}</p>
   </div>
 </div>
 <div *ngIf="selectedProductSubject | async">
