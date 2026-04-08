@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.8.0](https://github.com/JOkoropuzz/RIVS-Inform/compare/v1.7.0...v1.8.0) (2026-04-08)
+
+
+### Features
+
+* объявление графиков в html переделан под массив, lazy загрузка графиков через appChatHost, ([20a0c93](https://github.com/JOkoropuzz/RIVS-Inform/commit/20a0c934146503913ca77da040bed5ccadedff2f))
+
 ## [1.7.0](https://github.com/JOkoropuzz/RIVS-Inform/compare/v1.6.2...v1.7.0) (2026-04-07)
 
 
