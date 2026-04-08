@@ -2,7 +2,8 @@
   <div class="col-md-3" *ngIf="isAdmin$ | async">
     <mat-form-field>
       <mat-label>Предприятие</mat-label>
-      <mat-select id="enterprise" (selectionChange)="selectedEnterpriseSubject.next(+($event.value))">
+      <mat-select id="enterprise" name="enterprise"
+                  (selectionChange)="selectedEnterpriseSubject.next(+($event.value))">
         <mat-option *ngFor="let e of enterprises$ | async" [value]="e.id">
           {{ e.name }}
         </mat-option>
@@ -12,7 +13,9 @@
   <div class="col-md-3">
     <mat-form-field>
       <mat-label>Продукт</mat-label>
-      <mat-select [value]="selectedProductSubject | async" (selectionChange)="selectedProductSubject.next(+($event.value))">
+      <mat-select name="product"
+                  [value]="selectedProductSubject | async"
+                  (selectionChange)="selectedProductSubject.next(+($event.value))">
         <mat-option *ngFor="let p of products$ | async" [value]="p.id">
           {{ p.name }}
         </mat-option>
@@ -24,11 +27,17 @@
       <mat-label>Диапазон дат</mat-label>
       <mat-date-range-input [rangePicker]="picker" (click)="picker.open()">
         <input matStartDate
+               id="start-date"
+               name="start-date"
+               aria-label="Дата от"
                placeholder="Дата от"
                readonly
                [value]="pickerStartDate$ | async"
                (dateInput)="addEvent('inputStartDate', $event)">
         <input matEndDate
+               id="end-date"
+               name="end-date"
+               aria-label="Дата до"
                placeholder="Дата до"
                readonly
                [value]="pickerEndDate$ | async"
@@ -52,142 +61,34 @@
   </div>
 </div>
 <div *ngIf="selectedProductSubject | async">
-  <div [hidden]="allColumns[1].hide" [id]="allColumns[1].def">
-    <apx-chart #TFccChart
-               [series]="chart0options.series"
-               [chart]="chart0options.chart"
-               [colors]="chart0options.colors"
-               [yaxis]="chart0options.yaxis"
-               [title]="chart0options.title"
-               [dataLabels]="commonOptions.dataLabels"
-               [markers]="commonOptions.markers"
-               [stroke]="commonOptions.stroke"
-               [grid]="commonOptions.grid"
-               [xaxis]="commonOptions.xaxis"
-               [tooltip]="commonOptions.tooltip">
-    </apx-chart>
+  <ng-container *ngFor="let col of allColumns.slice(1); let i = index">
+    <div *ngIf="!col.hide"
+         [id]="col.def"
+         [attr.data-chart-index]="i"
+         style="min-height: 160px"
+         appChartHost
+         (hostReady)="registerChartHost($event)">
 
-  </div>
-  <div [hidden]="allColumns[2].hide" [id]="allColumns[2].def">
-    <apx-chart #el1Chart
-               [series]="chart1options.series"
-               [chart]="chart1options.chart"
-               [colors]="chart1options.colors"
-               [yaxis]="chart1options.yaxis"
-               [title]="chart1options.title"
-               [dataLabels]="commonOptions.dataLabels"
-               [markers]="commonOptions.markers"
-               [stroke]="commonOptions.stroke"
-               [grid]="commonOptions.grid"
-               [xaxis]="commonOptions.xaxis"
-               [tooltip]="commonOptions.tooltip">
-    </apx-chart>
-  </div>
-  <div [hidden]="allColumns[3].hide" [id]="allColumns[3].def">
-    <apx-chart #el2Chart
-               [series]="chart2options.series"
-               [chart]="chart2options.chart"
-               [colors]="chart2options.colors"
-               [yaxis]="chart2options.yaxis"
-               [title]="chart2options.title"
-               [dataLabels]="commonOptions.dataLabels"
-               [markers]="commonOptions.markers"
-               [stroke]="commonOptions.stroke"
-               [grid]="commonOptions.grid"
-               [xaxis]="commonOptions.xaxis"
-               [tooltip]="commonOptions.tooltip">
-    </apx-chart>
-  </div>
-  <div [hidden]="allColumns[4].hide" [id]="allColumns[4].def">
-    <apx-chart #el3Chart
-               [series]="chart3options.series"
-               [chart]="chart3options.chart"
-               [colors]="chart3options.colors"
-               [yaxis]="chart3options.yaxis"
-               [title]="chart3options.title"
-               [dataLabels]="commonOptions.dataLabels"
-               [markers]="commonOptions.markers"
-               [stroke]="commonOptions.stroke"
-               [grid]="commonOptions.grid"
-               [xaxis]="commonOptions.xaxis"
-               [tooltip]="commonOptions.tooltip">
-    </apx-chart>
-  </div>
-  <div [hidden]="allColumns[5].hide" [id]="allColumns[5].def">
-    <apx-chart #el4Chart
-               [series]="chart4options.series"
-               [chart]="chart4options.chart"
-               [colors]="chart4options.colors"
-               [yaxis]="chart4options.yaxis"
-               [title]="chart4options.title"
-               [dataLabels]="commonOptions.dataLabels"
-               [markers]="commonOptions.markers"
-               [stroke]="commonOptions.stroke"
-               [grid]="commonOptions.grid"
-               [xaxis]="commonOptions.xaxis"
-               [tooltip]="commonOptions.tooltip">
-    </apx-chart>
-  </div>
-  <div [hidden]="allColumns[6].hide" [id]="allColumns[6].def">
-    <apx-chart #el5Chart
-               [series]="chart5options.series"
-               [chart]="chart5options.chart"
-               [colors]="chart5options.colors"
-               [yaxis]="chart5options.yaxis"
-               [title]="chart5options.title"
-               [dataLabels]="commonOptions.dataLabels"
-               [markers]="commonOptions.markers"
-               [stroke]="commonOptions.stroke"
-               [grid]="commonOptions.grid"
-               [xaxis]="commonOptions.xaxis"
-               [tooltip]="commonOptions.tooltip">
-    </apx-chart>
-  </div>
-  <div [hidden]="allColumns[7].hide" [id]="allColumns[7].def">
-    <apx-chart #el6Chart
-               [series]="chart6options.series"
-               [chart]="chart6options.chart"
-               [colors]="chart6options.colors"
-               [yaxis]="chart6options.yaxis"
-               [title]="chart6options.title"
-               [dataLabels]="commonOptions.dataLabels"
-               [markers]="commonOptions.markers"
-               [stroke]="commonOptions.stroke"
-               [grid]="commonOptions.grid"
-               [xaxis]="commonOptions.xaxis"
-               [tooltip]="commonOptions.tooltip">
-    </apx-chart>
-  </div>
-  <div [hidden]="allColumns[8].hide" [id]="allColumns[8].def">
-    <apx-chart #el7Chart
-               [series]="chart7options.series"
-               [chart]="chart7options.chart"
-               [colors]="chart7options.colors"
-               [yaxis]="chart7options.yaxis"
-               [title]="chart7options.title"
-               [dataLabels]="commonOptions.dataLabels"
-               [markers]="commonOptions.markers"
-               [stroke]="commonOptions.stroke"
-               [grid]="commonOptions.grid"
-               [xaxis]="commonOptions.xaxis"
-               [tooltip]="commonOptions.tooltip">
-    </apx-chart>
-  </div>
-  <div [hidden]="allColumns[9].hide" [id]="allColumns[9].def">
-    <apx-chart #el8Chart
-               [series]="chart8options.series"
-               [chart]="chart8options.chart"
-               [colors]="chart8options.colors"
-               [yaxis]="chart8options.yaxis"
-               [title]="chart8options.title"
-               [dataLabels]="commonOptions.dataLabels"
-               [markers]="commonOptions.markers"
-               [stroke]="commonOptions.stroke"
-               [grid]="commonOptions.grid"
-               [xaxis]="commonOptions.xaxis"
-               [tooltip]="commonOptions.tooltip">
-    </apx-chart>
-  </div>
+      <apx-chart *ngIf="visibleCharts[i]"
+                 [series]="chartOptionsArray[i].series"
+                 [chart]="chartOptionsArray[i].chart"
+                 [colors]="chartOptionsArray[i].colors"
+                 [yaxis]="chartOptionsArray[i].yaxis"
+                 [title]="chartOptionsArray[i].title"
+                 [dataLabels]="commonOptions.dataLabels"
+                 [markers]="commonOptions.markers"
+                 [stroke]="commonOptions.stroke"
+                 [grid]="commonOptions.grid"
+                 [xaxis]="commonOptions.xaxis"
+                 [tooltip]="commonOptions.tooltip">
+      </apx-chart>
+
+      <div *ngIf="!visibleCharts[i]"
+           style=" height:160px; display:flex; align-items:center;
+           justify-content:center; background:#f9f9f9; color:#aaa">
+      </div>
+    </div>
+  </ng-container>
 </div>
 <div *ngIf="selectedProductSubject.value != null && ((measures$ | async)?.length ?? 0) > 0" class="mat-elevation-z8 flex-element">
   <table mat-table [dataSource]="(tableMeasures$ | async) ?? []" class="mat-elevation-z8">

@@ -31,6 +31,7 @@ import { MatPaginatorModule, MatPaginatorIntl } from '@angular/material/paginato
 import { CustomMatPaginatorIntl } from './components/measure/CustomMatPaginatorIntl';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { ChartHostDirective } from './components/measure/appChartHost';
 
 @NgModule({
   declarations: [
@@ -38,7 +39,8 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
     NavMenuComponent,
     HomeComponent,
     TableMultipleHeader,
-    LoginComponent
+    LoginComponent,
+    ChartHostDirective
   ],
   imports: [
     BrowserModule,

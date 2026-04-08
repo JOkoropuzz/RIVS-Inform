@@ -3,8 +3,9 @@ import { DataService } from '../../services/data.service';
 import { Measure } from '../../models/measure';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { MatIconRegistry } from '@angular/material/icon';
-import { BehaviorSubject, switchMap, of, combineLatest, map, filter, tap, distinctUntilChanged, shareReplay, } from 'rxjs';
+import { BehaviorSubject, switchMap, of, combineLatest, map, filter, tap } from 'rxjs';
 import { AuthService } from '../../auth/auth.service';
+import { ChangeDetectorRef } from '@angular/core';
 
 import {
   ApexAxisChartSeries,
@@ -43,7 +44,6 @@ export type ChartOptions = {
   colors: any;
   toolbar: any;
 };
-
 export interface DisplayColumn {
   def: string;
   label: string;
@@ -84,6 +84,11 @@ export class TableMultipleHeader implements OnInit
 
   page$ = new BehaviorSubject({ pageIndex: 0, pageSize: 40 });
   total: number = 0;
+
+  visibleCharts: boolean[] = new Array(9).fill(false);
+  private observer!: IntersectionObserver;
+  private pendingMeasures: Measure[] | null = null;
+  private chartHostElements: HTMLElement[] = [];
 
   //для таблицы
   tableMeasures$ = combineLatest([
@@ -142,7 +147,6 @@ export class TableMultipleHeader implements OnInit
     map(res => res ?? [])
   );
   
-  
   //Шаблон колонок таблицы
   allColumns: DisplayColumn[] = [
     { def: 'time', label: 'Время', hide: false },
@@ -173,7 +177,7 @@ export class TableMultipleHeader implements OnInit
   progressMessage = '';
   isSyncing = false;
 
-  constructor(public dataService: DataService) {
+  constructor(public dataService: DataService, private cdr: ChangeDetectorRef) {
    //регистрация иконки
     const iconRegistry = inject(MatIconRegistry);
     const sanitizer = inject(DomSanitizer);
@@ -186,9 +190,12 @@ export class TableMultipleHeader implements OnInit
       this.selectedProductName = undefined;
     });
     
-    this.measures$.subscribe(mes =>
-    {
-      this.updateCharts(mes);
+    this.measures$.subscribe(mes => {
+      this.pendingMeasures = mes;
+      this.visibleCharts = new Array(9).fill(false);
+      this.cdr.detectChanges(); // дать Angular убрать старые apx-chart из DOM
+      this.updateChartOptions(mes);
+      this.reobserveAll(); // заново наблюдать за всеми хостами
     });
 
     // Подписываемся на роль и список предприятий
@@ -204,6 +211,63 @@ export class TableMultipleHeader implements OnInit
 
   ngOnInit()
   {
+  }
+  ngAfterViewInit() {
+    this.initObserver();
+  }
+
+  ngOnDestroy() {
+    this.observer?.disconnect();
+  }
+
+  private initObserver() {
+    this.observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const index = Number(entry.target.getAttribute('data-chart-index'));
+          if (!this.visibleCharts[index]) {
+            setTimeout(() => {
+              this.visibleCharts[index] = true;
+              this.cdr.detectChanges();
+            }, 50);
+          }
+        }
+      });
+    }, { rootMargin: '150px', threshold: 0.01 });
+  }
+
+  // Вызывается из template через (chartHostReady)
+  registerChartHost(el: HTMLElement) {
+    if (!this.chartHostElements.includes(el)) {
+      this.chartHostElements.push(el);
+    }
+    this.observer?.observe(el);
+
+    // Сразу проверить — вдруг элемент уже в viewport
+    this.checkIfVisible(el);
+  }
+
+  private checkIfVisible(el: HTMLElement) {
+    const rect = el.getBoundingClientRect();
+    const isVisible = rect.top < window.innerHeight && rect.bottom > 0
+      && rect.left < window.innerWidth && rect.right > 0;
+
+    if (isVisible) {
+      const index = Number(el.getAttribute('data-chart-index'));
+      if (!this.visibleCharts[index]) {
+        setTimeout(() => {
+          this.visibleCharts[index] = true;
+          this.cdr.detectChanges();
+        }, 50);
+      }
+    }
+  }
+
+  private reobserveAll() {
+    this.chartHostElements.forEach(el => {
+      this.observer?.observe(el);
+      this.checkIfVisible(el);
+    });
   }
 
   //заполнение графиков
@@ -288,42 +352,22 @@ export class TableMultipleHeader implements OnInit
       this.pickerEndDate$.next(date);
     }
   }
-  
-  updateCharts(measures: Measure[]) {
-    
-    //Заполняем данные
+
+  updateChartOptions(measures: Measure[]) {
     const { elementSeries } = this.fillCharts(measures);
-    
-    // Объекты графиков и соответствующие элементы
-    const chartProps = [
-      { chart: this.chart0options, seriesLabelIndex: 1, chartRef: this.el0Chart },
-      { chart: this.chart1options, seriesLabelIndex: 2, chartRef: this.el1Chart },
-      { chart: this.chart2options, seriesLabelIndex: 3, chartRef: this.el2Chart },
-      { chart: this.chart3options, seriesLabelIndex: 4, chartRef: this.el3Chart },
-      { chart: this.chart4options, seriesLabelIndex: 5, chartRef: this.el4Chart },
-      { chart: this.chart5options, seriesLabelIndex: 6, chartRef: this.el5Chart },
-      { chart: this.chart6options, seriesLabelIndex: 7, chartRef: this.el6Chart },
-      { chart: this.chart7options, seriesLabelIndex: 8, chartRef: this.el7Chart },
-      { chart: this.chart8options, seriesLabelIndex: 9, chartRef: this.el8Chart }
-    ];
 
-    // Обновление всех графиков в цикле
-    chartProps.forEach(({ chart, seriesLabelIndex, chartRef }) => {
-      const label = this.allColumns[seriesLabelIndex].label;
-
+    this.chartOptionsArray.forEach((chart, i) => {
+      const label = this.allColumns[i + 1].label;
       chart.title = { text: label + ' %' };
-      chart.series = [
-        {
-          name: label,
-          data: (elementSeries[label] ?? []).map(p => ({ x: new Date(p.x), y: p.y ?? 0 }))
-        }
-      ];
-
-      // Обновляем ApexCharts через ссылку на компонент
-      if (chartRef) {
-        chartRef.updateSeries(chart.series, true);
-      }
+      chart.series = [{
+        name: label,
+        data: (elementSeries[label] ?? []).map(p => ({ x: new Date(p.x), y: p.y ?? 0 }))
+      }];
     });
+
+    // Сбрасываем флаги — графики перерендерятся при следующем появлении в viewport
+    this.visibleCharts = new Array(9).fill(false);
+    this.cdr.detectChanges();
   }
 
   // Show-Hide для колонок
@@ -379,6 +423,14 @@ export class TableMultipleHeader implements OnInit
     URL.revokeObjectURL(url);
   }
 
+  // Массив опций для удобного доступа по индексу
+  get chartOptionsArray(): Partial<ChartOptions>[] {
+    return [
+      this.chart0options, this.chart1options, this.chart2options,
+      this.chart3options, this.chart4options, this.chart5options,
+      this.chart6options, this.chart7options, this.chart8options
+    ];
+  }
   //Опции графиков по умолчанию
   public chart0options: Partial<ChartOptions> = {
     title: {
@@ -392,6 +444,7 @@ export class TableMultipleHeader implements OnInit
       }
     ],
     chart: {
+      width: '100%',
       zoom: { enabled: false },
       toolbar: {
         tools: {
@@ -428,6 +481,7 @@ export class TableMultipleHeader implements OnInit
       }
     ],
     chart: {
+      width: '100%',
       zoom: { enabled: false },
       toolbar: {
         show: false,
@@ -461,6 +515,7 @@ export class TableMultipleHeader implements OnInit
       }
     ],
     chart: {
+      width: '100%',
       zoom: { enabled: false },
       toolbar: {
         show: false,
@@ -493,6 +548,7 @@ export class TableMultipleHeader implements OnInit
       }
     ],
     chart: {
+      width: '100%',
       zoom: { enabled: false },
       toolbar: {
         show: false,
@@ -525,6 +581,7 @@ export class TableMultipleHeader implements OnInit
       }
     ],
     chart: {
+      width: '100%',
       zoom: { enabled: false },
       toolbar: {
         show: false,
@@ -557,6 +614,7 @@ export class TableMultipleHeader implements OnInit
       }
     ],
     chart: {
+      width: '100%',
       zoom: { enabled: false },
       toolbar: {
         show: false,
@@ -589,6 +647,7 @@ export class TableMultipleHeader implements OnInit
       }
     ],
     chart: {
+      width: '100%',
       zoom: { enabled: false },
       toolbar: {
         show: false,
@@ -621,6 +680,7 @@ export class TableMultipleHeader implements OnInit
       }
     ],
     chart: {
+      width: '100%',
       zoom: { enabled: false },
       toolbar: {
         show: false,
@@ -653,6 +713,7 @@ export class TableMultipleHeader implements OnInit
       }
     ],
     chart: {
+      width: '100%',
       zoom: { enabled: false },
       toolbar: {
         show: false,
