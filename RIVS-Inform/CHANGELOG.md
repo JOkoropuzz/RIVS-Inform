@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.9.0](https://github.com/JOkoropuzz/RIVS-Inform/compare/v1.8.0...v1.9.0) (2026-04-22)
+
+
+### Features
+
+* зарегестрирован новый компонент, настроен роутинг, сделаны минимально необходимые импорты, сделан набросок фильтрации в компоненьте ([36a53bf](https://github.com/JOkoropuzz/RIVS-Inform/commit/36a53bff4e263ffbb3c71263cb374bf7404a7c62))
+
 ## [1.8.0](https://github.com/JOkoropuzz/RIVS-Inform/compare/v1.7.0...v1.8.0) (2026-04-08)
 
 
