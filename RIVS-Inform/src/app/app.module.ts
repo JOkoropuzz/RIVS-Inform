@@ -8,6 +8,7 @@ import { HomeComponent } from './components/home/home.component';
 import { TableMultipleHeader } from './components/measure/measure.component';
 import { DataService } from './services/data.service';
 
+import { MatCardModule } from '@angular/material/card';
 import { MatMenuModule } from '@angular/material/menu';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
@@ -32,6 +33,8 @@ import { CustomMatPaginatorIntl } from './components/measure/CustomMatPaginatorI
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { ChartHostDirective } from './components/measure/appChartHost';
+import { MeasureByRepersComponent } from './components/measure-by-repers/measure-by-repers.component';
+import { MatInputModule } from '@angular/material/input';
 
 @NgModule({
   declarations: [
@@ -40,7 +43,8 @@ import { ChartHostDirective } from './components/measure/appChartHost';
     HomeComponent,
     TableMultipleHeader,
     LoginComponent,
-    ChartHostDirective
+    ChartHostDirective,
+    MeasureByRepersComponent
   ],
   imports: [
     BrowserModule,
@@ -61,7 +65,9 @@ import { ChartHostDirective } from './components/measure/appChartHost';
     NgbModule,
     MatProgressSpinnerModule,
     MatProgressBarModule,
-    MatPaginatorModule
+    MatPaginatorModule,
+    MatCardModule,
+    MatInputModule
   ],
   providers: [
     provideHttpClient(

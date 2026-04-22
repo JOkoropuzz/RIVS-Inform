@@ -19,7 +19,7 @@ interface LoginResponse {
 })
 export class AuthService {
   
-  baseUrl = '/api/Auth';
+  baseUrl = 'http://localhost:6070/api/Auth';
 
   private readonly _isAdmin = new BehaviorSubject<boolean>(false);
   readonly isAdmin$ = this._isAdmin.asObservable();

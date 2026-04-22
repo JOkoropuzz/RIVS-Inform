@@ -6,7 +6,6 @@ import { MatIconRegistry } from '@angular/material/icon';
 import { BehaviorSubject, switchMap, of, combineLatest, map, filter, tap } from 'rxjs';
 import { AuthService } from '../../auth/auth.service';
 import { ChangeDetectorRef } from '@angular/core';
-
 import {
   ApexAxisChartSeries,
   ApexTitleSubtitle,

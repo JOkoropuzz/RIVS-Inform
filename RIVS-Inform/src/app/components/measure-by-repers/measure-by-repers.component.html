@@ -1,0 +1,42 @@
+<section class="filter-page">
+  
+  <!-- Форма -->
+  <form [formGroup]="filterForm" (ngSubmit)="onSubmit()">
+    <!-- Предприятие -->
+    <div class="col-md-3" *ngIf="isAdmin$ | async">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Предприятие</mat-label>
+        <mat-select formControlName="enterprise">
+          <mat-option *ngFor="let e of enterprises" [value]="e">
+            {{ e.name }}
+          </mat-option>
+        </mat-select>
+        <mat-error>Выберите предприятие</mat-error>
+      </mat-form-field>
+    </div>
+
+    <!-- Дата -->
+    <div class="col-md-3">
+      <mat-form-field appearance="outline">
+        <mat-label>Дата</mat-label>
+        <input matInput [matDatepicker]="dp" formControlName="date" readonly />
+        <mat-datepicker-toggle matSuffix [for]="dp"></mat-datepicker-toggle>
+        <mat-datepicker #dp></mat-datepicker>
+        <mat-error>Выберите дату</mat-error>
+      </mat-form-field>
+    </div>
+    
+    <!-- Час -->
+    <div class="col-md-3">
+      <mat-form-field appearance="outline">
+        <mat-label>Час</mat-label>
+        <mat-select formControlName="hour">
+          <mat-option *ngFor="let h of hours" [value]="h">
+            {{ formatHour(h) }}
+          </mat-option>
+        </mat-select>
+        <mat-error>Выберите час</mat-error>
+      </mat-form-field>
+    </div>
+  </form>
+</section>

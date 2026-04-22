@@ -5,10 +5,12 @@ import { HomeComponent } from './components/home/home.component';
 import { TableMultipleHeader } from './components/measure/measure.component';
 import { authGuard } from './auth/auth.guard';
 import { LoginComponent } from './components/login/login.component';
+import { MeasureByRepersComponent } from './components/measure-by-repers/measure-by-repers.component';
 
 const routes: Routes = [
   { path: 'home', component: HomeComponent, canActivate: [authGuard] },
   { path: 'measure', component: TableMultipleHeader, canActivate: [authGuard] },
+  { path: 'measure-by-repers', component: MeasureByRepersComponent, canActivate: [authGuard] },
   { path: 'login', component: LoginComponent },
   { path: '', redirectTo: '/home', pathMatch: 'full' }];
 
